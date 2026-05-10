@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -35,6 +35,40 @@ const editions = [
 ]
 
 export function PreventaForm() {
+  return (
+    <Suspense fallback={<PreventaFormSkeleton />}>
+      <PreventaFormContent />
+    </Suspense>
+  )
+}
+
+function PreventaFormSkeleton() {
+  return (
+    <section id="reservar" className="py-24 lg:py-32">
+      <div className="max-w-2xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="font-serif text-3xl text-primary mb-4">
+            Reserva Tu Copia
+          </h2>
+          <p className="text-muted-foreground">
+            Cargando formulario...
+          </p>
+        </div>
+        <div className="animate-pulse space-y-8">
+          <div className="h-48 bg-muted/20 rounded-lg" />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="h-12 bg-muted/20 rounded-lg" />
+            <div className="h-12 bg-muted/20 rounded-lg" />
+          </div>
+          <div className="h-24 bg-muted/20 rounded-lg" />
+          <div className="h-12 bg-muted/20 rounded-lg" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function PreventaFormContent() {
   const searchParams = useSearchParams()
   const initialEdition = searchParams.get('edition') || 'fisica'
   
