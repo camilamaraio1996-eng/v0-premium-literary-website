@@ -11,6 +11,7 @@ const navLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/libro', label: 'El Libro' },
   { href: '/diario', label: 'Diario' },
+  { href: '/recomendaciones', label: 'Recomendaciones' },
   { href: '/autor', label: 'Autora' },
   { href: '/contacto', label: 'Contacto' },
 ]
