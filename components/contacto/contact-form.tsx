@@ -46,7 +46,7 @@ export function ContactForm() {
             transition={{ duration: 0.5 }}
           >
             <div className="w-14 h-14 bg-secondary flex items-center justify-center mx-auto mb-6">
-              <Check className="w-6 h-6 text-[#7a917a]" />
+              <Check className="w-6 h-6 text-accent" />
             </div>
             <h2 className="font-serif text-2xl text-primary mb-4">
               Mensaje Enviado

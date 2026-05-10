@@ -65,7 +65,7 @@ export function PostContent({ post }: PostContentProps) {
         )
       }
       return (
-        <p key={i} className="mb-5 leading-relaxed text-[#4a3555]">
+        <p key={i} className="mb-5 leading-relaxed text-foreground">
           {trimmed}
         </p>
       )
@@ -97,7 +97,7 @@ export function PostContent({ post }: PostContentProps) {
           transition={{ duration: 0.6 }}
           className="mb-10"
         >
-          <span className="text-xs uppercase tracking-[0.2em] text-[#7a917a] block mb-4">
+          <span           className="text-xs uppercase tracking-[0.2em] text-[#958568] block mb-4">
             {categoryLabel(post.category)}
           </span>
           <h1 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-snug text-balance">

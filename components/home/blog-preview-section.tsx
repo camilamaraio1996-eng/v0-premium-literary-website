@@ -48,7 +48,7 @@ export function BlogPreviewSection() {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12"
         >
           <div>
-            <span className="text-xs uppercase tracking-[0.25em] text-[#7a917a] mb-4 block">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#958568] mb-4 block">
               Diario
             </span>
             <h2 className="font-serif text-3xl lg:text-4xl text-primary">
@@ -75,7 +75,7 @@ export function BlogPreviewSection() {
             >
               <Link href={`/diario/${post.slug}`} className="block">
                 <div className="mb-4">
-                  <span className="text-xs uppercase tracking-[0.15em] text-[#7a917a]">
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#958568]">
                     {post.category}
                   </span>
                 </div>

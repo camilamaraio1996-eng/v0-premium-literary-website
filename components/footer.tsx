@@ -61,7 +61,7 @@ export function Footer() {
               </Button>
             </form>
             {message && (
-              <p className={`mt-2 text-xs ${status === 'success' ? 'text-[#7a917a]' : 'text-destructive'}`}>
+              <p className={`mt-2 text-xs ${status === 'success' ? 'text-accent' : 'text-destructive'}`}>
                 {message}
               </p>
             )}

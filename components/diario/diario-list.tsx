@@ -96,8 +96,8 @@ export function DiarioList({ posts }: { posts: Post[] }) {
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#e8ecce]/60">
-                      <div className="w-12 h-px bg-[#7a917a]/40" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-secondary/40">
+                      <div className="w-12 h-px bg-border" />
                     </div>
                   )}
                 </div>
@@ -105,7 +105,7 @@ export function DiarioList({ posts }: { posts: Post[] }) {
                 {/* Content */}
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-xs uppercase tracking-[0.2em] text-[#7a917a]">
+                    <span className="text-xs uppercase tracking-[0.2em] text-[#958568]">
                       {categoryLabel(featured.category)}
                     </span>
                     <span className="text-border">—</span>
@@ -159,15 +159,15 @@ export function DiarioList({ posts }: { posts: Post[] }) {
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-[#e8ecce]/50">
-                        <div className="w-8 h-px bg-[#7a917a]/40" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-secondary/30">
+                        <div className="w-8 h-px bg-border" />
                       </div>
                     )}
                   </div>
 
                   <div className="flex items-center gap-2 mb-3">
-                    <Tag className="w-3 h-3 text-[#7a917a]" />
-                    <span className="text-xs uppercase tracking-[0.15em] text-[#7a917a]">
+                    <Tag className="w-3 h-3 text-[#958568]" />
+                    <span className="text-xs uppercase tracking-[0.15em] text-[#958568]">
                       {categoryLabel(post.category)}
                     </span>
                   </div>

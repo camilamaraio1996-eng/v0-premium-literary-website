@@ -11,7 +11,7 @@ export function DiarioHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <span className="text-xs uppercase tracking-[0.25em] text-[#7a917a] block mb-4">
+          <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block mb-4">
             Blog
           </span>
           <h1 className="font-serif text-4xl lg:text-6xl text-primary leading-tight mb-6">

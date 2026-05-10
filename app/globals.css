@@ -3,61 +3,62 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Literary Theme — Warm Cream Base */
+/* Literary Theme — Mauve, Indigo, Sage, Olive */
 :root {
-  /* Background — warm cream parchment */
-  --background: #ede8df;
-  --foreground: #2a1a1a;
+  /* Background — Mauve (lightest) */
+  --background: #d3b1c2;
+  --foreground: #2d1a28;
 
-  --card: #e6e0d6;
-  --card-foreground: #2a1a1a;
+  /* Card — slightly darker mauve surface */
+  --card: #c9a4b7;
+  --card-foreground: #2d1a28;
 
-  --popover: #e6e0d6;
-  --popover-foreground: #2a1a1a;
+  --popover: #c9a4b7;
+  --popover-foreground: #2d1a28;
 
-  /* Primary — deep warm brown-black for text/buttons */
-  --primary: #2a1a1a;
-  --primary-foreground: #ede8df;
+  /* Primary — Indigo (deep magenta-purple) */
+  --primary: #7f2764;
+  --primary-foreground: #f5eef2;
 
-  /* Secondary — slightly lighter cream */
-  --secondary: #ddd6cb;
-  --secondary-foreground: #2a1a1a;
+  /* Secondary — Sage */
+  --secondary: #958568;
+  --secondary-foreground: #f5eef2;
 
-  /* Muted */
-  --muted: #d8d1c5;
-  --muted-foreground: #7a6a5a;
+  /* Muted — lighter mauve-grey */
+  --muted: #bea0b2;
+  --muted-foreground: #5a3a4e;
 
-  /* Accent — warm terracotta-brown */
-  --accent: #8c6a4a;
-  --accent-foreground: #ede8df;
+  /* Accent — Olive Green */
+  --accent: #6c6823;
+  --accent-foreground: #f5eef2;
 
-  /* Borders — soft warm dividers */
-  --border: #ccc4b8;
-  --input: #ccc4b8;
-  --ring: #8c6a4a;
+  /* Borders — mauve-toned dividers */
+  --border: #b897aa;
+  --input: #b897aa;
+  --ring: #7f2764;
 
   /* Destructive */
   --destructive: #b94040;
-  --destructive-foreground: #ede8df;
+  --destructive-foreground: #f5eef2;
 
   /* Charts */
-  --chart-1: #2a1a1a;
-  --chart-2: #8c6a4a;
-  --chart-3: #a88a6a;
-  --chart-4: #ddd6cb;
-  --chart-5: #c4b8a8;
+  --chart-1: #7f2764;
+  --chart-2: #958568;
+  --chart-3: #6c6823;
+  --chart-4: #d3b1c2;
+  --chart-5: #a87890;
 
   --radius: 0.25rem;
 
   /* Sidebar */
-  --sidebar: #e6e0d6;
-  --sidebar-foreground: #2a1a1a;
-  --sidebar-primary: #2a1a1a;
-  --sidebar-primary-foreground: #ede8df;
-  --sidebar-accent: #ddd6cb;
-  --sidebar-accent-foreground: #2a1a1a;
-  --sidebar-border: #ccc4b8;
-  --sidebar-ring: #8c6a4a;
+  --sidebar: #c9a4b7;
+  --sidebar-foreground: #2d1a28;
+  --sidebar-primary: #7f2764;
+  --sidebar-primary-foreground: #f5eef2;
+  --sidebar-accent: #958568;
+  --sidebar-accent-foreground: #f5eef2;
+  --sidebar-border: #b897aa;
+  --sidebar-ring: #7f2764;
 }
 
 @theme inline {
@@ -118,8 +119,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
-    background-color: #8c6a4a40;
-    color: #2a1a1a;
+    background-color: #7f276440;
+    color: #2d1a28;
   }
 }
 
@@ -163,28 +164,28 @@
     width: 100%;
   }
 
-  /* Warm divider */
+  /* Mauve divider */
   .divider-celadon {
-    border-color: #ccc4b840;
+    border-color: #b897aa50;
   }
 
   /* Blog prose */
   .prose-blog p {
     line-height: 1.8;
     margin-bottom: 1.4em;
-    color: #3a2a1a;
+    color: #2d1a28;
   }
   .prose-blog blockquote {
-    border-left: 2px solid #8c6a4a;
+    border-left: 2px solid #7f2764;
     padding-left: 1.5rem;
     font-style: italic;
-    color: #5a3a1a;
+    color: #7f2764;
     margin: 2rem 0;
   }
   .prose-blog h2,
   .prose-blog h3 {
     font-family: var(--font-serif);
-    color: #2a1a1a;
+    color: #2d1a28;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
     text-transform: uppercase;

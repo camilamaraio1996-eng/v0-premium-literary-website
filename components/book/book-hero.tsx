@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export function BookHero() {
   return (
-    <section className="py-24 lg:py-32 bg-[#e8ecce]/50">
+    <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
@@ -38,7 +38,7 @@ export function BookHero() {
               </div>
 
               {/* Pages effect */}
-              <div className="absolute right-0 top-1 bottom-1 w-2 bg-gradient-to-l from-[#7a917a]/20 to-transparent rounded-r-sm" />
+              <div className="absolute right-0 top-1 bottom-1 w-2 bg-gradient-to-l from-[#958568]/20 to-transparent rounded-r-sm" />
             </div>
           </motion.div>
 
@@ -49,7 +49,7 @@ export function BookHero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="order-1 lg:order-2"
           >
-            <span className="text-xs uppercase tracking-[0.25em] text-[#7a917a] mb-5 block">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#958568] mb-5 block">
               Una novela de sueños y memoria
             </span>
             <h1 className="font-serif text-4xl lg:text-5xl xl:text-6xl text-primary mb-6 leading-tight">

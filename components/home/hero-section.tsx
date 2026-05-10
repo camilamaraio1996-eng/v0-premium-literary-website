@@ -12,10 +12,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Lint background with celadon accent strip */}
-      <div className="absolute inset-0 bg-[#e8ecce]" />
-      <div className="absolute right-0 top-0 bottom-0 w-[38%] bg-[#7a917a]/15" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -23,7 +20,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="inline-block text-xs uppercase tracking-[0.35em] text-[#7a917a] mb-10"
+          className="inline-block text-xs uppercase tracking-[0.35em] text-[#958568] mb-10"
         >
           Una novela de
         </motion.span>
@@ -48,7 +45,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.55 }}
-          className="text-base md:text-lg text-[#5e376d]/70 max-w-xl mx-auto mb-12 leading-relaxed"
+          className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto mb-12 leading-relaxed"
         >
           Un viaje a través de los territorios más profundos de la memoria, 
           donde los sueños y las emociones se entrelazan en una narrativa 

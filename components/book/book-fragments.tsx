@@ -46,7 +46,7 @@ export function BookFragments({ fragments }: BookFragmentsProps) {
           transition={{ duration: 0.6 }}
           className="mb-14 text-center"
         >
-          <span className="text-xs uppercase tracking-[0.25em] text-[#7a917a] block mb-3">
+          <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block mb-3">
             Primeras Páginas
           </span>
           <h2 className="font-serif text-3xl lg:text-4xl text-primary">
