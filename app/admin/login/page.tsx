@@ -88,6 +88,10 @@ export default function AdminLoginPage() {
           <Link href="/" className="hover:text-primary transition-colors">
             Volver al sitio
           </Link>
+          {' • '}
+          <Link href="/admin/setup" className="hover:text-primary transition-colors">
+            Crear Admin
+          </Link>
         </p>
       </div>
     </div>
