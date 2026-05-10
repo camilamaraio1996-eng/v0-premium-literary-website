@@ -5,13 +5,13 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FileText, BookOpen, Mail, Users, LogOut, Home } from 'lucide-react'
-import type { User } from '@supabase/supabase-js'
+import { LayoutDashboard, FileText, BookOpen, Mail, Users, LogOut, Home, Heart } from 'lucide-react'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/posts', label: 'Entradas', icon: FileText },
   { href: '/admin/fragments', label: 'Fragmentos', icon: BookOpen },
+  { href: '/admin/recommendations', label: 'Recomendaciones', icon: Heart },
   { href: '/admin/preorders', label: 'Reservas', icon: Users },
   { href: '/admin/messages', label: 'Mensajes', icon: Mail },
 ]

@@ -1,201 +1,125 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Tag, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+import { Calendar, Tag } from 'lucide-react'
 
-interface Post {
+interface BlogPost {
   id: string
   title: string
   slug: string
+  content: string
   excerpt: string | null
-  cover_image: string | null
   image_url: string | null
   category: string
   reading_time: number
   created_at: string
 }
 
-const CATEGORIES = ['Todos', 'Reflexion', 'Proceso', 'Fragmentos', 'Fotos']
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('es-AR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
-function categoryLabel(cat: string) {
-  const map: Record<string, string> = {
+const categoryLabel = (cat: string) => {
+  const labels: Record<string, string> = {
     reflexion: 'Reflexión',
     proceso: 'Proceso',
     fragmentos: 'Fragmentos',
     fotos: 'Fotos',
   }
-  return map[cat?.toLowerCase()] ?? cat
+  return labels[cat] || cat
 }
 
-export function DiarioList({ posts }: { posts: Post[] }) {
-  const [active, setActive] = useState('Todos')
-
-  const filtered =
-    active === 'Todos'
-      ? posts
-      : posts.filter((p) => p.category?.toLowerCase() === active.toLowerCase())
-
-  const [featured, ...rest] = filtered
+export function DiarioList({ posts }: { posts: BlogPost[] }) {
+  if (posts.length === 0) {
+    return (
+      <section className="py-24 lg:py-32">
+        <div className="max-w-3xl mx-auto px-6 lg:px-8">
+          <div className="text-center py-12 bg-card/50 rounded-lg border border-border">
+            <p className="text-muted-foreground">No hay entradas todavía. Regresa pronto.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
-
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2 mb-12">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActive(cat)}
-              className={`text-xs uppercase tracking-[0.18em] px-4 py-2 border transition-colors duration-200 ${
-                active === cat
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border text-muted-foreground hover:border-accent hover:text-accent'
-              }`}
+    <section className="py-24 lg:py-32">
+      <div className="max-w-3xl mx-auto px-6 lg:px-8">
+        <div className="space-y-16">
+          {posts.map((post, i) => (
+            <motion.article
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="relative"
             >
-              {cat}
-            </button>
-          ))}
-        </div>
+              {/* Timeline line */}
+              {i < posts.length - 1 && (
+                <div className="absolute -bottom-8 left-4 w-0.5 h-8 bg-border" />
+              )}
 
-        {filtered.length === 0 && (
-          <div className="text-center py-20 text-muted-foreground text-sm uppercase tracking-widest">
-            No hay entradas en esta categoría todavía.
-          </div>
-        )}
-
-        {/* Featured post — large card */}
-        {featured && (
-          <motion.article
-            key={featured.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-14"
-          >
-            <Link href={`/diario/${featured.slug}`} className="group block">
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                {/* Image */}
-                <div className="aspect-[4/3] bg-secondary/40 overflow-hidden relative">
-                  {(featured.image_url || featured.cover_image) ? (
-                    <Image
-                      src={featured.image_url ?? featured.cover_image ?? ''}
-                      alt={featured.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-secondary/40">
-                      <div className="w-12 h-px bg-border" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-xs uppercase tracking-[0.2em] text-[#958568]">
-                      {categoryLabel(featured.category)}
-                    </span>
-                    <span className="text-border">—</span>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDate(featured.created_at)}
-                    </span>
-                  </div>
-                  <h2 className="font-serif text-2xl lg:text-3xl text-primary mb-4 group-hover:text-accent transition-colors leading-snug text-balance">
-                    {featured.title}
-                  </h2>
-                  {featured.excerpt && (
-                    <p className="text-muted-foreground leading-relaxed mb-6 text-sm">
-                      {featured.excerpt}
-                    </p>
-                  )}
-                  <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-accent">
-                    Leer entrada
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </div>
+              {/* Timeline dot */}
+              <div className="absolute -left-0.5 top-2 w-9 h-9 rounded-full bg-background border-2 border-accent flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-accent" />
               </div>
-            </Link>
-          </motion.article>
-        )}
 
-        {/* Divider */}
-        {rest.length > 0 && (
-          <div className="border-t border-border mb-14" />
-        )}
-
-        {/* Rest — grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {rest.map((post, index) => {
-            const photo = post.image_url ?? post.cover_image
-            return (
-              <motion.article
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.07 }}
-                className="group"
-              >
-                <Link href={`/diario/${post.slug}`} className="block">
-                  {/* Image */}
-                  <div className="aspect-[3/2] bg-secondary/30 overflow-hidden relative mb-5">
-                    {photo ? (
-                      <Image
-                        src={photo}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-secondary/30">
-                        <div className="w-8 h-px bg-border" />
-                      </div>
-                    )}
+              {/* Post content */}
+              <div className="ml-12">
+                {/* Meta info - Date and time */}
+                <div className="flex flex-wrap items-center gap-4 mb-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <time dateTime={post.created_at}>
+                      {format(new Date(post.created_at), "d 'de' MMMM 'de' yyyy 'a las' HH:mm", { 
+                        locale: es 
+                      })}
+                    </time>
                   </div>
-
-                  <div className="flex items-center gap-2 mb-3">
-                    <Tag className="w-3 h-3 text-[#958568]" />
+                  <div className="flex items-center gap-2 text-sm">
+                    <Tag className="w-4 h-4 text-[#958568]" />
                     <span className="text-xs uppercase tracking-[0.15em] text-[#958568]">
                       {categoryLabel(post.category)}
                     </span>
                   </div>
+                </div>
 
-                  <h3 className="font-serif text-lg text-primary mb-3 group-hover:text-accent transition-colors leading-snug">
+                {/* Link to full post */}
+                <Link href={`/diario/${post.slug}`} className="block group">
+                  <h3 className="font-serif text-2xl lg:text-3xl text-primary mb-4 group-hover:text-accent transition-colors">
                     {post.title}
                   </h3>
 
+                  {/* Image if present */}
+                  {post.image_url && (
+                    <div className="relative mb-4 overflow-hidden rounded-lg bg-muted/20 aspect-video">
+                      <Image
+                        src={post.image_url}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+
+                  {/* Excerpt */}
                   {post.excerpt && (
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
+                    <p className="text-foreground/70 leading-relaxed mb-4 line-clamp-2">
                       {post.excerpt}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(post.created_at)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {post.reading_time} min
+                  {/* Read more */}
+                  <div className="inline-block">
+                    <span className="text-sm uppercase tracking-[0.15em] text-accent group-hover:text-primary transition-colors">
+                      Leer más →
                     </span>
                   </div>
                 </Link>
-              </motion.article>
-            )
-          })}
+              </div>
+            </motion.article>
+          ))}
         </div>
       </div>
     </section>
