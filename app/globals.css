@@ -3,64 +3,61 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Literary Light Theme — Indigo, Lilac, Celadon, Lint */
+/* Literary Theme — Warm Cream Base */
 :root {
-  /* Backgrounds — clean, near-white */
-  --background: #fafaf7;
-  --foreground: #2a1a32;
+  /* Background — warm cream parchment */
+  --background: #ede8df;
+  --foreground: #2a1a1a;
 
-  --card: #ffffff;
-  --card-foreground: #2a1a32;
+  --card: #e6e0d6;
+  --card-foreground: #2a1a1a;
 
-  --popover: #ffffff;
-  --popover-foreground: #2a1a32;
+  --popover: #e6e0d6;
+  --popover-foreground: #2a1a1a;
 
-  /* Primary — Indigo #5E376D */
-  --primary: #5e376d;
-  --primary-foreground: #fafaf7;
+  /* Primary — deep warm brown-black for text/buttons */
+  --primary: #2a1a1a;
+  --primary-foreground: #ede8df;
 
-  /* Secondary — Lint #E8ECCE */
-  --secondary: #e8ecce;
-  --secondary-foreground: #2a1a32;
+  /* Secondary — slightly lighter cream */
+  --secondary: #ddd6cb;
+  --secondary-foreground: #2a1a1a;
 
-  /* Muted — soft off-white with greenish tint */
-  --muted: #f2f4e8;
-  --muted-foreground: #7a6080;
+  /* Muted */
+  --muted: #d8d1c5;
+  --muted-foreground: #7a6a5a;
 
-  /* Accent — Lilac #986AA8 */
-  --accent: #986aa8;
-  --accent-foreground: #ffffff;
+  /* Accent — warm terracotta-brown */
+  --accent: #8c6a4a;
+  --accent-foreground: #ede8df;
 
-  /* Celadon for decorative use */
-  --celadon: #7a917a;
-
-  /* Borders */
-  --border: #d6dbb8;
-  --input: #d6dbb8;
-  --ring: #986aa8;
+  /* Borders — soft warm dividers */
+  --border: #ccc4b8;
+  --input: #ccc4b8;
+  --ring: #8c6a4a;
 
   /* Destructive */
   --destructive: #b94040;
-  --destructive-foreground: #fafaf7;
+  --destructive-foreground: #ede8df;
 
   /* Charts */
-  --chart-1: #5e376d;
-  --chart-2: #986aa8;
-  --chart-3: #7a917a;
-  --chart-4: #e8ecce;
-  --chart-5: #c5b8cc;
+  --chart-1: #2a1a1a;
+  --chart-2: #8c6a4a;
+  --chart-3: #a88a6a;
+  --chart-4: #ddd6cb;
+  --chart-5: #c4b8a8;
 
   --radius: 0.25rem;
 
   /* Sidebar */
-  --sidebar: #f5f6ec;
-  --sidebar-foreground: #2a1a32;
-  --sidebar-primary: #5e376d;
-  --sidebar-primary-foreground: #fafaf7;
-  --sidebar-accent: #e8ecce;
-  --sidebar-accent-foreground: #2a1a32;
-  --sidebar-border: #d6dbb8;
-  --sidebar-ring: #986aa8;
+  --sidebar: #e6e0d6;
+  --sidebar-foreground: #2a1a1a;
+  --sidebar-primary: #2a1a1a;
+  --sidebar-primary-foreground: #ede8df;
+  --sidebar-accent: #ddd6cb;
+  --sidebar-accent-foreground: #2a1a1a;
+  --sidebar-border: #ccc4b8;
+  --sidebar-ring: #8c6a4a;
 }
 
 @theme inline {
@@ -121,8 +118,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
-    background-color: #986aa840;
-    color: #2a1a32;
+    background-color: #8c6a4a40;
+    color: #2a1a1a;
   }
 }
 
@@ -166,28 +163,28 @@
     width: 100%;
   }
 
-  /* Celadon divider */
+  /* Warm divider */
   .divider-celadon {
-    border-color: #7a917a40;
+    border-color: #ccc4b840;
   }
 
   /* Blog prose */
   .prose-blog p {
     line-height: 1.8;
     margin-bottom: 1.4em;
-    color: #4a3555;
+    color: #3a2a1a;
   }
   .prose-blog blockquote {
-    border-left: 2px solid #986aa8;
+    border-left: 2px solid #8c6a4a;
     padding-left: 1.5rem;
     font-style: italic;
-    color: #5e376d;
+    color: #5a3a1a;
     margin: 2rem 0;
   }
   .prose-blog h2,
   .prose-blog h3 {
     font-family: var(--font-serif);
-    color: #5e376d;
+    color: #2a1a1a;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
     text-transform: uppercase;
