@@ -2,9 +2,8 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Calendar, Clock } from 'lucide-react'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 
 interface Post {
@@ -13,148 +12,149 @@ interface Post {
   category: string
   reading_time: number
   created_at: string
+  image_url?: string | null
+  cover_image?: string | null
 }
 
 interface PostContentProps {
   post: Post
 }
 
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+function categoryLabel(cat: string) {
+  const map: Record<string, string> = {
+    reflexion: 'Reflexión',
+    proceso: 'Proceso',
+    fragmentos: 'Fragmentos',
+    fotos: 'Fotos',
+  }
+  return map[cat?.toLowerCase()] ?? cat
+}
+
 export function PostContent({ post }: PostContentProps) {
-  // Simple markdown-like rendering
-  const renderContent = (content: string) => {
-    const lines = content.split('\n')
-    const elements: React.ReactNode[] = []
-    let currentParagraph: string[] = []
-    let inBlockquote = false
-    
-    const flushParagraph = () => {
-      if (currentParagraph.length > 0) {
-        elements.push(
-          <p key={elements.length} className="mb-6 leading-relaxed">
-            {currentParagraph.join(' ')}
-          </p>
-        )
-        currentParagraph = []
-      }
-    }
-    
-    lines.forEach((line, index) => {
-      const trimmedLine = line.trim()
-      
-      if (trimmedLine === '') {
-        flushParagraph()
-        return
-      }
-      
-      if (trimmedLine.startsWith('## ')) {
-        flushParagraph()
-        elements.push(
-          <h2 key={index} className="font-serif text-2xl text-primary mt-12 mb-6">
-            {trimmedLine.slice(3)}
+  const photo = post.image_url ?? post.cover_image
+
+  // Content is already HTML from the DB; render directly
+  const isHTML = post.content.trim().startsWith('<')
+
+  // Plain-text fallback renderer
+  const renderPlainText = (content: string) => {
+    const paragraphs = content.split(/\n\n+/)
+    return paragraphs.map((para, i) => {
+      const trimmed = para.trim()
+      if (!trimmed) return null
+      if (trimmed.startsWith('## ')) {
+        return (
+          <h2 key={i} className="font-serif text-xl text-primary mt-10 mb-4">
+            {trimmed.slice(3)}
           </h2>
         )
-        return
       }
-      
-      if (trimmedLine.startsWith('> ')) {
-        flushParagraph()
-        if (!inBlockquote) {
-          inBlockquote = true
-        }
-        elements.push(
-          <blockquote key={index} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
-            {trimmedLine.slice(2)}
+      if (trimmed.startsWith('> ')) {
+        return (
+          <blockquote key={i} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
+            {trimmed.slice(2)}
           </blockquote>
         )
-        inBlockquote = false
-        return
       }
-      
-      currentParagraph.push(trimmedLine)
+      return (
+        <p key={i} className="mb-5 leading-relaxed text-[#4a3555]">
+          {trimmed}
+        </p>
+      )
     })
-    
-    flushParagraph()
-    return elements
   }
-  
+
   return (
     <article className="py-16 lg:py-24">
-      <div className="max-w-3xl mx-auto px-6 lg:px-8">
-        {/* Back link */}
+      <div className="max-w-2xl mx-auto px-6 lg:px-8">
+        {/* Back */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12"
+          transition={{ duration: 0.4 }}
+          className="mb-10"
         >
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/diario" className="text-muted-foreground hover:text-primary">
+          <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-primary -ml-3">
+            <Link href="/diario">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al diario
             </Link>
           </Button>
         </motion.div>
-        
+
         {/* Header */}
         <motion.header
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-10"
         >
-          <span className="text-sm uppercase tracking-wider text-accent mb-4 block">
-            {post.category}
+          <span className="text-xs uppercase tracking-[0.2em] text-[#7a917a] block mb-4">
+            {categoryLabel(post.category)}
           </span>
-          <h1 className="font-serif text-4xl lg:text-5xl text-primary mb-6 leading-tight text-balance">
+          <h1 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-snug text-balance">
             {post.title}
           </h1>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {format(new Date(post.created_at), "d 'de' MMMM, yyyy", { locale: es })}
+          <div className="flex items-center gap-5 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5" />
+              {formatDate(post.created_at)}
             </span>
-            <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
               {post.reading_time} min de lectura
             </span>
           </div>
         </motion.header>
-        
+
+        {/* Featured image */}
+        {photo && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mb-10 aspect-[3/2] relative overflow-hidden"
+          >
+            <Image src={photo} alt={post.title} fill className="object-cover" />
+          </motion.div>
+        )}
+
         {/* Content */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="prose-literary text-foreground/90 text-lg"
+          className="text-[15px] leading-relaxed"
         >
-          {renderContent(post.content)}
+          {isHTML ? (
+            <div
+              className="prose-blog"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          ) : (
+            <div className="prose-blog">{renderPlainText(post.content)}</div>
+          )}
         </motion.div>
-        
-        {/* Footer CTA */}
+
+        {/* Footer */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 pt-12 border-t border-border"
+          transition={{ duration: 0.5 }}
+          className="mt-14 pt-10 border-t border-border text-center"
         >
-          <div className="text-center">
-            <p className="text-muted-foreground mb-4">
-              ¿Te ha gustado esta reflexión?
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button asChild>
-                <Link href="/preventa">
-                  Reservar el Libro
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/diario">
-                  Más Entradas
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-[0.12em] text-xs">
+            <Link href="/diario">Ver más entradas</Link>
+          </Button>
         </motion.div>
       </div>
     </article>

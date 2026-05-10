@@ -80,11 +80,6 @@ export function AboutBookSection() {
                   Descubrir Más
                 </Link>
               </Button>
-              <Button asChild variant="ghost">
-                <Link href="/fragmentos">
-                  Leer un Fragmento
-                </Link>
-              </Button>
             </div>
 
             {/* Stats */}

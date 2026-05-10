@@ -36,9 +36,9 @@ export function FeaturedFragmentSection() {
             <div className="h-px w-12 bg-border" />
           </div>
 
-          <Button asChild variant="outline" className="group">
-            <Link href="/fragmentos">
-              Continuar Leyendo
+            <Button asChild variant="outline" className="group">
+            <Link href="/libro">
+              Ver Fragmentos
               <span className="ml-2 group-hover:translate-x-1 transition-transform">
                 &rarr;
               </span>

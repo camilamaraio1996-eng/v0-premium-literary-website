@@ -1,121 +1,129 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
 import Link from 'next/link'
-import { Calendar, Clock, ArrowRight, PenLine } from 'lucide-react'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { Calendar, Clock, Tag, ArrowRight } from 'lucide-react'
 
 interface Post {
   id: string
   title: string
   slug: string
   excerpt: string | null
+  cover_image: string | null
+  image_url: string | null
   category: string
   reading_time: number
   created_at: string
-  featured: boolean
 }
 
-// Sample posts for when database is empty
-const samplePosts: Post[] = [
-  {
-    id: '1',
-    title: 'Sobre el arte de soñar despierto',
-    slug: 'arte-de-sonar-despierto',
-    excerpt: 'Hay quienes dicen que soñar despierto es perder el tiempo. Yo creo que es la forma más honesta de estar vivo. Los sueños diurnos son bocetos de la imaginación, ensayos generales de mundos posibles.',
-    category: 'Reflexión',
-    reading_time: 5,
-    created_at: '2026-05-15T10:00:00Z',
-    featured: true
-  },
-  {
-    id: '2',
-    title: 'El proceso de escribir sobre los sueños',
-    slug: 'proceso-escribir-suenos',
-    excerpt: 'Cada noche, antes de dormir, dejo un cuaderno junto a la cama. Los sueños más reveladores son los que olvidamos primero, los que se desvanecen con las primeras luces del día.',
-    category: 'Proceso Creativo',
-    reading_time: 7,
-    created_at: '2026-05-10T10:00:00Z',
-    featured: false
-  },
-  {
-    id: '3',
-    title: 'La memoria como materia prima',
-    slug: 'memoria-materia-prima',
-    excerpt: 'La ficción y la memoria comparten un secreto: ambas reconstruyen lo que alguna vez fue real. Cada vez que recordamos, inventamos; cada vez que inventamos, recordamos.',
-    category: 'Escritura',
-    reading_time: 4,
-    created_at: '2026-05-05T10:00:00Z',
-    featured: false
-  },
-  {
-    id: '4',
-    title: 'Conversaciones con personajes',
-    slug: 'conversaciones-personajes',
-    excerpt: 'Los personajes de una novela no se crean: se descubren. Aparecen en los momentos más inesperados, a veces en sueños, a veces en el silencio de una tarde cualquiera.',
-    category: 'Proceso Creativo',
-    reading_time: 6,
-    created_at: '2026-05-01T10:00:00Z',
-    featured: false
-  }
-]
+const CATEGORIES = ['Todos', 'Reflexion', 'Proceso', 'Fragmentos', 'Fotos']
 
-interface DiarioListProps {
-  posts: Post[]
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
-export function DiarioList({ posts }: DiarioListProps) {
-  const displayPosts = posts.length > 0 ? posts : samplePosts
-  const featuredPost = displayPosts.find(p => p.featured) || displayPosts[0]
-  const otherPosts = displayPosts.filter(p => p.id !== featuredPost?.id)
-
-  if (displayPosts.length === 0) {
-    return (
-      <section className="py-12 lg:py-24">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <PenLine className="w-16 h-16 text-muted-foreground/50 mx-auto mb-6" />
-          <h2 className="font-serif text-2xl text-primary mb-4">
-            Próximamente
-          </h2>
-          <p className="text-muted-foreground">
-            Las entradas del diario estarán disponibles pronto.
-          </p>
-        </div>
-      </section>
-    )
+function categoryLabel(cat: string) {
+  const map: Record<string, string> = {
+    reflexion: 'Reflexión',
+    proceso: 'Proceso',
+    fragmentos: 'Fragmentos',
+    fotos: 'Fotos',
   }
+  return map[cat?.toLowerCase()] ?? cat
+}
+
+export function DiarioList({ posts }: { posts: Post[] }) {
+  const [active, setActive] = useState('Todos')
+
+  const filtered =
+    active === 'Todos'
+      ? posts
+      : posts.filter((p) => p.category?.toLowerCase() === active.toLowerCase())
+
+  const [featured, ...rest] = filtered
 
   return (
-    <section className="py-12 lg:py-24">
-      <div className="max-w-5xl mx-auto px-6 lg:px-8">
-        {/* Featured Post */}
-        {featuredPost && (
+    <section className="py-16 lg:py-24">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8">
+
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2 mb-12">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`text-xs uppercase tracking-[0.18em] px-4 py-2 border transition-colors duration-200 ${
+                active === cat
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border text-muted-foreground hover:border-accent hover:text-accent'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-20 text-muted-foreground text-sm uppercase tracking-widest">
+            No hay entradas en esta categoría todavía.
+          </div>
+        )}
+
+        {/* Featured post — large card */}
+        {featured && (
           <motion.article
-            initial={{ opacity: 0, y: 30 }}
+            key={featured.id}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
+            transition={{ duration: 0.5 }}
+            className="mb-14"
           >
-            <Link href={`/diario/${featuredPost.slug}`} className="group block">
-              <div className="p-8 lg:p-12 bg-card/50 border border-border hover:border-accent/30 rounded-lg transition-colors">
-                <span className="text-xs uppercase tracking-wider text-accent mb-4 block">
-                  {featuredPost.category}
-                </span>
-                <h2 className="font-serif text-3xl lg:text-4xl text-primary mb-4 group-hover:text-accent transition-colors leading-tight">
-                  {featuredPost.title}
-                </h2>
-                <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
-                  {featuredPost.excerpt}
-                </p>
-                <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(featuredPost.created_at), "d 'de' MMMM, yyyy", { locale: es })}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    {featuredPost.reading_time} min de lectura
+            <Link href={`/diario/${featured.slug}`} className="group block">
+              <div className="grid lg:grid-cols-2 gap-8 items-center">
+                {/* Image */}
+                <div className="aspect-[4/3] bg-secondary/40 overflow-hidden relative">
+                  {(featured.image_url || featured.cover_image) ? (
+                    <Image
+                      src={featured.image_url ?? featured.cover_image ?? ''}
+                      alt={featured.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#e8ecce]/60">
+                      <div className="w-12 h-px bg-[#7a917a]/40" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs uppercase tracking-[0.2em] text-[#7a917a]">
+                      {categoryLabel(featured.category)}
+                    </span>
+                    <span className="text-border">—</span>
+                    <span className="text-xs text-muted-foreground">
+                      {formatDate(featured.created_at)}
+                    </span>
+                  </div>
+                  <h2 className="font-serif text-2xl lg:text-3xl text-primary mb-4 group-hover:text-accent transition-colors leading-snug text-balance">
+                    {featured.title}
+                  </h2>
+                  {featured.excerpt && (
+                    <p className="text-muted-foreground leading-relaxed mb-6 text-sm">
+                      {featured.excerpt}
+                    </p>
+                  )}
+                  <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-accent">
+                    Leer entrada
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>
               </div>
@@ -123,42 +131,71 @@ export function DiarioList({ posts }: DiarioListProps) {
           </motion.article>
         )}
 
-        {/* Other Posts */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {otherPosts.map((post, index) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group"
-            >
-              <Link href={`/diario/${post.slug}`} className="block p-6 bg-card/30 border border-border hover:border-accent/30 rounded-lg transition-colors h-full">
-                <span className="text-xs uppercase tracking-wider text-accent mb-3 block">
-                  {post.category}
-                </span>
-                <h3 className="font-serif text-xl text-primary mb-3 group-hover:text-accent transition-colors leading-tight">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {format(new Date(post.created_at), "d MMM, yyyy", { locale: es })}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {post.reading_time} min
-                  </span>
-                </div>
-                <span className="mt-4 text-sm text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
-                  Leer más <ArrowRight className="w-4 h-4" />
-                </span>
-              </Link>
-            </motion.article>
-          ))}
+        {/* Divider */}
+        {rest.length > 0 && (
+          <div className="border-t border-border mb-14" />
+        )}
+
+        {/* Rest — grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {rest.map((post, index) => {
+            const photo = post.image_url ?? post.cover_image
+            return (
+              <motion.article
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.07 }}
+                className="group"
+              >
+                <Link href={`/diario/${post.slug}`} className="block">
+                  {/* Image */}
+                  <div className="aspect-[3/2] bg-secondary/30 overflow-hidden relative mb-5">
+                    {photo ? (
+                      <Image
+                        src={photo}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-[#e8ecce]/50">
+                        <div className="w-8 h-px bg-[#7a917a]/40" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-3">
+                    <Tag className="w-3 h-3 text-[#7a917a]" />
+                    <span className="text-xs uppercase tracking-[0.15em] text-[#7a917a]">
+                      {categoryLabel(post.category)}
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif text-lg text-primary mb-3 group-hover:text-accent transition-colors leading-snug">
+                    {post.title}
+                  </h3>
+
+                  {post.excerpt && (
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {formatDate(post.created_at)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {post.reading_time} min
+                    </span>
+                  </div>
+                </Link>
+              </motion.article>
+            )
+          })}
         </div>
       </div>
     </section>

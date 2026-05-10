@@ -10,10 +10,8 @@ import { cn } from '@/lib/utils'
 const navLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/libro', label: 'El Libro' },
-  { href: '/fragmentos', label: 'Fragmentos' },
   { href: '/diario', label: 'Diario' },
-  { href: '/autor', label: 'Autor' },
-  { href: '/preventa', label: 'Preventa' },
+  { href: '/autor', label: 'Autora' },
   { href: '/contacto', label: 'Contacto' },
 ]
 
@@ -40,12 +38,12 @@ export function Navigation() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-          isScrolled
-            ? 'bg-background/90 backdrop-blur-md border-b border-border/50'
-            : 'bg-transparent'
-        )}
+          className={cn(
+            'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+            isScrolled
+              ? 'bg-background/95 backdrop-blur-md border-b border-border shadow-sm'
+              : 'bg-transparent'
+          )}
       >
         <nav className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -106,7 +104,7 @@ export function Navigation() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-card border-l border-border flex flex-col justify-center px-12"
+              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border flex flex-col justify-center px-12"
             >
               <div className="flex flex-col gap-6">
                 {navLinks.map((link, index) => (

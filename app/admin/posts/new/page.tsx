@@ -24,7 +24,8 @@ export default function NewPostPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [excerpt, setExcerpt] = useState('')
-  const [category, setCategory] = useState('Reflexión')
+  const [imageUrl, setImageUrl] = useState('')
+  const [category, setCategory] = useState('reflexion')
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -45,7 +46,8 @@ export default function NewPostPage() {
         title,
         slug,
         content,
-        excerpt,
+        excerpt: excerpt || null,
+        image_url: imageUrl || null,
         category,
         reading_time: readingTime,
         published,
@@ -97,6 +99,18 @@ export default function NewPostPage() {
             className="mt-1"
           />
         </div>
+
+        <div>
+          <Label htmlFor="imageUrl">URL de imagen (opcional)</Label>
+          <Input
+            id="imageUrl"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="https://..."
+            className="mt-1"
+          />
+          <p className="text-xs text-muted-foreground mt-1">Pega la URL pública de una imagen para mostrar en la entrada.</p>
+        </div>
         
         <div>
           <Label htmlFor="content">Contenido</Label>
@@ -114,13 +128,17 @@ export default function NewPostPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="category">Categoría</Label>
-            <Input
+            <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Reflexión"
-              className="mt-1"
-            />
+              className="mt-1 w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="reflexion">Reflexión</option>
+              <option value="proceso">Proceso</option>
+              <option value="fragmentos">Fragmentos</option>
+              <option value="fotos">Fotos</option>
+            </select>
           </div>
           <div>
             <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>

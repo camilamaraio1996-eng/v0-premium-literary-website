@@ -14,133 +14,90 @@ export function Footer() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
-
     setStatus('loading')
     const supabase = createClient()
-
-    const { error } = await supabase
-      .from('subscribers')
-      .insert({ email })
-
+    const { error } = await supabase.from('subscribers').insert({ email })
     if (error) {
-      if (error.code === '23505') {
-        setStatus('error')
-        setMessage('Este email ya está suscrito.')
-      } else {
-        setStatus('error')
-        setMessage('Error al suscribirse. Intenta de nuevo.')
-      }
+      setStatus('error')
+      setMessage(error.code === '23505' ? 'Este email ya está suscrito.' : 'Error al suscribirse. Intenta de nuevo.')
     } else {
       setStatus('success')
       setMessage('Gracias por suscribirte.')
       setEmail('')
     }
-
-    setTimeout(() => {
-      setStatus('idle')
-      setMessage('')
-    }, 4000)
+    setTimeout(() => { setStatus('idle'); setMessage('') }, 4000)
   }
 
   return (
-    <footer className="border-t border-border bg-card/50">
+    <footer className="border-t border-border bg-secondary/20">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <h3 className="font-serif text-2xl text-primary mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+          {/* Brand + newsletter */}
+          <div className="md:col-span-2">
+            <h3 className="font-serif text-xl text-primary mb-3">
               El Libro de los Sueños
             </h3>
-            <p className="text-muted-foreground leading-relaxed max-w-md mb-6">
-              Una novela que explora los territorios más profundos de los sueños 
-              y las emociones. Una experiencia literaria inmersiva.
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-md mb-7">
+              Una novela sobre los sueños, la memoria y las emociones. 
+              Suscríbete para recibir novedades.
             </p>
-            
-            {/* Newsletter */}
             <form onSubmit={handleSubscribe} className="flex gap-2 max-w-sm">
               <Input
                 type="email"
                 placeholder="Tu email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-input border-border"
+                className="bg-background border-border text-sm"
                 required
               />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 variant="secondary"
                 disabled={status === 'loading'}
+                className="shrink-0 border border-border text-xs uppercase tracking-[0.12em]"
               >
-                {status === 'loading' ? 'Enviando...' : 'Suscribir'}
+                {status === 'loading' ? '...' : 'Suscribir'}
               </Button>
             </form>
             {message && (
-              <p className={`mt-2 text-sm ${status === 'success' ? 'text-accent' : 'text-destructive'}`}>
+              <p className={`mt-2 text-xs ${status === 'success' ? 'text-[#7a917a]' : 'text-destructive'}`}>
                 {message}
               </p>
             )}
           </div>
 
-          {/* Navigation */}
+          {/* Links */}
           <div>
-            <h4 className="text-sm uppercase tracking-wider text-muted-foreground mb-4">
-              Navegación
+            <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-5">
+              Páginas
             </h4>
             <ul className="space-y-3">
-              <li>
-                <Link href="/" className="text-foreground/80 hover:text-primary transition-colors">
-                  Inicio
-                </Link>
-              </li>
-              <li>
-                <Link href="/libro" className="text-foreground/80 hover:text-primary transition-colors">
-                  El Libro
-                </Link>
-              </li>
-              <li>
-                <Link href="/fragmentos" className="text-foreground/80 hover:text-primary transition-colors">
-                  Fragmentos
-                </Link>
-              </li>
-              <li>
-                <Link href="/diario" className="text-foreground/80 hover:text-primary transition-colors">
-                  Diario
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="text-sm uppercase tracking-wider text-muted-foreground mb-4">
-              Contacto
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/autor" className="text-foreground/80 hover:text-primary transition-colors">
-                  Sobre el Autor
-                </Link>
-              </li>
-              <li>
-                <Link href="/preventa" className="text-foreground/80 hover:text-primary transition-colors">
-                  Preventa
-                </Link>
-              </li>
-              <li>
-                <Link href="/contacto" className="text-foreground/80 hover:text-primary transition-colors">
-                  Contacto
-                </Link>
-              </li>
+              {[
+                { href: '/', label: 'Inicio' },
+                { href: '/libro', label: 'El Libro' },
+                { href: '/diario', label: 'Diario' },
+                { href: '/autor', label: 'Autora' },
+                { href: '/contacto', label: 'Contacto' },
+              ].map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-16 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-14 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} El Libro de los Sueños. Todos los derechos reservados.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Hecho con pasión por las palabras
           </p>
         </div>

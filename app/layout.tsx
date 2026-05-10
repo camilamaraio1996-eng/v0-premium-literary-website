@@ -1,49 +1,40 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Julius_Sans_One, Archivo_Narrow } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const inter = Inter({ 
+const juliusSansOne = Julius_Sans_One({
+  weight: '400',
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-julius',
   display: 'swap',
 })
 
-const playfair = Playfair_Display({ 
+const archivoNarrow = Archivo_Narrow({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-archivo',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: {
-    default: 'El Libro de los Sueños | Una novela sobre emociones y memoria',
+    default: 'El Libro de los Sueños',
     template: '%s | El Libro de los Sueños',
   },
-  description: 'Una experiencia literaria inmersiva. Reserva tu copia en preventa y accede a fragmentos exclusivos de esta novela que explora los territorios de los sueños y las emociones.',
-  keywords: ['novela', 'literatura', 'sueños', 'emociones', 'preventa', 'libro', 'escritor'],
-  authors: [{ name: 'Autor' }],
-  creator: 'Autor',
+  description: 'Una exploración íntima de los sueños, la memoria y las emociones.',
+  keywords: ['novela', 'literatura', 'sueños', 'ficción literaria'],
+  authors: [{ name: 'Autora' }],
   openGraph: {
     type: 'website',
-    locale: 'es_ES',
+    locale: 'es_AR',
     title: 'El Libro de los Sueños',
-    description: 'Una experiencia literaria inmersiva sobre sueños y emociones.',
-    siteName: 'El Libro de los Sueños',
+    description: 'Una exploración íntima de los sueños, la memoria y las emociones.',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'El Libro de los Sueños',
-    description: 'Una experiencia literaria inmersiva sobre sueños y emociones.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a',
+  themeColor: '#5e376d',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -55,7 +46,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable} bg-background`}>
+    <html
+      lang="es"
+      className={`${juliusSansOne.variable} ${archivoNarrow.variable} bg-background`}
+    >
       <body className="font-sans antialiased min-h-screen">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

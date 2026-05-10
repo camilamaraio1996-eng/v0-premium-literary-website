@@ -38,7 +38,7 @@ const previewPosts = [
 
 export function BlogPreviewSection() {
   return (
-    <section className="py-24 lg:py-32 bg-card/30">
+    <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -48,11 +48,11 @@ export function BlogPreviewSection() {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12"
         >
           <div>
-            <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
-              Diario del Autor
+            <span className="text-xs uppercase tracking-[0.25em] text-[#7a917a] mb-4 block">
+              Diario
             </span>
             <h2 className="font-serif text-3xl lg:text-4xl text-primary">
-              Reflexiones y Proceso
+              Últimas Entradas
             </h2>
           </div>
           <Button asChild variant="ghost" className="mt-4 md:mt-0 group">
@@ -75,7 +75,7 @@ export function BlogPreviewSection() {
             >
               <Link href={`/diario/${post.slug}`} className="block">
                 <div className="mb-4">
-                  <span className="text-xs uppercase tracking-wider text-accent">
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#7a917a]">
                     {post.category}
                   </span>
                 </div>
