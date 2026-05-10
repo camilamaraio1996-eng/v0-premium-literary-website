@@ -3,43 +3,43 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Literary Theme — Mauve, Indigo, Sage, Olive */
+/* Literary Theme — Beige base, Indigo, Sage, Olive */
 :root {
-  /* Background — Mauve (lightest) */
-  --background: #d3b1c2;
+  /* Background — beige claro */
+  --background: #f2ede6;
   --foreground: #2d1a28;
 
-  /* Card — slightly darker mauve surface */
-  --card: #c9a4b7;
+  /* Card — beige levemente más oscuro */
+  --card: #ebe4db;
   --card-foreground: #2d1a28;
 
-  --popover: #c9a4b7;
+  --popover: #ebe4db;
   --popover-foreground: #2d1a28;
 
   /* Primary — Indigo (deep magenta-purple) */
   --primary: #7f2764;
-  --primary-foreground: #f5eef2;
+  --primary-foreground: #f2ede6;
 
   /* Secondary — Sage */
   --secondary: #958568;
-  --secondary-foreground: #f5eef2;
+  --secondary-foreground: #f2ede6;
 
-  /* Muted — lighter mauve-grey */
-  --muted: #bea0b2;
-  --muted-foreground: #5a3a4e;
+  /* Muted — beige medio */
+  --muted: #dfd8ce;
+  --muted-foreground: #7a6058;
 
   /* Accent — Olive Green */
   --accent: #6c6823;
-  --accent-foreground: #f5eef2;
+  --accent-foreground: #f2ede6;
 
-  /* Borders — mauve-toned dividers */
-  --border: #b897aa;
-  --input: #b897aa;
+  /* Borders — beige-warm */
+  --border: #d4ccc2;
+  --input: #d4ccc2;
   --ring: #7f2764;
 
   /* Destructive */
   --destructive: #b94040;
-  --destructive-foreground: #f5eef2;
+  --destructive-foreground: #f2ede6;
 
   /* Charts */
   --chart-1: #7f2764;
@@ -51,13 +51,13 @@
   --radius: 0.25rem;
 
   /* Sidebar */
-  --sidebar: #c9a4b7;
+  --sidebar: #ebe4db;
   --sidebar-foreground: #2d1a28;
   --sidebar-primary: #7f2764;
-  --sidebar-primary-foreground: #f5eef2;
+  --sidebar-primary-foreground: #f2ede6;
   --sidebar-accent: #958568;
-  --sidebar-accent-foreground: #f5eef2;
-  --sidebar-border: #b897aa;
+  --sidebar-accent-foreground: #f2ede6;
+  --sidebar-border: #d4ccc2;
   --sidebar-ring: #7f2764;
 }
 
@@ -119,7 +119,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
-    background-color: #7f276440;
+    background-color: #7f276430;
     color: #2d1a28;
   }
 }
@@ -164,9 +164,9 @@
     width: 100%;
   }
 
-  /* Mauve divider */
+  /* Warm beige divider */
   .divider-celadon {
-    border-color: #b897aa50;
+    border-color: #d4ccc260;
   }
 
   /* Blog prose */
