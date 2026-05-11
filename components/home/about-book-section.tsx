@@ -81,22 +81,6 @@ export function AboutBookSection() {
                 </Link>
               </Button>
             </div>
-
-            {/* Stats */}
-            <div className="mt-12 flex gap-12 border-t border-border pt-8">
-              <div>
-                <span className="font-serif text-3xl text-primary">320</span>
-                <p className="text-sm text-muted-foreground mt-1">Páginas</p>
-              </div>
-              <div>
-                <span className="font-serif text-3xl text-primary">12</span>
-                <p className="text-sm text-muted-foreground mt-1">Capítulos</p>
-              </div>
-              <div>
-                <span className="font-serif text-3xl text-primary">2</span>
-                <p className="text-sm text-muted-foreground mt-1">Ediciones</p>
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>
