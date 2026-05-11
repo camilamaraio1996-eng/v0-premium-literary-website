@@ -12,102 +12,172 @@ interface SiteSettings {
   [key: string]: string
 }
 
+function Field({ label, id, value, onChange, placeholder, type = 'text', hint }: {
+  label: string
+  id: string
+  value: string
+  onChange: (val: string) => void
+  placeholder?: string
+  type?: string
+  hint?: string
+}) {
+  return (
+    <div>
+      <Label htmlFor={id} className="mb-1 block">{label}</Label>
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+      />
+      {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
+    </div>
+  )
+}
+
 export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
   const [formData, setFormData] = useState(settings)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
 
+  const set = (key: string) => (val: string) => setFormData((prev) => ({ ...prev, [key]: val }))
+  const get = (key: string, fallback = '') => formData[key] ?? fallback
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setMessage('')
-
     try {
       const result = await updateSiteSettings(formData)
       if (result.success) {
-        setMessage('✓ Configuración actualizada correctamente')
-        // Refresh page to show updated data
+        setMessage('Configuracion actualizada correctamente')
         setTimeout(() => window.location.reload(), 1500)
       } else {
-        setMessage(`✗ Error: ${result.message}`)
+        setMessage(`Error: ${result.message}`)
       }
     } catch (err: any) {
-      setMessage(`✗ Error: ${err.message}`)
+      setMessage(`Error: ${err.message}`)
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Configuración del Sitio</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+
+      {/* Site general */}
+      <Card>
+        <CardHeader><CardTitle>General del Sitio</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <Field label="Titulo del Sitio" id="site_title" value={get('site_title')} onChange={set('site_title')} placeholder="Camila Maraio" />
           <div>
-            <Label htmlFor="site_title">Título del Sitio</Label>
-            <Input
-              id="site_title"
-              value={formData.site_title || ''}
-              onChange={(e) =>
-                setFormData({ ...formData, site_title: e.target.value })
-              }
-              placeholder="El Libro de los Sueños"
-            />
+            <Label htmlFor="site_description" className="mb-1 block">Descripcion del Sitio (SEO)</Label>
+            <Textarea id="site_description" value={get('site_description')} onChange={(e) => set('site_description')(e.target.value)} placeholder="Descripcion para SEO" rows={3} />
           </div>
+        </CardContent>
+      </Card>
 
+      {/* Hero section */}
+      <Card>
+        <CardHeader><CardTitle>Pagina de Inicio — Hero</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <Field label="Texto pequeño encima del titulo" id="hero_eyebrow" value={get('hero_eyebrow', 'Una novela de')} onChange={set('hero_eyebrow')} placeholder="Una novela de" />
+          <Field label="Titulo principal" id="hero_title" value={get('hero_title')} onChange={set('hero_title')} placeholder="El Libro de los Sueños" />
           <div>
-            <Label htmlFor="site_description">Descripción del Sitio</Label>
-            <Textarea
-              id="site_description"
-              value={formData.site_description || ''}
-              onChange={(e) =>
-                setFormData({ ...formData, site_description: e.target.value })
-              }
-              placeholder="Descripción para SEO"
-              rows={3}
+            <Label htmlFor="hero_description" className="mb-1 block">Descripcion / Bajada</Label>
+            <Textarea id="hero_description" value={get('hero_description')} onChange={(e) => set('hero_description')(e.target.value)} placeholder="Un viaje a traves de..." rows={4} />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Boton principal — texto" id="hero_cta_primary_label" value={get('hero_cta_primary_label', 'Descubrir el Libro')} onChange={set('hero_cta_primary_label')} />
+            <Field label="Boton principal — destino" id="hero_cta_primary_href" value={get('hero_cta_primary_href', '/libro')} onChange={set('hero_cta_primary_href')} placeholder="/libro" />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Boton secundario — texto" id="hero_cta_secondary_label" value={get('hero_cta_secondary_label', 'Ir al Diario')} onChange={set('hero_cta_secondary_label')} />
+            <Field label="Boton secundario — destino" id="hero_cta_secondary_href" value={get('hero_cta_secondary_href', '/diario')} onChange={set('hero_cta_secondary_href')} placeholder="/diario" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Home video + buy link */}
+      <Card>
+        <CardHeader><CardTitle>Pagina de Inicio — Video y Link de Compra</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <Field
+            label="URL del Video (aparece sobre el link de compra)"
+            id="home_video_url"
+            value={get('home_video_url')}
+            onChange={set('home_video_url')}
+            placeholder="https://youtube.com/watch?v=... o https://vimeo.com/..."
+            hint="Compatible con YouTube, Vimeo o URL directa de video"
+          />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field
+              label="URL del link de compra"
+              id="home_buy_url"
+              value={get('home_buy_url')}
+              onChange={set('home_buy_url')}
+              placeholder="https://tienda.orsai.org/..."
+              hint="Deja vacio para ocultar el boton"
             />
+            <Field label="Texto del boton de compra" id="home_buy_label" value={get('home_buy_label', 'Comprar el Libro')} onChange={set('home_buy_label')} placeholder="Comprar el Libro" />
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="border-t pt-6">
-            <h3 className="font-semibold mb-4">Menús de Navegación</h3>
-            {['inicio', 'libro', 'diario', 'recomendaciones', 'autor', 'contacto'].map(
-              (menu) => (
-                <div key={menu} className="mb-4">
-                  <Label htmlFor={`nav_${menu}`}>
-                    {menu.charAt(0).toUpperCase() + menu.slice(1)}
-                  </Label>
-                  <Input
-                    id={`nav_${menu}`}
-                    value={formData[`nav_${menu}`] || menu.charAt(0).toUpperCase() + menu.slice(1)}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        [`nav_${menu}`]: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              )
-            )}
+      {/* Book page buy link */}
+      <Card>
+        <CardHeader><CardTitle>Pagina del Libro — Link de Compra</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field
+              label="URL del link de compra"
+              id="book_buy_url"
+              value={get('book_buy_url')}
+              onChange={set('book_buy_url')}
+              placeholder="https://tienda.orsai.org/..."
+              hint="Deja vacio para ocultar el boton"
+            />
+            <Field label="Texto del boton de compra" id="book_buy_label" value={get('book_buy_label', 'Comprar Ahora')} onChange={set('book_buy_label')} placeholder="Comprar Ahora" />
           </div>
+        </CardContent>
+      </Card>
 
-          {message && (
-            <div className={`p-3 rounded-lg text-sm ${
-              message.includes('✓') 
-                ? 'bg-green-500/10 text-green-700' 
-                : 'bg-red-500/10 text-red-700'
-            }`}>
-              {message}
-            </div>
-          )}
+      {/* Navigation */}
+      <Card>
+        <CardHeader><CardTitle>Etiquetas de Navegacion</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          {[
+            { key: 'nav_inicio', default: 'Inicio' },
+            { key: 'nav_libro', default: 'El Libro' },
+            { key: 'nav_diario', default: 'Diario' },
+            { key: 'nav_recomendaciones', default: 'Recomendaciones' },
+            { key: 'nav_autor', default: 'Autora' },
+            { key: 'nav_contacto', default: 'Contacto' },
+          ].map(({ key, default: def }) => (
+            <Field
+              key={key}
+              label={def}
+              id={key}
+              value={get(key, def)}
+              onChange={set(key)}
+              placeholder={def}
+            />
+          ))}
+        </CardContent>
+      </Card>
 
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? 'Guardando...' : 'Guardar Configuración'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      {message && (
+        <div className={`p-3 rounded-lg text-sm ${
+          message.startsWith('Error') ? 'bg-red-500/10 text-red-700' : 'bg-green-500/10 text-green-700'
+        }`}>
+          {message}
+        </div>
+      )}
+
+      <Button type="submit" disabled={isLoading} size="lg" className="w-full">
+        {isLoading ? 'Guardando...' : 'Guardar Configuracion'}
+      </Button>
+    </form>
   )
 }

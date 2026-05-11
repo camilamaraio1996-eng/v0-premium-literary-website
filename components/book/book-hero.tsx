@@ -2,13 +2,17 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { ShoppingBag } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface BookHeroProps {
   coverImage?: string | null
   bookTitle?: string
+  buyUrl?: string | null
+  buyLabel?: string
 }
 
-export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños' }: BookHeroProps) {
+export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', buyUrl, buyLabel = 'Comprar Ahora' }: BookHeroProps) {
   return (
     <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -80,7 +84,7 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños' }: 
             </p>
 
             {/* Meta */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs mb-10">
               {[
                 { label: 'Género', value: 'Ficción Literaria' },
                 { label: 'Idioma', value: 'Español' },
@@ -94,6 +98,16 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños' }: 
                 </div>
               ))}
             </div>
+
+            {/* Buy link */}
+            {buyUrl && (
+              <Button asChild size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
+                <a href={buyUrl} target="_blank" rel="noopener noreferrer">
+                  <ShoppingBag className="w-4 h-4" />
+                  {buyLabel}
+                </a>
+              </Button>
+            )}
           </motion.div>
         </div>
       </div>

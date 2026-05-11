@@ -29,16 +29,15 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
     setMessage('')
 
     try {
-      console.log('[v0] Saving book with video_url:', formData.video_url)
       const result = await updateBookInfo(formData)
       if (result.success) {
-        setMessage('✓ Libro actualizado correctamente')
+        setMessage('Libro actualizado correctamente')
         setTimeout(() => window.location.reload(), 1500)
       } else {
-        setMessage(`✗ Error: ${result.message}`)
+        setMessage(`Error: ${result.message}`)
       }
     } catch (err: any) {
-      setMessage(`✗ Error: ${err.message}`)
+      setMessage(`Error: ${err.message}`)
     } finally {
       setIsLoading(false)
     }
@@ -103,9 +102,9 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
       {message && (
         <div
           className={`p-3 rounded-lg text-sm ${
-            message.includes('✓')
-              ? 'bg-green-500/10 text-green-700'
-              : 'bg-red-500/10 text-red-700'
+            message.startsWith('Error')
+              ? 'bg-red-500/10 text-red-700'
+              : 'bg-green-500/10 text-green-700'
           }`}
         >
           {message}

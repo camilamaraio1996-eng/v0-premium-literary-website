@@ -6,7 +6,7 @@ import { BookVideo } from '@/components/book/book-video'
 import { BookDetails } from '@/components/book/book-details'
 import { BookFragments } from '@/components/book/book-fragments'
 import { createClient } from '@/lib/supabase/server'
-import { getNavigationData } from '@/lib/cms'
+import { getNavigationData, getSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'El Libro',
@@ -40,15 +40,23 @@ async function getBookInfo() {
 }
 
 export default async function LibroPage() {
-  const { navItems, siteTitle } = await getNavigationData()
-  const book = await getBookInfo()
-  const fragments = await getFragments()
+  const [{ navItems, siteTitle }, book, fragments, settings] = await Promise.all([
+    getNavigationData(),
+    getBookInfo(),
+    getFragments(),
+    getSiteSettings(),
+  ])
 
   return (
     <>
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
-        <BookHero coverImage={book.cover_image_url} bookTitle={book.title} />
+        <BookHero
+          coverImage={book.cover_image_url}
+          bookTitle={book.title}
+          buyUrl={settings['book_buy_url'] || null}
+          buyLabel={settings['book_buy_label'] || 'Comprar Ahora'}
+        />
         {book.video_url && <BookVideo videoUrl={book.video_url} />}
         <BookDetails description={book.description} />
         <BookFragments fragments={fragments} />

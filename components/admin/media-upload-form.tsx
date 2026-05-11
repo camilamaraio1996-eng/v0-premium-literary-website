@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,10 +23,8 @@ export function MediaUploadForm({
 }: MediaUploadFormProps) {
   const [coverUrl, setCoverUrl] = useState(currentCoverUrl || '')
   const [videoUrl, setVideoUrl] = useState(currentVideoUrl || '')
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url')
   const [copiedCover, setCopiedCover] = useState(false)
   const [copiedVideo, setCopiedVideo] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleCoverUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value
@@ -139,11 +137,8 @@ export function MediaUploadForm({
           )}
 
           <div className="pt-4 border-t">
-            <p className="text-xs text-muted-foreground mb-3">
-              💡 Consejos:
-              <br />• Usa Vercel Blob, Cloudinary, o un storage en la nube
-              <br />• Asegúrate que la URL sea accesible públicamente
-              <br />• Los formatos recomendados son JPG o PNG
+            <p className="text-xs text-muted-foreground">
+              Pega la URL pública de la imagen. Formatos recomendados: JPG o PNG. Asegúrate que la URL sea accesible públicamente.
             </p>
           </div>
         </CardContent>
