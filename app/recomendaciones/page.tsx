@@ -4,6 +4,7 @@ import { Footer } from '@/components/footer'
 import { RecommendationsHero } from '@/components/recomendaciones/recommendations-hero'
 import { RecommendationsGrid } from '@/components/recomendaciones/recommendations-grid'
 import { createClient } from '@/lib/supabase/server'
+import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Recomendaciones de Lectura',
@@ -21,11 +22,12 @@ async function getRecommendations() {
 }
 
 export default async function RecomendacionesPage() {
+  const { navItems, siteTitle } = await getNavigationData()
   const recommendations = await getRecommendations()
 
   return (
     <>
-      <Navigation />
+      <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
         <RecommendationsHero />
         <RecommendationsGrid recommendations={recommendations} />

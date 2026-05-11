@@ -4,10 +4,22 @@ import { Footer } from '@/components/footer'
 import { BookHero } from '@/components/book/book-hero'
 import { BookDetails } from '@/components/book/book-details'
 import { createClient } from '@/lib/supabase/server'
+import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'El Libro',
   description: 'Conoce la novela, su historia y fragmentos seleccionados.',
+}
+
+async function getFragments() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('book_fragments')
+    .select('*')
+    .eq('published', true)
+    .order('sort_order', { ascending: true })
+
+  return data || []
 }
 
 async function getBookInfo() {
@@ -24,24 +36,14 @@ async function getBookInfo() {
   }
 }
 
-async function getFragments() {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('book_fragments')
-    .select('*')
-    .eq('published', true)
-    .order('sort_order', { ascending: true })
-
-  return data || []
-}
-
 export default async function LibroPage() {
+  const { navItems, siteTitle } = await getNavigationData()
   const book = await getBookInfo()
   const fragments = await getFragments()
 
   return (
     <>
-      <Navigation />
+      <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
         <BookHero coverImage={book.cover_image_url} bookTitle={book.title} />
         <BookDetails description={book.description} />

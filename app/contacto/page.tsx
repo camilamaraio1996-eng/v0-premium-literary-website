@@ -3,16 +3,19 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ContactHero } from '@/components/contacto/contact-hero'
 import { ContactForm } from '@/components/contacto/contact-form'
+import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Contacto',
   description: 'Ponte en contacto con el autor de El Libro de los Sueños. Consultas, colaboraciones y mensajes.',
 }
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const { navItems, siteTitle } = await getNavigationData()
+
   return (
     <>
-      <Navigation />
+      <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
         <ContactHero />
         <ContactForm />

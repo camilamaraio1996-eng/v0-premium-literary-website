@@ -4,6 +4,7 @@ import { Footer } from '@/components/footer'
 import { DiarioHero } from '@/components/diario/diario-hero'
 import { DiarioList } from '@/components/diario/diario-list'
 import { createClient } from '@/lib/supabase/server'
+import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Diario',
@@ -22,11 +23,12 @@ async function getPosts() {
 }
 
 export default async function DiarioPage() {
+  const { navItems, siteTitle } = await getNavigationData()
   const posts = await getPosts()
   
   return (
     <>
-      <Navigation />
+      <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
         <DiarioHero />
         <DiarioList posts={posts} />
