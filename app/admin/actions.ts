@@ -7,7 +7,11 @@ export async function updateSiteSettings(settings: Record<string, string>) {
   const supabase = await createClient()
 
   try {
+    console.log('[v0] Starting settings update. Total keys:', Object.keys(settings).length)
+    
     for (const [key, value] of Object.entries(settings)) {
+      console.log('[v0] Updating setting:', { key, value: value.substring(0, 50) })
+      
       const { data: existing } = await supabase
         .from('site_settings')
         .select('id')
@@ -15,17 +19,30 @@ export async function updateSiteSettings(settings: Record<string, string>) {
         .single()
 
       if (existing) {
-        await supabase
+        const { error } = await supabase
           .from('site_settings')
           .update({ value, updated_at: new Date().toISOString() })
           .eq('key', key)
+        
+        if (error) {
+          console.error('[v0] Update error for', key, ':', error)
+          throw error
+        }
+        console.log('[v0] Setting updated:', key)
       } else {
-        await supabase
+        const { error } = await supabase
           .from('site_settings')
           .insert({ key, value })
+        
+        if (error) {
+          console.error('[v0] Insert error for', key, ':', error)
+          throw error
+        }
+        console.log('[v0] Setting inserted:', key)
       }
     }
 
+    console.log('[v0] All settings updated. Revalidating cache...')
     // Revalidate all pages that use navigation
     revalidatePath('/', 'layout')
     revalidateTag('site-settings')
@@ -34,7 +51,8 @@ export async function updateSiteSettings(settings: Record<string, string>) {
     return { success: true, message: 'Configuración actualizada correctamente' }
   } catch (error: any) {
     console.error('[v0] Error updating settings:', error)
-    return { success: false, message: error.message }
+    console.error('[v0] Error details:', error.message, error.code)
+    return { success: false, message: error.message || 'Error desconocido actualizando configuración' }
   }
 }
 
@@ -49,20 +67,32 @@ export async function updateBookInfo(bookData: {
   const supabase = await createClient()
 
   try {
+    console.log('[v0] Updating book info:', { id: bookData.id, title: bookData.title })
+    
     // Only send columns that exist on book_info
-    const { error } = await supabase
+    const updateData = {
+      title: bookData.title,
+      subtitle: bookData.subtitle ?? null,
+      author_name: bookData.author_name ?? null,
+      cover_image_url: bookData.cover_image_url ?? null,
+      description: bookData.description ?? null,
+      updated_at: new Date().toISOString(),
+    }
+    
+    console.log('[v0] Update payload:', updateData)
+    
+    const { data, error } = await supabase
       .from('book_info')
-      .update({
-        title: bookData.title,
-        subtitle: bookData.subtitle ?? null,
-        author_name: bookData.author_name ?? null,
-        cover_image_url: bookData.cover_image_url ?? null,
-        description: bookData.description ?? null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', bookData.id)
+      .select()
 
-    if (error) throw error
+    if (error) {
+      console.error('[v0] Book update error:', error)
+      throw error
+    }
+    
+    console.log('[v0] Book updated successfully:', data)
 
     revalidatePath('/libro')
     revalidateTag('book-info')
@@ -70,7 +100,8 @@ export async function updateBookInfo(bookData: {
     return { success: true, message: 'Libro actualizado correctamente' }
   } catch (error: any) {
     console.error('[v0] Error updating book:', error)
-    return { success: false, message: error.message }
+    console.error('[v0] Error details:', error.message, error.code)
+    return { success: false, message: error.message || 'Error desconocido actualizando libro' }
   }
 }
 
@@ -114,31 +145,47 @@ export async function updateFragments(fragments: any[]) {
   const supabase = await createClient()
 
   try {
+    console.log('[v0] Starting fragment update. Total fragments:', fragments.length)
+    
     for (const fragment of fragments) {
+      console.log('[v0] Updating fragment:', { id: fragment.id, title: fragment.title })
+      
       // Only send columns that actually exist on book_fragments:
       // id, title, chapter_number, content, audio_url, sort_order, published, created_at, image_url
-      const { error } = await supabase
+      const updateData = {
+        title: fragment.title,
+        content: fragment.content ?? '',
+        image_url: fragment.image_url ?? null,
+        sort_order: fragment.sort_order ?? 0,
+        published: fragment.published ?? false,
+        chapter_number: fragment.chapter_number ?? null,
+      }
+      
+      console.log('[v0] Update payload:', updateData)
+      
+      const { data, error } = await supabase
         .from('book_fragments')
-        .update({
-          title: fragment.title,
-          content: fragment.content ?? '',
-          image_url: fragment.image_url ?? null,
-          sort_order: fragment.sort_order ?? 0,
-          published: fragment.published ?? false,
-          chapter_number: fragment.chapter_number ?? null,
-        })
+        .update(updateData)
         .eq('id', fragment.id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('[v0] Update error for fragment', fragment.id, ':', error)
+        throw error
+      }
+      
+      console.log('[v0] Fragment updated successfully:', data)
     }
 
+    console.log('[v0] All fragments updated. Revalidating cache...')
     revalidatePath('/libro')
     revalidateTag('book-fragments')
 
     return { success: true, message: 'Fragmentos actualizados correctamente' }
   } catch (error: any) {
     console.error('[v0] Error updating fragments:', error)
-    return { success: false, message: error.message }
+    console.error('[v0] Error details:', error.message, error.code, error.hint)
+    return { success: false, message: error.message || 'Error desconocido actualizando fragmentos' }
   }
 }
 
