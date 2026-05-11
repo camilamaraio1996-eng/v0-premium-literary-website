@@ -38,18 +38,32 @@ export async function updateSiteSettings(settings: Record<string, string>) {
   }
 }
 
-export async function updateBookInfo(bookData: any) {
+export async function updateBookInfo(bookData: {
+  id: string
+  title: string
+  subtitle?: string | null
+  author_name?: string | null
+  cover_image_url?: string | null
+  description?: string | null
+}) {
   const supabase = await createClient()
 
   try {
+    // Only send columns that exist on book_info
     const { error } = await supabase
       .from('book_info')
-      .update({ ...bookData, updated_at: new Date().toISOString() })
+      .update({
+        title: bookData.title,
+        subtitle: bookData.subtitle ?? null,
+        author_name: bookData.author_name ?? null,
+        cover_image_url: bookData.cover_image_url ?? null,
+        description: bookData.description ?? null,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', bookData.id)
 
     if (error) throw error
 
-    // Revalidate book pages
     revalidatePath('/libro')
     revalidateTag('book-info')
 
@@ -60,27 +74,64 @@ export async function updateBookInfo(bookData: any) {
   }
 }
 
+export async function createFragment() {
+  const supabase = await createClient()
+
+  try {
+    const { data: maxOrder } = await supabase
+      .from('book_fragments')
+      .select('sort_order')
+      .order('sort_order', { ascending: false })
+      .limit(1)
+      .single()
+
+    const nextOrder = (maxOrder?.sort_order ?? 0) + 1
+
+    const { data, error } = await supabase
+      .from('book_fragments')
+      .insert({
+        title: 'Nuevo Fragmento',
+        content: '',
+        sort_order: nextOrder,
+        published: false,
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    revalidatePath('/libro')
+    revalidateTag('book-fragments')
+
+    return { success: true, message: 'Fragmento creado', fragment: data }
+  } catch (error: any) {
+    console.error('[v0] Error creating fragment:', error)
+    return { success: false, message: error.message }
+  }
+}
+
 export async function updateFragments(fragments: any[]) {
   const supabase = await createClient()
 
   try {
     for (const fragment of fragments) {
+      // Only send columns that actually exist on book_fragments:
+      // id, title, chapter_number, content, audio_url, sort_order, published, created_at, image_url
       const { error } = await supabase
         .from('book_fragments')
         .update({
           title: fragment.title,
-          description: fragment.description,
-          content: fragment.content,
-          image_url: fragment.image_url,
-          sort_order: fragment.sort_order,
-          updated_at: new Date().toISOString(),
+          content: fragment.content ?? '',
+          image_url: fragment.image_url ?? null,
+          sort_order: fragment.sort_order ?? 0,
+          published: fragment.published ?? false,
+          chapter_number: fragment.chapter_number ?? null,
         })
         .eq('id', fragment.id)
 
       if (error) throw error
     }
 
-    // Revalidate fragment pages
     revalidatePath('/libro')
     revalidateTag('book-fragments')
 

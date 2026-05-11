@@ -7,16 +7,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import Image from 'next/image'
-import { Trash2 } from 'lucide-react'
-import { updateFragments, deleteFragment } from '@/app/admin/actions'
+import { Trash2, Plus } from 'lucide-react'
+import { updateFragments, deleteFragment, createFragment } from '@/app/admin/actions'
 
 interface Fragment {
   id: string
   sort_order: number
   title: string
-  description: string
-  content: string | null
+  chapter_number: number | null
+  content: string
   image_url: string | null
+  published: boolean
 }
 
 export function AdminFragmentsForm({ fragments: initialFragments }: { fragments: Fragment[] }) {
@@ -47,6 +48,20 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
       setMessage(`✗ Error: ${err.message}`)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleCreate = async () => {
+    try {
+      const result = await createFragment()
+      if (result.success && result.fragment) {
+        setFragments([...fragments, result.fragment as Fragment])
+        setMessage('✓ Fragmento creado. Rellena los campos y guarda.')
+      } else {
+        setMessage(`✗ Error: ${result.message}`)
+      }
+    } catch (err: any) {
+      setMessage(`✗ Error: ${err.message}`)
     }
   }
 
@@ -83,44 +98,70 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
             </Button>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <Label>Orden</Label>
                 <Input
                   type="number"
-                  value={fragment.sort_order}
+                  value={fragment.sort_order ?? 0}
                   onChange={(e) =>
-                    handleChange(fragment.id, 'sort_order', parseInt(e.target.value))
+                    handleChange(fragment.id, 'sort_order', parseInt(e.target.value) || 0)
                   }
                 />
               </div>
               <div>
-                <Label>Título</Label>
+                <Label>Número de Capítulo</Label>
                 <Input
-                  value={fragment.title}
-                  onChange={(e) => handleChange(fragment.id, 'title', e.target.value)}
-                  placeholder="Título del fragmento"
+                  type="number"
+                  value={fragment.chapter_number ?? ''}
+                  onChange={(e) =>
+                    handleChange(
+                      fragment.id,
+                      'chapter_number',
+                      e.target.value === '' ? null : parseInt(e.target.value)
+                    )
+                  }
+                  placeholder="Ej. 1"
                 />
+              </div>
+              <div className="flex flex-col justify-end gap-1">
+                <Label>Publicado</Label>
+                <div className="flex items-center gap-2 h-10">
+                  <input
+                    type="checkbox"
+                    id={`published-${fragment.id}`}
+                    checked={fragment.published ?? false}
+                    onChange={(e) =>
+                      handleChange(fragment.id, 'published', e.target.checked)
+                    }
+                    className="w-4 h-4 accent-primary"
+                  />
+                  <label
+                    htmlFor={`published-${fragment.id}`}
+                    className="text-sm text-muted-foreground"
+                  >
+                    {fragment.published ? 'Visible en el sitio' : 'Oculto'}
+                  </label>
+                </div>
               </div>
             </div>
 
             <div>
-              <Label>Descripción</Label>
-              <Textarea
-                value={fragment.description}
-                onChange={(e) => handleChange(fragment.id, 'description', e.target.value)}
-                placeholder="Descripción breve"
-                rows={2}
+              <Label>Título</Label>
+              <Input
+                value={fragment.title}
+                onChange={(e) => handleChange(fragment.id, 'title', e.target.value)}
+                placeholder="Título del fragmento"
               />
             </div>
 
             <div>
-              <Label>Contenido Completo</Label>
+              <Label>Contenido</Label>
               <Textarea
-                value={fragment.content || ''}
+                value={fragment.content ?? ''}
                 onChange={(e) => handleChange(fragment.id, 'content', e.target.value)}
-                placeholder="Texto completo del fragmento"
-                rows={6}
+                placeholder="Texto del fragmento..."
+                rows={8}
               />
             </div>
 
@@ -156,14 +197,26 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
         </div>
       )}
 
-      <Button
-        onClick={handleSubmit}
-        disabled={isLoading}
-        className="w-full"
-        size="lg"
-      >
-        {isLoading ? 'Guardando...' : 'Guardar todos los Fragmentos'}
-      </Button>
+      <div className="flex gap-3">
+        <Button
+          type="button"
+          onClick={handleCreate}
+          variant="outline"
+          className="flex-1"
+          size="lg"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Nuevo Fragmento
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="flex-1"
+          size="lg"
+        >
+          {isLoading ? 'Guardando...' : 'Guardar todos los Fragmentos'}
+        </Button>
+      </div>
     </div>
   )
 }
