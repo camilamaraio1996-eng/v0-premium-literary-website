@@ -68,6 +68,19 @@ export async function updateBookInfo(bookData: {
   const supabase = await createClient()
 
   try {
+    // Validaciones
+    if (!bookData.title || bookData.title.trim().length < 3) {
+      return { success: false, message: 'El título debe tener al menos 3 caracteres' }
+    }
+    
+    if (!bookData.description || bookData.description.trim().length < 20) {
+      return { success: false, message: 'La sinopsis debe tener al menos 20 caracteres' }
+    }
+    
+    if (bookData.description.trim().length > 1000) {
+      return { success: false, message: 'La sinopsis no puede exceder 1000 caracteres' }
+    }
+    
     console.log('[v0] Updating book info:', { id: bookData.id, title: bookData.title })
     
     // Only send columns that exist on book_info

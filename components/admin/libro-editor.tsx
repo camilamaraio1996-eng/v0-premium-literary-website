@@ -42,6 +42,28 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
 
+  const isValid = () => {
+    return (
+      formData.title?.trim().length >= 3 &&
+      formData.description?.trim().length >= 20 &&
+      formData.description?.trim().length <= 1000
+    )
+  }
+
+  const getValidationErrors = () => {
+    const errors: string[] = []
+    if (!formData.title?.trim() || formData.title.trim().length < 3) {
+      errors.push('Título mínimo 3 caracteres')
+    }
+    if (!formData.description?.trim() || formData.description.trim().length < 20) {
+      errors.push('Sinopsis mínimo 20 caracteres')
+    }
+    if (formData.description && formData.description.trim().length > 1000) {
+      errors.push('Sinopsis máximo 1000 caracteres')
+    }
+    return errors
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -144,21 +166,47 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
           </CardContent>
         </Card>
 
-        {/* Descripción */}
+        {/* Descripción y Sinopsis */}
         <Card>
           <CardHeader>
-            <CardTitle>Descripción del Libro</CardTitle>
+            <CardTitle>Sinopsis del Libro</CardTitle>
+            <p className="text-sm text-muted-foreground mt-2">
+              Escribe la sinopsis que aparecerá en la sección de "SINOPSIS" de la página del libro. 
+              Esta es la descripción que los lectores verán para decidir si les interesa el libro.
+            </p>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Descripción Completa</label>
+              <div className="flex justify-between items-baseline mb-2">
+                <label className="text-sm font-medium block">Sinopsis (Requerido)</label>
+                <span className="text-xs text-muted-foreground">
+                  {formData.description?.length || 0} / 1000 caracteres
+                </span>
+              </div>
               <Textarea
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe el libro aquí..."
-                rows={6}
+                placeholder="En una ciudad sin nombre, un hombre comienza a soñar recuerdos que no le pertenecen. En sus sueños, revive historias olvidadas que lo persiguen durante el día. Una exploración íntima de los territorios donde la vigilia y el sueño se entrelazan..."
+                rows={8}
+                maxLength={1000}
+                className={formData.description && formData.description.length < 20 ? 'border-red-500' : ''}
               />
+              {formData.description && formData.description.length < 20 && (
+                <p className="text-xs text-red-600 mt-1">La sinopsis debe tener al menos 20 caracteres</p>
+              )}
             </div>
+
+            {/* Vista previa de cómo se verá la sinopsis */}
+            {formData.description && (
+              <div className="p-4 rounded-lg bg-card/50 border border-border">
+                <p className="text-xs uppercase tracking-[0.2em] text-accent mb-3 block">
+                  Vista Previa
+                </p>
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  {formData.description}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -189,7 +237,13 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
           </div>
         )}
 
-        <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+        <Button 
+          type="submit" 
+          disabled={isLoading || !isValid()} 
+          className="w-full" 
+          size="lg"
+          title={!isValid() ? `Errores: ${getValidationErrors().join(', ')}` : ''}
+        >
           {isLoading ? 'Guardando...' : 'Guardar Cambios'}
         </Button>
       </form>
