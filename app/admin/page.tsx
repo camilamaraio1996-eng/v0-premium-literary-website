@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AdminNav } from '@/components/admin/admin-nav'
+import { AdminHealthCheck } from '@/components/admin/admin-health-check'
 import { FileText, BookOpen, Users, Mail } from 'lucide-react'
 import Link from 'next/link'
 
@@ -70,7 +71,7 @@ export default async function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <h1 className="font-serif text-3xl text-primary mb-8">Dashboard</h1>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {cards.map((card) => {
             const Icon = card.icon
             return (
@@ -91,6 +92,8 @@ export default async function AdminDashboard() {
             )
           })}
         </div>
+
+        <AdminHealthCheck />
       </main>
     </div>
   )

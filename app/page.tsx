@@ -10,6 +10,10 @@ async function getNavigationData() {
   const { data: settings } = await supabase
     .from('site_settings')
     .select('key, value')
+    .then(result => ({
+      ...result,
+      tags: ['site-settings', 'navigation']
+    }))
 
   const settingsMap: Record<string, string> = {}
   settings?.forEach(({ key, value }) => {

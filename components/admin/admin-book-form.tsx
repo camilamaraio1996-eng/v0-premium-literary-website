@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Upload } from 'lucide-react'
+import { updateBookInfo } from '@/app/admin/actions'
 import Image from 'next/image'
 
 interface BookInfo {
@@ -22,7 +21,6 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
   const [formData, setFormData] = useState(book)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const supabase = createClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,13 +28,13 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
     setMessage('')
 
     try {
-      const { error } = await supabase
-        .from('book_info')
-        .update(formData)
-        .eq('id', book.id)
-
-      if (error) throw error
-      setMessage('✓ Libro actualizado correctamente')
+      const result = await updateBookInfo(formData)
+      if (result.success) {
+        setMessage('✓ Libro actualizado correctamente')
+        setTimeout(() => window.location.reload(), 1500)
+      } else {
+        setMessage(`✗ Error: ${result.message}`)
+      }
     } catch (err: any) {
       setMessage(`✗ Error: ${err.message}`)
     } finally {
@@ -109,7 +107,11 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
           </div>
 
           {message && (
-            <div className="p-3 rounded-lg text-sm bg-accent/10 text-accent">
+            <div className={`p-3 rounded-lg text-sm ${
+              message.includes('✓') 
+                ? 'bg-green-500/10 text-green-700' 
+                : 'bg-red-500/10 text-red-700'
+            }`}>
               {message}
             </div>
           )}

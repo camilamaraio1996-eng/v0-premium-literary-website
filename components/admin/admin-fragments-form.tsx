@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import Image from 'next/image'
-import { Trash2, Plus } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
+import { updateFragments, deleteFragment } from '@/app/admin/actions'
 
 interface Fragment {
   id: string
@@ -23,7 +23,6 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
   const [fragments, setFragments] = useState(initialFragments)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const supabase = createClient()
 
   const handleChange = (id: string, field: string, value: any) => {
     setFragments(fragments.map((f) =>
@@ -37,21 +36,13 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
     setMessage('')
 
     try {
-      for (const fragment of fragments) {
-        const { error } = await supabase
-          .from('book_fragments')
-          .update({
-            title: fragment.title,
-            description: fragment.description,
-            content: fragment.content,
-            image_url: fragment.image_url,
-            sort_order: fragment.sort_order,
-          })
-          .eq('id', fragment.id)
-
-        if (error) throw error
+      const result = await updateFragments(fragments)
+      if (result.success) {
+        setMessage('✓ Fragmentos actualizados correctamente')
+        setTimeout(() => window.location.reload(), 1500)
+      } else {
+        setMessage(`✗ Error: ${result.message}`)
       }
-      setMessage('✓ Fragmentos actualizados correctamente')
     } catch (err: any) {
       setMessage(`✗ Error: ${err.message}`)
     } finally {
@@ -60,10 +51,16 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
   }
 
   const handleDelete = async (id: string) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este fragmento?')) return
+
     try {
-      await supabase.from('book_fragments').delete().eq('id', id)
-      setFragments(fragments.filter((f) => f.id !== id))
-      setMessage('✓ Fragmento eliminado')
+      const result = await deleteFragment(id)
+      if (result.success) {
+        setFragments(fragments.filter((f) => f.id !== id))
+        setMessage('✓ Fragmento eliminado correctamente')
+      } else {
+        setMessage(`✗ Error: ${result.message}`)
+      }
     } catch (err: any) {
       setMessage(`✗ Error: ${err.message}`)
     }
@@ -76,6 +73,7 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-lg">Fragmento {idx + 1}</CardTitle>
             <Button
+              type="button"
               variant="ghost"
               size="sm"
               onClick={() => handleDelete(fragment.id)}
@@ -149,7 +147,11 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
       ))}
 
       {message && (
-        <div className="p-3 rounded-lg text-sm bg-accent/10 text-accent">
+        <div className={`p-3 rounded-lg text-sm ${
+          message.includes('✓') 
+            ? 'bg-green-500/10 text-green-700' 
+            : 'bg-red-500/10 text-red-700'
+        }`}>
           {message}
         </div>
       )}

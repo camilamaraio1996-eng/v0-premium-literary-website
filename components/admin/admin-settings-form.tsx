@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { updateSiteSettings } from '@/app/admin/actions'
 
 interface SiteSettings {
   [key: string]: string
@@ -16,7 +16,6 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
   const [formData, setFormData] = useState(settings)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const supabase = createClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,25 +23,14 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
     setMessage('')
 
     try {
-      for (const [key, value] of Object.entries(formData)) {
-        const { data: existing } = await supabase
-          .from('site_settings')
-          .select('id')
-          .eq('key', key)
-          .single()
-
-        if (existing) {
-          await supabase
-            .from('site_settings')
-            .update({ value })
-            .eq('key', key)
-        } else {
-          await supabase
-            .from('site_settings')
-            .insert({ key, value })
-        }
+      const result = await updateSiteSettings(formData)
+      if (result.success) {
+        setMessage('✓ Configuración actualizada correctamente')
+        // Refresh page to show updated data
+        setTimeout(() => window.location.reload(), 1500)
+      } else {
+        setMessage(`✗ Error: ${result.message}`)
       }
-      setMessage('✓ Configuración actualizada correctamente')
     } catch (err: any) {
       setMessage(`✗ Error: ${err.message}`)
     } finally {
@@ -106,7 +94,11 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           {message && (
-            <div className="p-3 rounded-lg text-sm bg-accent/10 text-accent">
+            <div className={`p-3 rounded-lg text-sm ${
+              message.includes('✓') 
+                ? 'bg-green-500/10 text-green-700' 
+                : 'bg-red-500/10 text-red-700'
+            }`}>
               {message}
             </div>
           )}
