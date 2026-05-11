@@ -19,19 +19,21 @@ export async function GET(request: Request) {
       supabase.from('book_fragments').select('*').eq('published', true),
     ])
 
+    const responseData = {
+      settings: settings.data ?? [],
+      bookInfo: bookInfo.data ?? [],
+      fragmentsCount: fragments.data?.length ?? 0,
+      lastUpdated: new Date().toISOString(),
+    }
+
     return NextResponse.json({
       status: 'ok',
       user: user.email,
-      data: {
-        settings: settings.data,
-        bookInfo: bookInfo.data,
-        fragmentsCount: fragments.data?.length,
-        lastUpdated: new Date().toISOString(),
-      },
+      data: responseData,
       checks: {
-        settingsOk: !!settings.data && settings.data.length > 0,
-        bookInfoOk: !!bookInfo.data && bookInfo.data.length > 0,
-        fragmentsOk: !!fragments.data && fragments.data.length > 0,
+        settingsOk: responseData.settings.length > 0,
+        bookInfoOk: responseData.bookInfo.length > 0,
+        fragmentsOk: responseData.fragmentsCount > 0,
       }
     })
   } catch (error: any) {

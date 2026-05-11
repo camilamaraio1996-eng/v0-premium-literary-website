@@ -7,7 +7,12 @@ import { RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
 
 interface HealthData {
   status: string
-  data: any
+  data: {
+    settings: any[]
+    bookInfo: any[]
+    fragmentsCount: number
+    lastUpdated: string
+  }
   checks: {
     settingsOk: boolean
     bookInfoOk: boolean
@@ -75,7 +80,7 @@ export function AdminHealthCheck() {
                   <span className="font-medium">Configuración</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {health.data.data.settings.length} configuraciones
+                  {health.data?.settings?.length ?? 0} configuraciones
                 </p>
               </div>
 
@@ -89,7 +94,7 @@ export function AdminHealthCheck() {
                   <span className="font-medium">Libro</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {health.data.data.bookInfo.length} entrada
+                  {health.data?.bookInfo?.length ?? 0} entrada
                 </p>
               </div>
 
@@ -103,13 +108,13 @@ export function AdminHealthCheck() {
                   <span className="font-medium">Fragmentos</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {health.data.data.fragmentsCount} publicados
+                  {health.data?.fragmentsCount ?? 0} publicados
                 </p>
               </div>
             </div>
 
             <div className="p-3 rounded-lg bg-muted text-xs font-mono text-muted-foreground">
-              Última verificación: {new Date(health.data.lastUpdated).toLocaleTimeString()}
+              Última verificación: {health.data?.lastUpdated ? new Date(health.data.lastUpdated).toLocaleTimeString() : '-'}
             </div>
           </div>
         )}
