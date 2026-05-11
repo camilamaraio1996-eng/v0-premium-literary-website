@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminNav } from '@/components/admin/admin-nav'
-import { AdminBookForm } from '@/components/admin/admin-book-form'
+import { LibroEditor } from '@/components/admin/libro-editor'
 
 async function getBookInfo() {
   const supabase = await createClient()
@@ -21,6 +21,17 @@ async function getBookInfo() {
   }
 }
 
+async function getFragments() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('book_fragments')
+    .select('*')
+    .eq('published', true)
+    .order('sort_order', { ascending: true })
+
+  return data || []
+}
+
 export default async function AdminBookPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -29,14 +40,17 @@ export default async function AdminBookPage() {
     redirect('/admin/login')
   }
 
-  const book = await getBookInfo()
+  const [book, fragments] = await Promise.all([
+    getBookInfo(),
+    getFragments(),
+  ])
 
   return (
     <div className="min-h-screen bg-background">
       <AdminNav user={user} />
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         <h1 className="font-serif text-3xl text-primary mb-8">Editar Libro</h1>
-        <AdminBookForm book={book} />
+        <LibroEditor book={book} fragments={fragments} />
       </main>
     </div>
   )

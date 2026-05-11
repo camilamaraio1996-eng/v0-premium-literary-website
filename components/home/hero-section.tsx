@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ChevronDown, ShoppingBag } from 'lucide-react'
@@ -9,6 +10,8 @@ interface HeroSectionProps {
   title?: string
   eyebrow?: string
   description?: string
+  imageUrl?: string | null
+  imageAlt?: string
   ctaPrimaryLabel?: string
   ctaPrimaryHref?: string
   ctaSecondaryLabel?: string
@@ -37,6 +40,8 @@ export function HeroSection({
   title = 'El Libro de los Sueños',
   eyebrow = 'Una novela de',
   description = 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.',
+  imageUrl = null,
+  imageAlt = '',
   ctaPrimaryLabel = 'Descubrir el Libro',
   ctaPrimaryHref = '/libro',
   ctaSecondaryLabel = 'Ir al Diario',
@@ -103,6 +108,24 @@ export function HeroSection({
             <Link href={ctaSecondaryHref}>{ctaSecondaryLabel}</Link>
           </Button>
         </motion.div>
+
+        {/* Hero image */}
+        {imageUrl && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.8 }}
+            className="w-full max-w-2xl mx-auto mb-10 rounded-lg overflow-hidden border border-border shadow-md h-80 sm:h-96 md:h-[500px] relative"
+          >
+            <Image
+              src={imageUrl}
+              alt={imageAlt || title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+        )}
 
         {/* Home video */}
         {embedUrl && (

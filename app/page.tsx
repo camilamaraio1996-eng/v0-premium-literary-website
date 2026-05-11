@@ -17,6 +17,8 @@ export default async function HomePage() {
           eyebrow={settings['hero_eyebrow'] || 'Una novela de'}
           title={settings['hero_title'] || siteTitle}
           description={settings['hero_description'] || 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.'}
+          imageUrl={settings['home_hero_image_url'] || null}
+          imageAlt={settings['home_hero_image_alt'] || ''}
           ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrir el Libro'}
           ctaPrimaryHref={settings['hero_cta_primary_href'] || '/libro'}
           ctaSecondaryLabel={settings['hero_cta_secondary_label'] || 'Ir al Diario'}
