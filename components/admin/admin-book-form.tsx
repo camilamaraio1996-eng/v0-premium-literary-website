@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { MediaUploadForm } from './media-upload-form'
 import { updateBookInfo } from '@/app/admin/actions'
-import Image from 'next/image'
 
 interface BookInfo {
   id: string
@@ -15,6 +15,7 @@ interface BookInfo {
   author_name: string | null
   cover_image_url: string | null
   description: string | null
+  video_url?: string | null
 }
 
 export function AdminBookForm({ book }: { book: BookInfo }) {
@@ -28,6 +29,7 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
     setMessage('')
 
     try {
+      console.log('[v0] Saving book with video_url:', formData.video_url)
       const result = await updateBookInfo(formData)
       if (result.success) {
         setMessage('✓ Libro actualizado correctamente')
@@ -43,12 +45,13 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Información del Libro</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Información Básica */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Información del Libro</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="text-sm font-medium mb-2 block">Título</label>
@@ -86,41 +89,32 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
               rows={6}
             />
           </div>
+        </CardContent>
+      </Card>
 
-          <div>
-            <label className="text-sm font-medium mb-2 block">URL de Portada</label>
-            <Input
-              value={formData.cover_image_url || ''}
-              onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-              placeholder="https://ejemplo.com/portada.jpg"
-            />
-            {formData.cover_image_url && (
-              <div className="mt-4 relative w-32 h-48 bg-muted rounded-lg overflow-hidden">
-                <Image
-                  src={formData.cover_image_url}
-                  alt="Portada"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-          </div>
+      {/* Media Management */}
+      <MediaUploadForm
+        currentCoverUrl={formData.cover_image_url}
+        currentVideoUrl={formData.video_url}
+        onCoverChange={(url) => setFormData({ ...formData, cover_image_url: url })}
+        onVideoChange={(url) => setFormData({ ...formData, video_url: url })}
+      />
 
-          {message && (
-            <div className={`p-3 rounded-lg text-sm ${
-              message.includes('✓') 
-                ? 'bg-green-500/10 text-green-700' 
-                : 'bg-red-500/10 text-red-700'
-            }`}>
-              {message}
-            </div>
-          )}
+      {message && (
+        <div
+          className={`p-3 rounded-lg text-sm ${
+            message.includes('✓')
+              ? 'bg-green-500/10 text-green-700'
+              : 'bg-red-500/10 text-red-700'
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? 'Guardando...' : 'Guardar Cambios'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+        {isLoading ? 'Guardando...' : 'Guardar Cambios'}
+      </Button>
+    </form>
   )
 }

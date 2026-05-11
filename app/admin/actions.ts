@@ -63,6 +63,7 @@ export async function updateBookInfo(bookData: {
   author_name?: string | null
   cover_image_url?: string | null
   description?: string | null
+  video_url?: string | null
 }) {
   const supabase = await createClient()
 
@@ -76,6 +77,7 @@ export async function updateBookInfo(bookData: {
       author_name: bookData.author_name ?? null,
       cover_image_url: bookData.cover_image_url ?? null,
       description: bookData.description ?? null,
+      video_url: bookData.video_url ?? null,
       updated_at: new Date().toISOString(),
     }
     

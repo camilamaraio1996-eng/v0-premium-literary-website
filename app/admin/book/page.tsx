@@ -17,6 +17,7 @@ async function getBookInfo() {
     author_name: null,
     cover_image_url: null,
     description: null,
+    video_url: null,
   }
 }
 

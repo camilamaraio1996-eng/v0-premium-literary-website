@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { BookHero } from '@/components/book/book-hero'
+import { BookVideo } from '@/components/book/book-video'
 import { BookDetails } from '@/components/book/book-details'
 import { BookFragments } from '@/components/book/book-fragments'
 import { createClient } from '@/lib/supabase/server'
@@ -34,6 +35,7 @@ async function getBookInfo() {
     title: 'El Libro de los Sueños',
     cover_image_url: null,
     description: null,
+    video_url: null,
   }
 }
 
@@ -47,6 +49,7 @@ export default async function LibroPage() {
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
         <BookHero coverImage={book.cover_image_url} bookTitle={book.title} />
+        {book.video_url && <BookVideo videoUrl={book.video_url} />}
         <BookDetails description={book.description} />
         <BookFragments fragments={fragments} />
       </main>
