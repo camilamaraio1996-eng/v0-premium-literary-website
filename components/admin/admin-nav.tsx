@@ -5,12 +5,15 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FileText, BookOpen, Mail, Users, LogOut, Home, Heart } from 'lucide-react'
+import { Settings, LayoutDashboard, FileText, BookOpen, Mail, Users, LogOut, Home, Heart, FileJson } from 'lucide-react'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/settings', label: 'Configuración', icon: Settings },
+  { href: '/admin/book', label: 'Editar Libro', icon: BookOpen },
+  { href: '/admin/fragments-edit', label: 'Fragmentos', icon: FileText },
+  { href: '/admin/pages', label: 'Páginas', icon: FileJson },
   { href: '/admin/posts', label: 'Entradas', icon: FileText },
-  { href: '/admin/fragments', label: 'Fragmentos', icon: BookOpen },
   { href: '/admin/recommendations', label: 'Recomendaciones', icon: Heart },
   { href: '/admin/preorders', label: 'Reservas', icon: Users },
   { href: '/admin/messages', label: 'Mensajes', icon: Mail },

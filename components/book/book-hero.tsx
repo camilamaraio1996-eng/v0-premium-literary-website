@@ -1,14 +1,20 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
-export function BookHero() {
+interface BookHeroProps {
+  coverImage?: string | null
+  bookTitle?: string
+}
+
+export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños' }: BookHeroProps) {
   return (
     <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-          {/* Book cover mock */}
+          {/* Book cover */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -20,21 +26,32 @@ export function BookHero() {
               <div className="absolute inset-0 translate-x-2 translate-y-2 bg-primary/10 rounded-sm" />
 
               {/* Cover */}
-              <div className="relative bg-primary rounded-sm shadow-xl">
-                <div className="aspect-[2/3] flex flex-col items-center justify-center p-10 text-center">
-                  <div className="w-full h-px bg-primary-foreground/20 mb-10" />
-                  <span className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/60 mb-5">
-                    Novela
-                  </span>
-                  <h2 className="font-serif text-2xl lg:text-3xl text-primary-foreground leading-tight mb-5">
-                    El Libro de<br />los Sueños
-                  </h2>
-                  <div className="w-10 h-px bg-primary-foreground/40 mb-5" />
-                  <span className="text-xs text-primary-foreground/50 tracking-wider">
-                    Autora
-                  </span>
-                  <div className="w-full h-px bg-primary-foreground/20 mt-10" />
-                </div>
+              <div className="relative bg-primary rounded-sm shadow-xl overflow-hidden">
+                {coverImage ? (
+                  <div className="aspect-[2/3] relative">
+                    <Image
+                      src={coverImage}
+                      alt={bookTitle}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-[2/3] flex flex-col items-center justify-center p-10 text-center">
+                    <div className="w-full h-px bg-primary-foreground/20 mb-10" />
+                    <span className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/60 mb-5">
+                      Novela
+                    </span>
+                    <h2 className="font-serif text-2xl lg:text-3xl text-primary-foreground leading-tight mb-5">
+                      {bookTitle}
+                    </h2>
+                    <div className="w-10 h-px bg-primary-foreground/40 mb-5" />
+                    <span className="text-xs text-primary-foreground/50 tracking-wider">
+                      Autora
+                    </span>
+                    <div className="w-full h-px bg-primary-foreground/20 mt-10" />
+                  </div>
+                )}
               </div>
 
               {/* Pages effect */}
@@ -53,7 +70,7 @@ export function BookHero() {
               Una novela de sueños y memoria
             </span>
             <h1 className="font-serif text-4xl lg:text-5xl xl:text-6xl text-primary mb-6 leading-tight">
-              El Libro de los Sueños
+              {bookTitle}
             </h1>
             <div className="w-10 h-px bg-accent mb-7" />
             <p className="text-sm text-muted-foreground leading-relaxed mb-10 max-w-md">
@@ -66,7 +83,6 @@ export function BookHero() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
               {[
                 { label: 'Género', value: 'Ficción Literaria' },
-                { label: 'Páginas', value: '320' },
                 { label: 'Idioma', value: 'Español' },
                 { label: 'Publicación', value: 'Otoño 2026' },
               ].map(({ label, value }) => (

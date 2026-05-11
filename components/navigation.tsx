@@ -7,7 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const navLinks = [
+interface NavigationProps {
+  navItems?: Array<{ href: string; label: string }>
+  siteTitle?: string
+}
+
+const defaultNavLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/libro', label: 'El Libro' },
   { href: '/diario', label: 'Diario' },
@@ -16,7 +21,7 @@ const navLinks = [
   { href: '/contacto', label: 'Contacto' },
 ]
 
-export function Navigation() {
+export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro de los Sueños' }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -53,12 +58,12 @@ export function Navigation() {
               href="/" 
               className="font-serif text-xl tracking-wide text-primary hover:text-accent transition-colors"
             >
-              El Libro de los Sueños
+              {siteTitle}
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
+              {navItems.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -108,7 +113,7 @@ export function Navigation() {
               className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border flex flex-col justify-center px-12"
             >
               <div className="flex flex-col gap-6">
-                {navLinks.map((link, index) => (
+                {navItems.map((link, index) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, x: 20 }}
