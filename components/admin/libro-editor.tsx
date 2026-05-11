@@ -25,8 +25,9 @@ interface BookInfo {
 interface Fragment {
   id: string
   title: string
-  description?: string
-  content?: string
+  chapter_number?: number | null
+  description?: string | null
+  content: string
   sort_order: number
   published: boolean
 }
@@ -74,8 +75,6 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
               <BookHero
                 coverImage={formData.cover_image_url}
                 bookTitle={formData.title}
-                buyUrl={formData.subtitle ? 'https://tienda.ejemplo.com' : null}
-                buyLabel="Comprar Ahora"
               />
 
               {formData.video_url && (
@@ -90,7 +89,7 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
                 </div>
               )}
 
-              {fragments.length > 0 && (
+              {fragments && fragments.length > 0 && (
                 <div className="border-t py-16">
                   <BookFragments fragments={fragments} />
                 </div>

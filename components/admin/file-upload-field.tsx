@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Upload, X, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,7 +28,7 @@ export function FileUploadField({
   const [isUploading, setIsUploading] = useState(false)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -56,7 +56,6 @@ export function FileUploadField({
       onChange(data.url)
     } catch (err: any) {
       setError(err.message || 'Error desconocido')
-      console.error('[v0] Upload error:', err)
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
