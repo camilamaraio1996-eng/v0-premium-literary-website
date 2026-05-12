@@ -113,7 +113,7 @@ export const BookFragments = memo(function BookFragments({ fragments }: BookFrag
             Un libro de relatos
           </span>
           <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block">
-            Primeras Páginas
+            Frangmentos
           </span>
         </motion.div>
 
