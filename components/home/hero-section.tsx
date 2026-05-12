@@ -38,7 +38,7 @@ function getEmbedUrl(url: string): string | null {
 
 export function HeroSection({
   title = 'El Libro de los Sueños',
-  eyebrow = 'Una novela de',
+  eyebrow = '',
   description = 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.',
   imageUrl = null,
   imageAlt = '',
@@ -61,14 +61,16 @@ export function HeroSection({
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        <motion.span
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="inline-block text-xs uppercase tracking-[0.35em] text-[#958568] mb-10"
-        >
-          {eyebrow}
-        </motion.span>
+        {eyebrow && (
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="inline-block text-xs uppercase tracking-[0.35em] text-[#958568] mb-10"
+          >
+            {eyebrow}
+          </motion.span>
+        )}
 
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
