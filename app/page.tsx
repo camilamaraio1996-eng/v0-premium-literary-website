@@ -13,9 +13,9 @@ export default async function HomePage() {
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main>
         <HeroSection
-          eyebrow={settings['hero_eyebrow'] || 'Una novela de'}
+          eyebrow={settings['hero_eyebrow'] || 'Editorial Orsai'}
           title={settings['hero_title'] || 'Lo real y lo otro'}
-          description={settings['hero_description'] || 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.'}
+          description={settings['hero_description'] || 'Un libro de relatos cortos, realistas. '}
           imageUrl={settings['home_hero_image_url'] || null}
           imageAlt={settings['home_hero_image_alt'] || ''}
           ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrí el libro'}
