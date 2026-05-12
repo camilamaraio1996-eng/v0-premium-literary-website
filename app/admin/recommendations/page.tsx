@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AdminNav } from '@/components/admin/admin-nav'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -80,23 +80,17 @@ export default async function AdminRecommendationsPage() {
                       {format(new Date(rec.created_at), 'd MMM yyyy', { locale: es })}
                     </TableCell>
                     <TableCell className="text-right">
-                      <form
-                        action={async () => {
-                          'use server'
-                          await deleteRecommendation(rec.id)
-                        }}
-                        className="inline"
-                      >
+                      <form action={deleteRecommendation} className="inline">
+                        <input type="hidden" name="id" value={rec.id} />
                         <button
                           type="submit"
-                          className="text-red-600 hover:text-red-700 text-sm font-medium inline-flex items-center gap-1"
+                          className="text-red-600 hover:text-red-700 text-sm font-medium"
                           onClick={(e) => {
                             if (!confirm('¿Eliminar esta recomendación?')) {
                               e.preventDefault()
                             }
                           }}
                         >
-                          <Trash2 className="w-4 h-4" />
                           Eliminar
                         </button>
                       </form>

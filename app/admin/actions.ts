@@ -225,14 +225,21 @@ export async function deleteFragment(fragmentId: string) {
   }
 }
 
-export async function deleteRecommendation(recommendationId: string) {
+export async function deleteRecommendation(formData: FormData) {
+  'use server'
+  
+  const id = formData.get('id') as string
+  if (!id) {
+    return { success: false, message: 'ID no proporcionado' }
+  }
+
   const supabase = await createClient()
 
   try {
     const { error } = await supabase
       .from('recommendations')
       .delete()
-      .eq('id', recommendationId)
+      .eq('id', id)
 
     if (error) throw error
 
