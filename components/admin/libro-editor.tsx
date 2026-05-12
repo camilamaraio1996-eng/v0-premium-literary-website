@@ -131,9 +131,12 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
           <CardContent className="space-y-6">
             <FileUploadField
               label="Imagen de Portada"
-              type="image"
+              bucketName="book-images"
               value={formData.cover_image_url || ''}
               onChange={(url) => setFormData({ ...formData, cover_image_url: url })}
+              accept="image/jpeg,image/png,image/webp"
+              maxSize={5 * 1024 * 1024}
+              helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB."
             />
 
             <div>
@@ -218,9 +221,12 @@ export function LibroEditor({ book, fragments }: LibroEditorProps) {
           <CardContent className="space-y-6">
             <FileUploadField
               label="URL o Archivo de Video"
-              type="video"
+              bucketName="book-videos"
               value={formData.video_url || ''}
               onChange={(url) => setFormData({ ...formData, video_url: url })}
+              accept="video/mp4,video/webm,video/ogg"
+              maxSize={50 * 1024 * 1024}
+              helpText="Sube un video MP4, WebM u OGG. Máximo 50MB."
             />
           </CardContent>
         </Card>

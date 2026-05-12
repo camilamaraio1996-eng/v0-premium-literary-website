@@ -104,9 +104,9 @@ export default function NewPostPage() {
         <div>
           <FileUploadField
             label="Imagen de la Entrada"
+            bucketName="blog-images"
             value={imageUrl}
             onChange={setImageUrl}
-            fileType="image"
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
             helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. Puedes también pegar una URL directamente en el campo de texto."
