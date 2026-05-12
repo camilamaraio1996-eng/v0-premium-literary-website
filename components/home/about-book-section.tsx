@@ -50,55 +50,23 @@ export function AboutBookSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-12"
           >
-            {/* Section 1: Así comenzó */}
-            <div>
-              <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
-                Editorial Orsai
-              </span>
-              <h2 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-tight">
-                Así comenzó
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  A través de historias reales, el libro busca una conexión con el lector. Que este pueda encontrarse en las páginas, hundirse en ellas hasta hacerlas propias.
-                </p>
-                <p>
-                  Es una exploración íntima de los vínculos, los sueños, el inconsciente. Cada relato aborda una temática diferente de la vida. Algunos lo hacen en un tono humorístico, mientras que otros se vuelven sombríos.
-                </p>
-              </div>
-            </div>
-
-            {/* Section 2: El mensaje */}
-            <div>
-              <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
-                editorial orsai
-              </span>
-              <h2 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-tight">
-                El mensaje
-              </h2>
-            </div>
-
-            {/* Section 3: Lo que hay detrás */}
-            <div>
-              <h2 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-tight">
-                Lo que hay detrás
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  A través de historias reales, el libro busca una conexión con el lector. Que este pueda encontrarse en las páginas, hundirse en ellas hasta hacerlas propias.
-                </p>
-                <p>
-                  Es una exploración íntima de los vínculos, los sueños, el inconsciente. Cada relato aborda una temática diferente de la vida. Algunos lo hacen en un tono humorístico, mientras que otros se vuelven sombríos.
-                </p>
-                <p>
-                  Son historias de vida, consecuencias unas de las otras.
-                </p>
-              </div>
+            <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
+              Lo real y lo otro - editorial orsai
+            </span>
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                A través de historias reales, el libro busca una conexión con el lector. Que este pueda encontrarse en las páginas, hundirse en ellas hasta hacerlas propias.
+              </p>
+              <p>
+                Es una exploración íntima de los vínculos, los sueños, el inconsciente. Cada relato aborda una temática diferente de la vida. Algunos lo hacen en un tono humorístico, mientras que otros se vuelven sombríos.
+              </p>
+              <p>
+                Son historias de vida, consecuencias unas de las otras.
+              </p>
             </div>
             
-            <div className="mt-8 flex flex-wrap gap-4 pt-4">
+            <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild variant="outline">
                 <Link href="/libro">
                   Descubrir Más
