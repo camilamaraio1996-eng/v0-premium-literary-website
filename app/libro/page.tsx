@@ -56,8 +56,8 @@ export default async function LibroPage() {
           buyUrl={settings['book_buy_url'] || null}
           buyLabel={settings['book_buy_label'] || 'Comprar Ahora'}
         />
-        <PremiumYoutubePlayer />
         <BookFragments fragments={fragments} />
+        <PremiumYoutubePlayer />
       </main>
       <Footer />
     </>
