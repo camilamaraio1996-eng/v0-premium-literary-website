@@ -23,13 +23,13 @@ export function AboutBookSection() {
               <div className="absolute inset-0 bg-accent/20 blur-3xl transform translate-y-12 scale-90 -z-10" />
               
               {/* Book cover image */}
-              <div className="relative shadow-2xl">
+              <div className="relative">
                 <Image
                   src="/images/book-cover.jpg"
                   alt="Lo real y lo otro - Book Cover"
                   width={400}
                   height={600}
-                  className="w-full h-auto rounded-sm"
+                  className="w-full h-auto"
                   priority
                 />
               </div>
