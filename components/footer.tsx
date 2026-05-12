@@ -31,10 +31,10 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-secondary/20">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 gap-12">
 
           {/* Brand + newsletter */}
-          <div className="md:col-span-2">
+          <div>
             <h3 className="font-serif text-xl text-primary mb-3">
               Lo real y lo otro
             </h3>
@@ -65,38 +65,10 @@ export function Footer() {
               </p>
             )}
           </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-5">
-              Páginas
-            </h4>
-            <ul className="space-y-3">
-              {[
-                { href: '/', label: 'Inicio' },
-                { href: '/libro', label: 'El Libro' },
-                { href: '/diario', label: 'Blog' },
-                { href: '/autor', label: 'Autora' },
-                { href: '/contacto', label: 'Contacto' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        <div className="mt-14 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} El Libro de los Sueños. Todos los derechos reservados.
-          </p>
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-14 pt-8 border-t border-border">
+          <p className="text-xs text-muted-foreground text-center">
             Camila Maraio
           </p>
         </div>
