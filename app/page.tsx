@@ -13,7 +13,7 @@ export default async function HomePage() {
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main>
         <HeroSection
-          eyebrow={settings['hero_eyebrow'] || 'Editorial Orsai'}
+          eyebrow={settings['hero_eyebrow'] || ''}
           title={settings['hero_title'] || 'Lo real y lo otro'}
           description={settings['hero_description'] || 'Un libro de relatos cortos, realistas. '}
           imageUrl={settings['home_hero_image_url'] || null}
