@@ -5,6 +5,8 @@ import { Upload, X, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
+import { v4 as uuidv4 } from 'uuid'
 
 interface FileUploadFieldProps {
   label: string
@@ -28,6 +30,7 @@ export function FileUploadField({
   const [isUploading, setIsUploading] = useState(false)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,29 +39,74 @@ export function FileUploadField({
 
     setIsUploading(true)
     setError('')
+    setUploadProgress(0)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('type', type)
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Error al subir archivo')
+      // Validar tamaño
+      const maxSize = type === 'image' ? 5 * 1024 * 1024 : 50 * 1024 * 1024 // 5MB para imágenes, 50MB para videos
+      if (file.size > maxSize) {
+        throw new Error(`Archivo debe ser menor a ${maxSize / 1024 / 1024}MB`)
       }
 
-      const data = await response.json()
-      onChange(data.url)
+      // Validar tipo
+      if (type === 'image' && !file.type.startsWith('image/')) {
+        throw new Error('Por favor sube una imagen válida')
+      }
+      if (type === 'video' && !file.type.startsWith('video/')) {
+        throw new Error('Por favor sube un video válido')
+      }
+
+      const supabase = createClient()
+
+      // Crear nombre único
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${type}-${uuidv4()}.${fileExt}`
+      const bucketName = type === 'image' ? 'book-images' : 'book-videos'
+
+      console.log('[v0] Subiendo a Supabase Storage:', { bucket: bucketName, file: fileName, size: file.size })
+
+      // Subir a Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (uploadError) {
+        console.error('[v0] Error de upload:', uploadError)
+        throw new Error(uploadError.message || 'Error al subir archivo')
+      }
+
+      console.log('[v0] Upload exitoso:', data)
+      setUploadProgress(100)
+
+      // Obtener URL pública
+      const { data: publicUrlData } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(fileName)
+
+      const publicUrl = publicUrlData.publicUrl
+
+      if (!publicUrl) {
+        throw new Error('No se pudo generar la URL pública')
+      }
+
+      console.log('[v0] URL pública:', publicUrl)
+
+      // Llamar onChange con la nueva URL
+      onChange(publicUrl)
+
+      // Limpiar input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (err: any) {
+      console.error('[v0] Error:', err)
       setError(err.message || 'Error desconocido')
     } finally {
       setIsUploading(false)
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      setUploadProgress(0)
     }
   }
 
@@ -130,37 +178,56 @@ export function FileUploadField({
           className="gap-2 w-full"
         >
           <Upload className="w-4 h-4" />
-          {isUploading ? 'Subiendo...' : `Subir ${type === 'image' ? 'Imagen' : 'Video'}`}
+          {isUploading ? `Subiendo ${uploadProgress}%...` : `Subir ${type === 'image' ? 'Imagen' : 'Video'}`}
         </Button>
       </div>
+
+      {/* Progress Bar */}
+      {isUploading && uploadProgress > 0 && (
+        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary transition-all duration-300"
+            style={{ width: `${uploadProgress}%` }}
+          />
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="p-3 bg-red-500/10 text-red-700 text-sm rounded-lg border border-red-200">
+          <p className="font-medium">Error al subir:</p>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* Success Message */}
+      {!isUploading && !error && value && (
+        <div className="p-3 bg-green-500/10 text-green-700 text-sm rounded-lg border border-green-200">
+          ✓ {type === 'image' ? 'Imagen' : 'Video'} cargado exitosamente
+        </div>
+      )}
 
       {/* Preview */}
       {value && (
         <div className="mt-4">
           <p className="text-xs font-medium mb-2">Vista previa:</p>
           {type === 'image' ? (
-            <div className="relative w-full max-h-64 bg-muted rounded-lg overflow-hidden">
+            <div className="relative w-full max-h-64 bg-muted rounded-lg overflow-hidden border border-border">
               <Image
                 src={value}
                 alt="Preview"
                 fill
                 className="object-cover"
-                crossOrigin="anonymous"
+                unoptimized
               />
             </div>
           ) : (
             <video
               src={value}
               controls
-              className="w-full max-h-64 bg-muted rounded-lg"
+              className="w-full max-h-64 bg-muted rounded-lg border border-border"
             />
           )}
-        </div>
-      )}
-
-      {error && (
-        <div className="p-3 bg-red-500/10 text-red-700 text-sm rounded-lg">
-          {error}
         </div>
       )}
     </div>
