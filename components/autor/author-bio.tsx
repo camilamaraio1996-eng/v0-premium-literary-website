@@ -13,28 +13,12 @@ export function AuthorBio() {
           transition={{ duration: 0.6 }}
           className="prose-literary"
         >
-          <h2 className="font-serif text-3xl text-primary mb-8 text-center">
-            Sobre el Proceso
-          </h2>
-          
           <div className="space-y-6 text-muted-foreground leading-relaxed">
             <p>
               La escritura de <em>El Libro de los Sueños</em> comenzó, como muchas 
               cosas importantes, de manera accidental. Un cuaderno junto a la cama, 
               la costumbre de anotar los sueños al despertar, y la gradual comprensión 
               de que esos fragmentos nocturnos contenían algo que merecía ser explorado.
-            </p>
-            
-            <p>
-              El proceso tomó varios años. No fueron años de escritura continua, sino 
-              de espera, de observación, de dejar que las historias maduraran en 
-              silencio antes de intentar capturarlas con palabras.
-            </p>
-            
-            <p>
-              Esta novela es el resultado de ese proceso: una meditación sobre la 
-              naturaleza de la memoria, la identidad y los mundos que construimos 
-              cada noche cuando cerramos los ojos.
             </p>
           </div>
         </motion.div>
@@ -54,16 +38,16 @@ export function AuthorBio() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: 'Borges',
-                description: 'La arquitectura de los laberintos y la exploración del infinito.',
+                name: 'm. enriquez',
+                description: 'Un lugar soleado para gente sombría',
               },
               {
-                name: 'Cortázar',
-                description: 'El juego con la realidad y las puertas entre mundos.',
+                name: 'N Ephron',
+                description: 'No me gusta mi cuello',
               },
               {
-                name: 'Rulfo',
-                description: 'Los murmullos, las voces que hablan desde otro lugar.',
+                name: 'K. O. KNAUSGARD',
+                description: 'La isla de la infancia',
               },
             ].map((influence) => (
               <div 
