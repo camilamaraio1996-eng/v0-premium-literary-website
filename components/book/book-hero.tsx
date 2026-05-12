@@ -26,11 +26,8 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
             className="order-2 lg:order-1"
           >
             <div className="relative mx-auto w-64 lg:w-80">
-              {/* Shadow */}
-              <div className="absolute inset-0 translate-x-2 translate-y-2 bg-primary/10 rounded-sm" />
-
               {/* Cover */}
-              <div className="relative bg-transparent rounded-sm shadow-xl overflow-hidden">
+              <div className="relative bg-transparent overflow-hidden">
                 {coverImage ? (
                   <div className="aspect-[2/3] relative">
                     <Image
