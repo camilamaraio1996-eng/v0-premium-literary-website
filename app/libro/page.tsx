@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { BookHero } from '@/components/book/book-hero'
-import { BookVideo } from '@/components/book/book-video'
+import { PremiumYoutubePlayer } from '@/components/book/premium-youtube-player'
 import { BookFragments } from '@/components/book/book-fragments'
 import { createClient } from '@/lib/supabase/server'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
@@ -56,7 +56,7 @@ export default async function LibroPage() {
           buyUrl={settings['book_buy_url'] || null}
           buyLabel={settings['book_buy_label'] || 'Comprar Ahora'}
         />
-        {book.video_url && <BookVideo videoUrl={book.video_url} />}
+        <PremiumYoutubePlayer />
         <BookFragments fragments={fragments} />
       </main>
       <Footer />
