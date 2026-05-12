@@ -52,7 +52,7 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro d
           )}
       >
         <nav className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between pt-6 pb-4">
             {/* Logo */}
             <Link 
               href="/" 
