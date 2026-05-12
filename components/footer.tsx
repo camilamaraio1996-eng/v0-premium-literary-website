@@ -36,11 +36,10 @@ export function Footer() {
           {/* Brand + newsletter */}
           <div className="md:col-span-2">
             <h3 className="font-serif text-xl text-primary mb-3">
-              El Libro de los Sueños
+              Lo real y lo otro
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md mb-7">
-              Una novela sobre los sueños, la memoria y las emociones. 
-              Suscríbete para recibir novedades.
+              Editorial Orsai
             </p>
             <form onSubmit={handleSubscribe} className="flex gap-2 max-w-sm">
               <Input
