@@ -2,7 +2,6 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { v4 as uuidv4 } from 'uuid'
 
 export async function updateSiteSettings(settings: Record<string, string>) {
   const supabase = await createClient()
@@ -226,84 +225,4 @@ export async function deleteFragment(fragmentId: string) {
   }
 }
 
-export async function uploadFile(
-  file: File,
-  bucketName: 'book-images' | 'book-videos' | 'blog-images'
-) {
-  const supabase = await createClient()
-
-  try {
-    // Validate file size
-    const maxSize = bucketName === 'book-videos' ? 50 * 1024 * 1024 : 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      return {
-        success: false,
-        message: `El archivo debe ser menor a ${maxSize / 1024 / 1024}MB`,
-      }
-    }
-
-    // Validate file type
-    const isImage = bucketName !== 'book-videos'
-    if (isImage && !file.type.startsWith('image/')) {
-      return { success: false, message: 'Por favor sube una imagen válida' }
-    }
-    if (!isImage && !file.type.startsWith('video/')) {
-      return { success: false, message: 'Por favor sube un video válido' }
-    }
-
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${bucketName}-${uuidv4()}.${fileExt}`
-
-    console.log('[v0] Uploading file to Supabase:', {
-      bucket: bucketName,
-      fileName,
-      size: file.size,
-      type: file.type,
-    })
-
-    // Convert File to Buffer for server upload
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-
-    // Upload to Supabase Storage
-    const { data, error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(fileName, buffer, {
-        contentType: file.type,
-        cacheControl: '3600',
-        upsert: false,
-      })
-
-    if (uploadError) {
-      console.error('[v0] Supabase upload error:', uploadError)
-      return {
-        success: false,
-        message: uploadError.message || 'Error al subir el archivo',
-      }
-    }
-
-    console.log('[v0] File uploaded successfully:', data)
-
-    // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(fileName)
-
-    const publicUrl = publicUrlData.publicUrl
-
-    if (!publicUrl) {
-      return { success: false, message: 'No se pudo generar la URL pública' }
-    }
-
-    console.log('[v0] Public URL generated:', publicUrl)
-
-    return { success: true, url: publicUrl }
-  } catch (error: any) {
-    console.error('[v0] Upload error:', error)
-    return {
-      success: false,
-      message: error.message || 'Error desconocido al subir el archivo',
-    }
-  }
 }
