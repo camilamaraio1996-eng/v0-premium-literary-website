@@ -53,10 +53,13 @@ export function AuthorHero() {
               y la imaginación se entrelazan. <em>El Libro de los Sueños</em> es 
               su primera novela publicada, aunque no la primera que ha escrito.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              &ldquo;Escribo porque hay cosas que solo pueden decirse en la 
-              frontera entre el sueño y la vigilia, en ese espacio donde las 
-              palabras todavía no han aprendido a mentir.&rdquo;
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+              {`Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante. 
+
+Participó de distintos talleres literarios y escribe a diario. 
+Encuentra su pasión en relatar hechos de la vida cotidiana a través del humor y la sensibilidad. 
+
+En el 2026 saca su primer libro de relatos "Lo real y lo otro" de la mano de la editorial Orsai.`}
             </p>
           </motion.div>
         </div>
