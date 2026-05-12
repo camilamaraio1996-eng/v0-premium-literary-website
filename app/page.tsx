@@ -15,7 +15,7 @@ export default async function HomePage() {
       <main>
         <HeroSection
           eyebrow={settings['hero_eyebrow'] || 'Una novela de'}
-          title={settings['hero_title'] || siteTitle}
+          title={settings['hero_title'] || 'Lo real y lo otro'}
           description={settings['hero_description'] || 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.'}
           imageUrl={settings['home_hero_image_url'] || null}
           imageAlt={settings['home_hero_image_alt'] || ''}
