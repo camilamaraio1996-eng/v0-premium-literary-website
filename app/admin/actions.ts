@@ -224,3 +224,25 @@ export async function deleteFragment(fragmentId: string) {
     return { success: false, message: error.message }
   }
 }
+
+export async function deleteRecommendation(recommendationId: string) {
+  const supabase = await createClient()
+
+  try {
+    const { error } = await supabase
+      .from('recommendations')
+      .delete()
+      .eq('id', recommendationId)
+
+    if (error) throw error
+
+    revalidatePath('/admin/recommendations')
+    revalidatePath('/recomendaciones')
+    revalidateTag('recommendations', 'max')
+
+    return { success: true, message: 'Recomendación eliminada correctamente' }
+  } catch (error: any) {
+    console.error('[v0] Error deleting recommendation:', error)
+    return { success: false, message: error.message }
+  }
+}

@@ -1,9 +1,8 @@
 'use client'
 
-import { redirect } from 'next/navigation'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { AdminNav } from '@/components/admin/admin-nav'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +11,7 @@ import Link from 'next/link'
 import { Loader2, ChevronLeft } from 'lucide-react'
 
 export default function NewRecommendationPage() {
+  const router = useRouter()
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [description, setDescription] = useState('')
@@ -40,7 +40,7 @@ export default function NewRecommendationPage() {
 
       if (err) throw err
 
-      redirect('/admin/recommendations')
+      router.push('/admin/recommendations')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al crear')
       setLoading(false)

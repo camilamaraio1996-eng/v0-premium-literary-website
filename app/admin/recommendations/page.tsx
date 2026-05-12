@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AdminNav } from '@/components/admin/admin-nav'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -15,6 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { deleteRecommendation } from '@/app/admin/actions'
 
 async function getRecommendations() {
   const supabase = await createClient()
@@ -34,12 +35,6 @@ export default async function AdminRecommendationsPage() {
   }
   
   const recommendations = await getRecommendations()
-  
-  async function deleteRecommendation(id: string) {
-    'use server'
-    const supabase = await createClient()
-    await supabase.from('recommendations').delete().eq('id', id)
-  }
   
   return (
     <div className="min-h-screen bg-background">
@@ -85,14 +80,26 @@ export default async function AdminRecommendationsPage() {
                       {format(new Date(rec.created_at), 'd MMM yyyy', { locale: es })}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteRecommendation(rec.id)}
-                        className="text-red-600 hover:text-red-700"
+                      <form
+                        action={async () => {
+                          'use server'
+                          await deleteRecommendation(rec.id)
+                        }}
+                        className="inline"
                       >
-                        Eliminar
-                      </Button>
+                        <button
+                          type="submit"
+                          className="text-red-600 hover:text-red-700 text-sm font-medium inline-flex items-center gap-1"
+                          onClick={(e) => {
+                            if (!confirm('¿Eliminar esta recomendación?')) {
+                              e.preventDefault()
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Eliminar
+                        </button>
+                      </form>
                     </TableCell>
                   </TableRow>
                 ))}
