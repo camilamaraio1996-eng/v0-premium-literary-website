@@ -67,24 +67,22 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
             className="order-1 lg:order-2"
           >
             <span className="text-xs uppercase tracking-[0.25em] text-[#958568] mb-5 block">
-              Una novela de sueños y memoria
+              un libro de relatos
             </span>
-            <h1 className="font-serif text-4xl lg:text-5xl xl:text-6xl text-primary mb-6 leading-tight">
+            <h1 className="font-serif text-3xl lg:text-3xl xl:text-3xl text-primary mb-6 leading-tight">
               {bookTitle}
             </h1>
             <div className="w-10 h-px bg-accent mb-7" />
             <p className="text-sm text-muted-foreground leading-relaxed mb-10 max-w-md">
-              Una exploración íntima de los territorios donde la vigilia y el 
-              sueño se entrelazan, donde los recuerdos mutan y las emociones 
-              encuentran su forma más pura.
+              Explora los distintos universos.
             </p>
 
             {/* Meta */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs mb-10">
               {[
-                { label: 'Género', value: 'Ficción Literaria' },
+                { label: 'Género', value: 'Realismo Mágico' },
                 { label: 'Idioma', value: 'Español' },
-                { label: 'Publicación', value: 'Otoño 2026' },
+                { label: 'Publicación', value: 'Junio 2026' },
               ].map(({ label, value }) => (
                 <div key={label}>
                   <span className="block uppercase tracking-[0.15em] text-muted-foreground mb-1">
