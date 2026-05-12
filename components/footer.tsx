@@ -97,7 +97,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} El Libro de los Sueños. Todos los derechos reservados.
           </p>
           <p className="text-xs text-muted-foreground">
-            Hecho con pasión por las palabras
+            Camila Maraio
           </p>
         </div>
       </div>
