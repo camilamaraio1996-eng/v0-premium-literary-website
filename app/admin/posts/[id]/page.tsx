@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader } from 'lucide-react'
 import { FileUploadField } from '@/components/admin/file-upload-field'
 
 function generateSlug(title: string): string {
@@ -21,7 +21,24 @@ function generateSlug(title: string): string {
     .replace(/^-|-$/g, '')
 }
 
-export default function NewPostPage() {
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  content: string
+  excerpt: string | null
+  image_url: string | null
+  category: string
+  reading_time: number
+  published: boolean
+  created_at: string
+  updated_at: string
+}
+
+export default function EditPostPage() {
+  const params = useParams()
+  const postId = params.id as string
+  const [post, setPost] = useState<BlogPost | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [excerpt, setExcerpt] = useState('')
@@ -29,39 +46,98 @@ export default function NewPostPage() {
   const [category, setCategory] = useState('reflexion')
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  
+  useEffect(() => {
+    const fetchPost = async () => {
+      const supabase = createClient()
+      const { data, error: fetchError } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', postId)
+        .single()
+      
+      if (fetchError || !data) {
+        setError('No se encontró la entrada')
+        setLoading(false)
+        return
+      }
+      
+      setPost(data as BlogPost)
+      setTitle(data.title)
+      setContent(data.content)
+      setExcerpt(data.excerpt || '')
+      setImageUrl(data.image_url || '')
+      setCategory(data.category)
+      setReadingTime(data.reading_time)
+      setPublished(data.published)
+      setLoading(false)
+    }
+    
+    fetchPost()
+  }, [postId])
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+    setSaving(true)
     
-    const supabase = createClient()
-    const slug = generateSlug(title)
-    
-    const { error: insertError } = await supabase
-      .from('blog_posts')
-      .insert({
-        title,
-        slug,
-        content,
-        excerpt: excerpt || null,
-        image_url: imageUrl || null,
-        category,
-        reading_time: readingTime,
-        published,
-      })
-    
-    if (insertError) {
-      setError(insertError.message)
-      setLoading(false)
-      return
+    try {
+      const supabase = createClient()
+      const newSlug = generateSlug(title)
+      
+      const { error: updateError } = await supabase
+        .from('blog_posts')
+        .update({
+          title,
+          slug: newSlug,
+          content,
+          excerpt: excerpt || null,
+          image_url: imageUrl || null,
+          category,
+          reading_time: readingTime,
+          published,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', postId)
+      
+      if (updateError) {
+        setError(updateError.message)
+        setSaving(false)
+        return
+      }
+      
+      router.push('/admin/posts')
+      router.refresh()
+    } catch (err: any) {
+      setError(err.message || 'Error desconocido')
+      setSaving(false)
     }
-    
-    router.push('/admin/posts')
-    router.refresh()
+  }
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader className="w-6 h-6 animate-spin" />
+      </div>
+    )
+  }
+  
+  if (error && !post) {
+    return (
+      <div>
+        <Button asChild variant="ghost" size="sm" className="mb-4">
+          <Link href="/admin/posts">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Link>
+        </Button>
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
+    )
   }
   
   return (
@@ -73,7 +149,7 @@ export default function NewPostPage() {
             Volver
           </Link>
         </Button>
-        <h1 className="font-serif text-3xl text-primary">Nueva Entrada</h1>
+        <h1 className="font-serif text-3xl text-primary">Editar Entrada</h1>
       </div>
       
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
@@ -160,7 +236,7 @@ export default function NewPostPage() {
             checked={published}
             onCheckedChange={setPublished}
           />
-          <Label htmlFor="published">Publicar inmediatamente</Label>
+          <Label htmlFor="published">Publicar</Label>
         </div>
         
         {error && (
@@ -168,8 +244,8 @@ export default function NewPostPage() {
         )}
         
         <div className="flex gap-4">
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar Entrada'}
+          <Button type="submit" disabled={saving}>
+            {saving ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/posts">Cancelar</Link>
