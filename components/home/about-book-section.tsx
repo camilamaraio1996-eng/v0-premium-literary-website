@@ -51,7 +51,7 @@ export function AboutBookSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
+            <span className="text-sm uppercase tracking-[0.2em] text-primary mb-4 block">
               Lo real y lo otro - editorial orsai
             </span>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
