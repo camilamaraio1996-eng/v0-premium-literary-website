@@ -229,27 +229,43 @@ export async function deleteRecommendation(formData: FormData) {
   'use server'
   
   const id = formData.get('id') as string
-  if (!id) {
-    return { success: false, message: 'ID no proporcionado' }
+  
+  console.log('[v0-admin-action] Delete recommendation requested, id:', id)
+  
+  if (!id || typeof id !== 'string') {
+    console.error('[v0-admin-action] Invalid ID provided')
+    throw new Error('ID no proporcionado o inválido')
   }
 
-  const supabase = await createClient()
-
   try {
+    const supabase = await createClient()
+
+    console.log('[v0-admin-action] Supabase client created, deleting from recommendations...')
+
     const { error } = await supabase
       .from('recommendations')
       .delete()
       .eq('id', id)
 
-    if (error) throw error
+    if (error) {
+      console.error('[v0-admin-action] Supabase delete error:', error)
+      throw error
+    }
+
+    console.log('[v0-admin-action] Delete successful, revalidating paths...')
 
     revalidatePath('/admin/recommendations')
     revalidatePath('/recomendaciones')
     revalidateTag('recommendations', 'max')
 
-    return { success: true, message: 'Recomendación eliminada correctamente' }
+    console.log('[v0-admin-action] Revalidation complete')
   } catch (error: any) {
-    console.error('[v0] Error deleting recommendation:', error)
-    return { success: false, message: error.message }
+    console.error('[v0-admin-action] Error in deleteRecommendation:', {
+      message: error?.message,
+      code: error?.code,
+      details: error?.details,
+      id,
+    })
+    throw error
   }
 }

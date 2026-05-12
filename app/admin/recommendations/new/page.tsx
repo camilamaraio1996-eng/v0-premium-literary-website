@@ -21,8 +21,9 @@ export default function NewRecommendationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
     if (!title.trim() || !description.trim()) {
-      setError('Completa los campos requeridos')
+      setError('Por favor completa los campos requeridos (Título y Descripción)')
       return
     }
 
@@ -30,19 +31,41 @@ export default function NewRecommendationPage() {
     setError('')
 
     try {
+      console.log('[v0-admin] Creating new recommendation...')
+      
       const supabase = createClient()
-      const { error: err } = await supabase.from('recommendations').insert({
-        title,
-        author: author || null,
-        description,
-        image_url: imageUrl || null,
-      })
+      
+      const payload = {
+        title: title.trim(),
+        author: author?.trim() || null,
+        description: description.trim(),
+        image_url: imageUrl?.trim() || null,
+        published: false,
+        created_at: new Date().toISOString(),
+      }
 
-      if (err) throw err
+      console.log('[v0-admin] Insert payload:', payload)
 
+      const { data, error: err } = await supabase
+        .from('recommendations')
+        .insert([payload])
+        .select()
+
+      if (err) {
+        console.error('[v0-admin] Insert error:', err)
+        throw new Error(err.message)
+      }
+
+      console.log('[v0-admin] Insert successful:', data)
+
+      // Esperar un momento para que se replique
+      await new Promise(r => setTimeout(r, 500))
+      
       router.push('/admin/recommendations')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear')
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido al crear la recomendación'
+      console.error('[v0-admin] Create error:', errorMessage)
+      setError(errorMessage)
       setLoading(false)
     }
   }
