@@ -123,9 +123,11 @@ export default function InicioEditor({ settings }: InicioEditorProps) {
 
             <FileUploadField
               label="Imagen del Hero"
-              type="image"
+              bucketName="book-images"
               value={formData['home_hero_image_url'] || ''}
               onChange={(url) => setFormData({ ...formData, 'home_hero_image_url': url })}
+              accept="image/jpeg,image/png,image/webp"
+              maxSize={5 * 1024 * 1024}
             />
 
             <div>
@@ -204,9 +206,11 @@ export default function InicioEditor({ settings }: InicioEditorProps) {
 
             <FileUploadField
               label="URL o Archivo del Video"
-              type="video"
+              bucketName="book-videos"
               value={formData['home_video_url'] || ''}
               onChange={(url) => setFormData({ ...formData, 'home_video_url': url })}
+              accept="video/mp4,video/webm,video/ogg"
+              maxSize={50 * 1024 * 1024}
             />
           </CardContent>
         </Card>

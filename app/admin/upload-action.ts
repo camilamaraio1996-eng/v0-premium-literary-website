@@ -87,7 +87,6 @@ export async function uploadFileAction(
       console.error('[v0 UPLOAD] Supabase upload failed:', {
         error: uploadError.message,
         status: uploadError.status,
-        code: uploadError.code,
       })
       return {
         success: false,

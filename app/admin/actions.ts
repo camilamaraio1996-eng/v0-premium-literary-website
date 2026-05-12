@@ -45,8 +45,8 @@ export async function updateSiteSettings(settings: Record<string, string>) {
     console.log('[v0] All settings updated. Revalidating cache...')
     // Revalidate all pages that use navigation
     revalidatePath('/', 'layout')
-    revalidateTag('site-settings')
-    revalidateTag('navigation')
+    revalidateTag('site-settings', 'max')
+    revalidateTag('navigation', 'max')
 
     return { success: true, message: 'Configuración actualizada correctamente' }
   } catch (error: any) {
@@ -110,7 +110,7 @@ export async function updateBookInfo(bookData: {
     console.log('[v0] Book updated successfully:', data)
 
     revalidatePath('/libro')
-    revalidateTag('book-info')
+    revalidateTag('book-info', 'max')
 
     return { success: true, message: 'Libro actualizado correctamente' }
   } catch (error: any) {
@@ -147,7 +147,7 @@ export async function createFragment() {
     if (error) throw error
 
     revalidatePath('/libro')
-    revalidateTag('book-fragments')
+    revalidateTag('book-fragments', 'max')
 
     return { success: true, message: 'Fragmento creado', fragment: data }
   } catch (error: any) {
@@ -194,7 +194,7 @@ export async function updateFragments(fragments: any[]) {
 
     console.log('[v0] All fragments updated. Revalidating cache...')
     revalidatePath('/libro')
-    revalidateTag('book-fragments')
+    revalidateTag('book-fragments', 'max')
 
     return { success: true, message: 'Fragmentos actualizados correctamente' }
   } catch (error: any) {
@@ -216,13 +216,11 @@ export async function deleteFragment(fragmentId: string) {
     if (error) throw error
 
     revalidatePath('/libro')
-    revalidateTag('book-fragments')
+    revalidateTag('book-fragments', 'max')
 
     return { success: true, message: 'Fragmento eliminado correctamente' }
   } catch (error: any) {
     console.error('[v0] Error deleting fragment:', error)
     return { success: false, message: error.message }
   }
-}
-
 }
