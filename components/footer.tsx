@@ -75,7 +75,7 @@ export function Footer() {
               {[
                 { href: '/', label: 'Inicio' },
                 { href: '/libro', label: 'El Libro' },
-                { href: '/diario', label: 'Diario' },
+                { href: '/diario', label: 'Blog' },
                 { href: '/autor', label: 'Autora' },
                 { href: '/contacto', label: 'Contacto' },
               ].map((l) => (
