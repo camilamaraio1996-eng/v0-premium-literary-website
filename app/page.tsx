@@ -2,7 +2,6 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
 import { AboutBookSection } from '@/components/home/about-book-section'
-import { FeaturedFragmentSection } from '@/components/home/featured-fragment-section'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
 
 export default async function HomePage() {
@@ -28,7 +27,6 @@ export default async function HomePage() {
           buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
         />
         <AboutBookSection />
-        <FeaturedFragmentSection />
       </main>
       <Footer />
     </>
