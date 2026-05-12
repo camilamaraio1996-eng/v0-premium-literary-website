@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export function AuthorHero() {
   return (
@@ -9,7 +10,7 @@ export function AuthorHero() {
       
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Author Image Placeholder */}
+          {/* Author Image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -20,14 +21,16 @@ export function AuthorHero() {
               {/* Ambient glow */}
               <div className="absolute inset-0 bg-accent/10 blur-3xl" />
               
-              {/* Image placeholder */}
-              <div className="relative bg-gradient-to-br from-secondary to-muted rounded-lg overflow-hidden h-full flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-24 h-24 rounded-full bg-muted-foreground/10 mx-auto mb-4 flex items-center justify-center">
-                    <span className="font-serif text-4xl text-muted-foreground">A</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">Fotografía del autor</span>
-                </div>
+              {/* Author photo */}
+              <div className="relative bg-muted rounded-lg overflow-hidden h-full">
+                <Image
+                  src="/images/author-photo.jpg"
+                  alt="Camila Maraio - Author"
+                  width={400}
+                  height={533}
+                  className="w-full h-full object-cover"
+                  priority
+                />
               </div>
             </div>
           </motion.div>
