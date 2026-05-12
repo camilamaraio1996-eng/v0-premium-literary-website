@@ -55,8 +55,7 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
                 )}
               </div>
 
-              {/* Pages effect */}
-              <div className="absolute right-0 top-1 bottom-1 w-2 bg-gradient-to-l from-[#958568]/20 to-transparent rounded-r-sm" />
+
             </div>
           </motion.div>
 
