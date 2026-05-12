@@ -43,10 +43,10 @@ export function AuthorHero() {
             className="order-1 lg:order-2"
           >
             <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
-              El Autor
+              La autora
             </span>
-            <h1 className="font-serif text-4xl lg:text-5xl text-primary mb-6 leading-tight">
-              Una voz entre sueños y palabras
+            <h1 className="font-serif text-3xl lg:text-3xl text-primary mb-6 leading-tight">
+              Camila Maraio
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-6">
               Escritor, soñador y explorador de los territorios donde la memoria 
