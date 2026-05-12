@@ -19,7 +19,7 @@ export default async function HomePage() {
           description={settings['hero_description'] || 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.'}
           imageUrl={settings['home_hero_image_url'] || null}
           imageAlt={settings['home_hero_image_alt'] || ''}
-          ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrir el Libro'}
+          ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrí el libro'}
           ctaPrimaryHref={settings['hero_cta_primary_href'] || '/libro'}
           ctaSecondaryLabel={settings['hero_cta_secondary_label'] || 'Ir al Diario'}
           ctaSecondaryHref={settings['hero_cta_secondary_href'] || '/diario'}
