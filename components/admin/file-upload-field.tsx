@@ -5,7 +5,6 @@ import { Upload, X, Copy, Check, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
-import { uploadFileAction } from '@/app/admin/upload-action'
 
 interface FileUploadFieldProps {
   label: string
