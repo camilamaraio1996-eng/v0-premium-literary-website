@@ -48,11 +48,6 @@ export function AuthorHero() {
             <h1 className="font-serif text-3xl lg:text-3xl text-primary mb-6 leading-tight">
               Camila Maraio
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-              Escritor, soñador y explorador de los territorios donde la memoria 
-              y la imaginación se entrelazan. <em>El Libro de los Sueños</em> es 
-              su primera novela publicada, aunque no la primera que ha escrito.
-            </p>
             <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {`Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante. 
 
