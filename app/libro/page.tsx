@@ -1,17 +1,11 @@
 import { Metadata } from 'next'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { BookHero } from '@/components/book/book-hero'
-import { PremiumYoutubePlayer } from '@/components/book/premium-youtube-player'
 import { BookFragments } from '@/components/book/book-fragments'
-import { BookTitleSection } from '@/components/book/book-title-section'
-import { BookCTASection } from '@/components/book/book-cta-section'
-import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
-import type { Book, BookFragment, SiteSettings } from '@/types/book'
+import type { Book, BookFragment } from '@/types/book'
 
 export const metadata: Metadata = {
   title: 'El Libro | Camila Maraio',
@@ -84,15 +78,6 @@ export default async function LibroPage() {
           buyUrl={settings['book_buy_url'] as string | null}
           buyLabel={(settings['book_buy_label'] as string) || 'Comprar Ahora'}
         />
-        
-        {/* Title Section - Extracted component */}
-        <BookTitleSection />
-        
-        {/* Video Section */}
-        <PremiumYoutubePlayer />
-        
-        {/* Call-to-Action Buttons Section */}
-        <BookCTASection />
         
         {/* Fragments Section */}
         <BookFragments fragments={fragments} />
