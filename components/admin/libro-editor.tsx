@@ -7,8 +7,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FileUploadField } from '@/components/admin/file-upload-field'
 import { BookHero } from '@/components/book/book-hero'
-import { BookVideo } from '@/components/book/book-video'
-import { BookDetails } from '@/components/book/book-details'
 import { BookFragments } from '@/components/book/book-fragments'
 import { updateBookInfo } from '@/app/admin/actions'
 

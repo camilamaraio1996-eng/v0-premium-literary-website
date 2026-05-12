@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FileUploadField } from '@/components/admin/file-upload-field'
 import { HeroSection } from '@/components/home/hero-section'
-import { BookVideo } from '@/components/book/book-video'
+import { PremiumYoutubePlayer } from '@/components/book/premium-youtube-player'
 import { updateSiteSettings } from '@/app/admin/actions'
 
 interface InicioEditorProps {

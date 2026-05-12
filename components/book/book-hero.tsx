@@ -1,18 +1,22 @@
 'use client'
 
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { BookHeroProps } from '@/types/book'
 
-interface BookHeroProps {
-  coverImage?: string | null
-  bookTitle?: string
-  buyUrl?: string | null
-  buyLabel?: string
-}
-
-export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', buyUrl, buyLabel = 'Comprar Ahora' }: BookHeroProps) {
+/**
+ * Book hero component with optimized image loading
+ * Images use priority prop for LCP optimization and blur placeholder for visual feedback
+ */
+export const BookHero = memo(function BookHero({
+  coverImage,
+  bookTitle = 'El Libro de los Sueños',
+  buyUrl,
+  buyLabel = 'Comprar Ahora',
+}: BookHeroProps) {
   return (
     <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -34,11 +38,15 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
                       src={coverImage}
                       alt={bookTitle}
                       fill
+                      priority
                       className="object-cover"
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600'%3E%3Crect fill='%23f5f1ed' width='400' height='600'/%3E%3C/svg%3E"
+                      sizes="(max-width: 768px) 256px, 320px"
                     />
                   </div>
                 ) : (
-                  <div className="aspect-[2/3] flex flex-col items-center justify-center p-10 text-center">
+                  <div className="aspect-[2/3] flex flex-col items-center justify-center p-10 text-center bg-muted">
                     <div className="w-full h-px bg-primary-foreground/20 mb-10" />
                     <span className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/60 mb-5">
                       Novela
@@ -54,8 +62,6 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
                   </div>
                 )}
               </div>
-
-
             </div>
           </motion.div>
 
@@ -107,4 +113,4 @@ export function BookHero({ coverImage, bookTitle = 'El Libro de los Sueños', bu
       </div>
     </section>
   )
-}
+})
