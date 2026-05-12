@@ -18,8 +18,7 @@ export function DiarioHero() {
             Diario
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-xl text-sm">
-            Historias, fotos, reflexiones y momentos. Un espacio propio, sin 
-            relación con el libro — solo lo que merece ser compartido.
+            Lo que se cruce en el día, simple, sin filtros
           </p>
         </motion.div>
       </div>
