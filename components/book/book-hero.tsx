@@ -11,12 +11,18 @@ import type { BookHeroProps } from '@/types/book'
  * Book hero component with optimized image loading
  * Images use priority prop for LCP optimization and blur placeholder for visual feedback
  */
+// Default book cover image path
+const DEFAULT_COVER_IMAGE = '/images/book-cover.png'
+
 export const BookHero = memo(function BookHero({
   coverImage,
-  bookTitle = 'El Libro de los Sueños',
+  bookTitle = 'Lo real y lo otro',
   buyUrl,
   buyLabel = 'Comprar Ahora',
 }: BookHeroProps) {
+  // Use provided cover image or fall back to default
+  const displayCoverImage = coverImage || DEFAULT_COVER_IMAGE
+
   return (
     <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -32,35 +38,16 @@ export const BookHero = memo(function BookHero({
             <div className="relative mx-auto w-64 lg:w-80">
               {/* Cover */}
               <div className="relative bg-transparent overflow-hidden">
-                {coverImage ? (
-                  <div className="aspect-[2/3] relative">
-                    <Image
-                      src={coverImage}
-                      alt={bookTitle}
-                      fill
-                      priority
-                      className="object-cover"
-                      placeholder="blur"
-                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600'%3E%3Crect fill='%23f5f1ed' width='400' height='600'/%3E%3C/svg%3E"
-                      sizes="(max-width: 768px) 256px, 320px"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-[2/3] flex flex-col items-center justify-center p-10 text-center bg-muted">
-                    <div className="w-full h-px bg-primary-foreground/20 mb-10" />
-                    <span className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/60 mb-5">
-                      Novela
-                    </span>
-                    <h2 className="font-serif text-2xl lg:text-3xl text-primary-foreground leading-tight mb-5">
-                      {bookTitle}
-                    </h2>
-                    <div className="w-10 h-px bg-primary-foreground/40 mb-5" />
-                    <span className="text-xs text-primary-foreground/50 tracking-wider">
-                      Autora
-                    </span>
-                    <div className="w-full h-px bg-primary-foreground/20 mt-10" />
-                  </div>
-                )}
+                <div className="aspect-[2/3] relative">
+                  <Image
+                    src={displayCoverImage}
+                    alt={bookTitle}
+                    fill
+                    priority
+                    className="object-contain"
+                    sizes="(max-width: 768px) 256px, 320px"
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
