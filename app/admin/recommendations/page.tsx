@@ -32,10 +32,10 @@ export default async function AdminRecommendationsPage() {
   return (
     <div className="min-h-screen bg-background">
       <AdminNav user={user} />
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="font-serif text-3xl text-primary">Recomendaciones</h1>
-          <Button asChild>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+          <h1 className="font-serif text-2xl sm:text-3xl text-primary">Recomendaciones</h1>
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/admin/recommendations/new">
               <Plus className="w-4 h-4 mr-2" />
               Nueva Recomendación

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { AdminNav } from '@/components/admin/admin-nav'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -143,39 +142,39 @@ export default function EditRecommendationPage() {
   if (notFound) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-6 py-8">
+        <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <Button variant="ghost" size="sm" asChild className="mb-6">
             <Link href="/admin/recommendations">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver a Recomendaciones
             </Link>
           </Button>
-          <div className="bg-card/50 border border-border rounded-lg p-8 text-center">
+          <div className="bg-card/50 border border-border rounded-lg p-6 sm:p-8 text-center">
             <p className="font-serif text-xl text-primary mb-2">Recomendación no encontrada</p>
             <p className="text-muted-foreground text-sm">
               No existe ninguna recomendación con el ID proporcionado.
             </p>
           </div>
-        </div>
+        </main>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="flex items-center gap-3 mb-8">
-          <Button variant="ghost" size="icon" asChild>
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9 sm:h-10 sm:w-10">
             <Link href="/admin/recommendations">
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </Button>
-          <h1 className="font-serif text-3xl text-primary">Editar Recomendación</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl text-primary">Editar Recomendación</h1>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 bg-card/50 p-6 rounded-lg border border-border"
+          className="space-y-6 bg-card/50 p-4 sm:p-6 rounded-lg border border-border"
         >
           {error && (
             <div className="bg-destructive/10 border border-destructive/30 text-destructive px-4 py-3 rounded-lg text-sm">
@@ -191,30 +190,30 @@ export default function EditRecommendationPage() {
           )}
 
           <div>
-            <Label htmlFor="title">Título del Libro *</Label>
+            <Label htmlFor="title" className="text-sm sm:text-base">Título del Libro *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Título del libro"
               required
-              className="mt-1"
+              className="mt-1 text-base"
             />
           </div>
 
           <div>
-            <Label htmlFor="author">Autor</Label>
+            <Label htmlFor="author" className="text-sm sm:text-base">Autor</Label>
             <Input
               id="author"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Nombre del autor"
-              className="mt-1"
+              className="mt-1 text-base"
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Descripción *</Label>
+            <Label htmlFor="description" className="text-sm sm:text-base">Descripción *</Label>
             <Textarea
               id="description"
               value={description}
@@ -222,12 +221,12 @@ export default function EditRecommendationPage() {
               placeholder="¿Por qué recomendamos este libro?"
               rows={6}
               required
-              className="mt-1"
+              className="mt-1 text-base resize-none"
             />
           </div>
 
           <div>
-            <Label htmlFor="imageUrl">Imagen de portada</Label>
+            <Label htmlFor="imageUrl" className="text-sm sm:text-base">Imagen de portada</Label>
             <FileUploadField
               label="Subir imagen de portada"
               value={imageUrl}
@@ -239,28 +238,45 @@ export default function EditRecommendationPage() {
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 pt-2">
             <Switch
               id="published"
               checked={published}
               onCheckedChange={setPublished}
             />
-            <Label htmlFor="published" className="cursor-pointer">
+            <Label htmlFor="published" className="cursor-pointer text-sm sm:text-base">
               {published ? 'Publicada' : 'Borrador'}
             </Label>
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <Button type="submit" disabled={saving || success}>
-              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+          <div className="flex gap-3 pt-4 flex-col sm:flex-row">
+            <Button
+              type="submit"
+              disabled={saving}
+              className="w-full sm:w-auto"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                'Guardar Cambios'
+              )}
             </Button>
-            <Button type="button" variant="outline" asChild>
-              <Link href="/admin/recommendations">Cancelar</Link>
+            <Button
+              type="button"
+              variant="outline"
+              asChild
+              className="w-full sm:w-auto"
+            >
+              <Link href="/admin/recommendations">
+                Cancelar
+              </Link>
             </Button>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   )
 }

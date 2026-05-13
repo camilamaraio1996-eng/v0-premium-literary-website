@@ -63,17 +63,17 @@ export default function NewRecommendationPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" asChild>
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9 sm:h-10 sm:w-10">
             <Link href="/admin/recommendations">
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </Button>
-          <h1 className="font-serif text-3xl text-primary">Nueva Recomendación</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl text-primary">Nueva Recomendación</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-card/50 p-6 rounded-lg border border-border">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-card/50 p-4 sm:p-6 rounded-lg border border-border">
           {error && (
             <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm">
               {error}
@@ -81,43 +81,43 @@ export default function NewRecommendationPage() {
           )}
 
           <div>
-            <Label htmlFor="title">Título del Libro *</Label>
+            <Label htmlFor="title" className="text-sm sm:text-base">Título del Libro *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Título del libro"
-              className="mt-1"
+              className="mt-1 text-base"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="author">Autor</Label>
+            <Label htmlFor="author" className="text-sm sm:text-base">Autor</Label>
             <Input
               id="author"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Nombre del autor"
-              className="mt-1"
+              className="mt-1 text-base"
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Descripción *</Label>
+            <Label htmlFor="description" className="text-sm sm:text-base">Descripción *</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="¿Por qué recomendamos este libro?"
-              rows={5}
-              className="mt-1"
+              rows={6}
+              className="mt-1 text-base resize-none"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="imageUrl">Imagen de portada (opcional)</Label>
+            <Label htmlFor="imageUrl" className="text-sm sm:text-base">Imagen de portada (opcional)</Label>
             <FileUploadField
               label="Subir imagen de portada"
               value={imageUrl}
@@ -129,21 +129,34 @@ export default function NewRecommendationPage() {
             />
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-4 flex-col sm:flex-row">
             <Button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2"
+              className="w-full sm:w-auto"
             >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? 'Guardando...' : 'Crear Recomendación'}
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creando...
+                </>
+              ) : (
+                'Crear Recomendación'
+              )}
             </Button>
-            <Button type="button" variant="outline" asChild>
-              <Link href="/admin/recommendations">Cancelar</Link>
+            <Button
+              type="button"
+              variant="outline"
+              asChild
+              className="w-full sm:w-auto"
+            >
+              <Link href="/admin/recommendations">
+                Cancelar
+              </Link>
             </Button>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   )
 }
