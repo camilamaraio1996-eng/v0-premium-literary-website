@@ -31,8 +31,6 @@ export default function NewRecommendationPage() {
     setError('')
 
     try {
-      console.log('[v0-admin] Creating new recommendation...')
-      
       const supabase = createClient()
       
       const payload = {
@@ -44,27 +42,19 @@ export default function NewRecommendationPage() {
         created_at: new Date().toISOString(),
       }
 
-      console.log('[v0-admin] Insert payload:', payload)
-
-      const { data, error: err } = await supabase
+      const { error: err } = await supabase
         .from('recommendations')
         .insert([payload])
         .select()
 
       if (err) {
-        console.error('[v0-admin] Insert error:', err)
         throw new Error(err.message)
       }
 
-      console.log('[v0-admin] Insert successful:', data)
-
-      // Esperar un momento para que se replique
-      await new Promise(r => setTimeout(r, 500))
-      
       router.push('/admin/recommendations')
+      router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido al crear la recomendación'
-      console.error('[v0-admin] Create error:', errorMessage)
       setError(errorMessage)
       setLoading(false)
     }
