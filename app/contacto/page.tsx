@@ -7,7 +7,7 @@ import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Contacto',
-  description: 'Ponte en contacto con el autor de El Libro de los Sueños. Consultas, colaboraciones y mensajes.',
+  description: 'Ponte en contacto con Camila Maraio. Consultas, colaboraciones y mensajes.',
 }
 
 export default async function ContactoPage() {

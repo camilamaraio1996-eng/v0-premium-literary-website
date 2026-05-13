@@ -19,16 +19,17 @@ const archivoNarrow = Archivo_Narrow({
 
 export const metadata: Metadata = {
   title: {
-    default: 'El Libro de los Sueños',
-    template: '%s | El Libro de los Sueños',
+    default: 'Camila Maraio',
+    template: '%s | Camila Maraio',
   },
   description: 'Una exploración íntima de los sueños, la memoria y las emociones.',
   keywords: ['novela', 'literatura', 'sueños', 'ficción literaria'],
-  authors: [{ name: 'Autora' }],
+  authors: [{ name: 'Camila Maraio' }],
+  manifest: '/manifest.json',
   openGraph: {
     type: 'website',
     locale: 'es_AR',
-    title: 'El Libro de los Sueños',
+    title: 'Camila Maraio',
     description: 'Una exploración íntima de los sueños, la memoria y las emociones.',
   },
   robots: { index: true, follow: true },

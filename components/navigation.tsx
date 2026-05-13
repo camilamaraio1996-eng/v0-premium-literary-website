@@ -21,7 +21,7 @@ const defaultNavLinks = [
   { href: '/contacto', label: 'Contacto' },
 ]
 
-export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro de los Sueños' }: NavigationProps) {
+export function Navigation({ navItems = defaultNavLinks, siteTitle = 'Camila Maraio' }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -52,13 +52,20 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro d
           )}
       >
         <nav className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between pt-6 pb-4">
+          <div className="flex items-center justify-between pt-5 pb-5 lg:pt-6 lg:pb-4">
             {/* Logo */}
             <Link 
               href="/" 
-              className="font-serif text-xl tracking-wide text-primary hover:text-accent transition-colors"
+              className="flex items-center gap-3 hover:opacity-75 transition-opacity"
             >
-              {siteTitle}
+              <img 
+                src="/logo.png" 
+                alt="Camila Maraio" 
+                className="h-8 w-8 object-contain"
+              />
+              <span className="font-serif text-lg tracking-wide text-primary hidden sm:inline">
+                {siteTitle}
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -82,7 +89,7 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro d
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-primary hover:text-accent transition-colors"
+              className="lg:hidden p-2 -mr-2 text-primary hover:text-accent transition-colors"
               aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -110,9 +117,9 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro d
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border flex flex-col justify-center px-12"
+              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border flex flex-col justify-center px-8"
             >
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-8">
                 {navItems.map((link, index) => (
                   <motion.div
                     key={link.href}
@@ -123,7 +130,7 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'El Libro d
                     <Link
                       href={link.href}
                       className={cn(
-                        'text-2xl font-serif tracking-wide transition-colors',
+                        'text-xl font-serif tracking-wide transition-colors block',
                         pathname === link.href
                           ? 'text-primary'
                           : 'text-muted-foreground hover:text-primary'

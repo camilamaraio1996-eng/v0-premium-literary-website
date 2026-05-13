@@ -40,8 +40,9 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="font-serif text-2xl text-primary">
-            El Libro de los Sueños
+          <Link href="/" className="font-serif text-2xl text-primary flex items-center justify-center gap-2">
+            <img src="/logo.png" alt="Camila Maraio" className="h-8 w-8 object-contain" />
+            <span className="hidden sm:inline">Camila Maraio</span>
           </Link>
           <p className="text-sm text-muted-foreground mt-2">
             Panel de Administración

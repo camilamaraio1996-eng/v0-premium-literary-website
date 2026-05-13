@@ -47,7 +47,7 @@ export default function AdminSetupPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl text-primary mb-2">
-            El Libro de los Sueños
+            Camila Maraio
           </h1>
           <p className="text-sm text-muted-foreground">
             Configuración del Panel Admin

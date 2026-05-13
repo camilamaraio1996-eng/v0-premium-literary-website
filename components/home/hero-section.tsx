@@ -38,7 +38,7 @@ function getEmbedUrl(url: string): string | null {
 
 export function HeroSection({
   title = 'El Libro de los Sueños',
-  eyebrow = '',
+  eyebrow = 'Camila Maraio',
   description = 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.',
   imageUrl = null,
   imageAlt = '',

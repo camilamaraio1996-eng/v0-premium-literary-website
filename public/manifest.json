@@ -1,0 +1,24 @@
+{
+  "name": "Camila Maraio",
+  "short_name": "Camila Maraio",
+  "description": "Una exploración íntima de los sueños, la memoria y las emociones.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2ede6",
+  "theme_color": "#6d4c7d",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

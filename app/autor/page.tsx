@@ -7,7 +7,7 @@ import { getNavigationData } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Sobre el Autor',
-  description: 'Conoce al autor de El Libro de los Sueños. Su trayectoria y el proceso detrás de la novela.',
+  description: 'Conoce a Camila Maraio. Su trayectoria y el proceso detrás de la novela.',
 }
 
 export default async function AutorPage() {

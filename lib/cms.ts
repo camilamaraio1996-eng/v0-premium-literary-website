@@ -27,7 +27,7 @@ export async function getNavigationData() {
 
   return {
     navItems,
-    siteTitle: settingsMap['site_title'] || 'El Libro de los Sueños',
+    siteTitle: settingsMap['site_title'] || 'Camila Maraio',
     settings: settingsMap,
   }
 }
@@ -56,7 +56,7 @@ export async function getBookInfo() {
     id: '',
     title: 'El Libro de los Sueños',
     subtitle: null,
-    author_name: null,
+    author_name: 'Camila Maraio',
     cover_image_url: null,
     description: null,
   }

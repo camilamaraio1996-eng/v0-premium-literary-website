@@ -14,7 +14,7 @@ async function getBookInfo() {
     id: '',
     title: 'El Libro de los Sueños',
     subtitle: null,
-    author_name: null,
+    author_name: 'Camila Maraio',
     cover_image_url: null,
     description: null,
     video_url: null,
