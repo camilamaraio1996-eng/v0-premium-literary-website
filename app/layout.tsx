@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   keywords: ['novela', 'literatura', 'sueños', 'ficción literaria'],
   authors: [{ name: 'Camila Maraio' }],
   manifest: '/manifest.json',
+  icons: {
+    icon: '/camila-logo.png',
+    shortcut: '/camila-logo.png',
+    apple: '/camila-logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'es_AR',

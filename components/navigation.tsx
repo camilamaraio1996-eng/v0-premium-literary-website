@@ -56,14 +56,9 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'Camila Mar
             {/* Logo */}
             <Link 
               href="/" 
-              className="flex items-center gap-3 hover:opacity-75 transition-opacity"
+              className="hover:opacity-75 transition-opacity"
             >
-              <img 
-                src="/logo.png" 
-                alt="Camila Maraio" 
-                className="h-8 w-8 object-contain"
-              />
-              <span className="font-serif text-lg tracking-wide text-primary hidden sm:inline">
+              <span className="font-serif text-lg tracking-wide text-primary">
                 {siteTitle}
               </span>
             </Link>
