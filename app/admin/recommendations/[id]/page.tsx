@@ -21,7 +21,6 @@ interface Recommendation {
   published: boolean
   sort_order: number | null
   created_at: string
-  updated_at: string | null
 }
 
 export default function EditRecommendationPage() {
@@ -73,7 +72,6 @@ export default function EditRecommendationPage() {
         published: Boolean(data.published),
         sort_order: data.sort_order ?? null,
         created_at: String(data.created_at ?? ''),
-        updated_at: data.updated_at ? String(data.updated_at) : null,
       }
 
       setRec(safe)
@@ -109,7 +107,6 @@ export default function EditRecommendationPage() {
           description: description.trim(),
           image_url: imageUrl.trim() || null,
           published,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
 
