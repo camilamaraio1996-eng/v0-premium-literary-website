@@ -13,13 +13,25 @@ export default function RecommendationsError({
   reset: () => void
 }) {
   useEffect(() => {
-    // Loguear error para debugging
-    console.error('[v0-admin-error] Recommendations page error:', {
-      message: error.message,
-      stack: error.stack,
-      digest: error.digest,
+    // Log completo del error
+    const errorDetails = {
+      message: error?.message || 'Unknown error',
+      stack: error?.stack || 'No stack trace',
+      digest: error?.digest || 'No digest',
       timestamp: new Date().toISOString(),
-    })
+      isDev: process.env.NODE_ENV === 'development',
+    }
+    
+    console.error('[v0-recommendations-error] Error boundary caught:', errorDetails)
+    
+    // En desarrollo, mostrar detalles completos
+    if (process.env.NODE_ENV === 'development') {
+      console.group('📋 Detailed Error Information')
+      console.error('Message:', errorDetails.message)
+      console.error('Stack:', errorDetails.stack)
+      console.error('Digest:', errorDetails.digest)
+      console.groupEnd()
+    }
   }, [error])
 
   return (
@@ -39,13 +51,23 @@ export default function RecommendationsError({
           </p>
 
           <div className="bg-destructive/5 border border-destructive/20 rounded p-4 mb-6 text-left">
-            <p className="text-xs font-mono text-destructive/80">
+            <p className="text-xs font-mono text-destructive/80 break-words">
               {error?.message || 'Error desconocido'}
             </p>
             {error?.digest && (
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground mt-2 break-all">
                 Código: {error.digest}
               </p>
+            )}
+            {process.env.NODE_ENV === 'development' && error?.stack && (
+              <details className="mt-4">
+                <summary className="text-xs font-medium cursor-pointer text-muted-foreground hover:text-foreground">
+                  Stack trace (desarrollo)
+                </summary>
+                <pre className="text-xs mt-2 bg-background/50 p-2 rounded overflow-auto max-h-40">
+                  {error.stack}
+                </pre>
+              </details>
             )}
           </div>
 
