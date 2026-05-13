@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate bucket name
-    const validBuckets = ['book-images', 'book-videos', 'blog-images']
+    const validBuckets = ['book-images', 'book-videos', 'blog-images', 'recommendation-covers']
     if (!validBuckets.includes(bucketName)) {
       console.error('[v0-upload] Invalid bucket:', bucketName)
       return NextResponse.json(

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { FileUploadField } from '@/components/admin/file-upload-field'
 import Link from 'next/link'
 import { Loader2, ChevronLeft } from 'lucide-react'
 
@@ -116,15 +117,16 @@ export default function NewRecommendationPage() {
           </div>
 
           <div>
-            <Label htmlFor="imageUrl">URL de imagen (opcional)</Label>
-            <Input
-              id="imageUrl"
+            <Label htmlFor="imageUrl">Imagen de portada (opcional)</Label>
+            <FileUploadField
+              label="Subir imagen de portada"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-              className="mt-1"
+              onChange={setImageUrl}
+              bucketName="recommendation-covers"
+              accept="image/jpeg,image/png,image/webp"
+              maxSize={5 * 1024 * 1024}
+              helpText="PNG, JPG o WebP. Máximo 5MB. Mínimo recomendado 800x400px"
             />
-            <p className="text-xs text-muted-foreground mt-1">Pega la URL pública de la portada del libro.</p>
           </div>
 
           <div className="flex gap-3 pt-4">

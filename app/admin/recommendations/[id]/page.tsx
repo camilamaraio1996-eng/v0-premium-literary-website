@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { FileUploadField } from '@/components/admin/file-upload-field'
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react'
 
 interface Recommendation {
@@ -226,29 +227,16 @@ export default function EditRecommendationPage() {
           </div>
 
           <div>
-            <Label htmlFor="imageUrl">URL de imagen de portada</Label>
-            <Input
-              id="imageUrl"
+            <Label htmlFor="imageUrl">Imagen de portada</Label>
+            <FileUploadField
+              label="Subir imagen de portada"
               value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-              className="mt-1"
+              onChange={setImageUrl}
+              bucketName="recommendation-covers"
+              accept="image/jpeg,image/png,image/webp"
+              maxSize={5 * 1024 * 1024}
+              helpText="PNG, JPG o WebP. Máximo 5MB. Mínimo recomendado 800x400px"
             />
-            {imageUrl && (
-              <div className="mt-2">
-                <img
-                  src={imageUrl}
-                  alt="Vista previa de portada"
-                  className="h-24 w-16 object-cover rounded border border-border"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Pega la URL pública de la portada del libro.
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
