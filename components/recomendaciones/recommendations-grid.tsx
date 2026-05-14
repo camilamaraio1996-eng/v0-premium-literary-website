@@ -10,15 +10,22 @@ interface Recommendation {
   sort_order: number
 }
 
-function BookCover({ imageUrl, title }: { imageUrl: string | null; title: string }) {
+function BookCover({ imageUrl, title, mobile }: { imageUrl: string | null; title: string; mobile?: boolean }) {
+  const sizeClass = mobile
+    ? 'w-20 aspect-[3/4]'
+    : 'w-28 md:w-32 aspect-[3/4]'
+  const sizes = mobile
+    ? '80px'
+    : '(max-width: 768px) 112px, 128px'
+
   return (
-    <div className="relative flex-shrink-0 w-24 sm:w-28 md:w-32 aspect-[3/4] rounded-sm overflow-hidden bg-secondary/40 shadow-[0_2px_8px_rgba(0,0,0,0.07)]">
+    <div className={`relative flex-shrink-0 ${sizeClass} rounded-sm overflow-hidden bg-secondary/40 shadow-[0_2px_8px_rgba(0,0,0,0.07)]`}>
       {imageUrl ? (
         <Image
           src={imageUrl}
           alt={`Portada de ${title}`}
           fill
-          sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, 128px"
+          sizes={sizes}
           className="object-cover"
           loading="lazy"
           quality={60}
@@ -56,30 +63,54 @@ export function RecommendationsGrid({
           {recommendations.map((rec, i) => (
             <article
               key={rec.id}
-              className="group flex gap-6 sm:gap-8 py-10 first:pt-0 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+              className="group py-8 sm:py-10 first:pt-0 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
               style={{ animationDelay: `${Math.min(i * 60, 300)}ms`, animationDuration: '400ms' }}
             >
-              {/* Book Cover */}
-              <BookCover imageUrl={rec.image_url} title={rec.title} />
+              {/* Mobile layout: small cover left + meta right, then full description below */}
+              <div className="flex gap-4 mb-4 sm:hidden">
+                <BookCover imageUrl={rec.image_url} title={rec.title} mobile />
+                <div className="flex flex-col justify-start min-w-0 flex-1 pt-1">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-2 font-mono">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-serif text-base text-primary leading-snug mb-1 text-pretty">
+                    {rec.title}
+                  </h3>
+                  {rec.author && (
+                    <p className="text-[11px] tracking-wide text-[#958568] font-medium uppercase">
+                      {rec.author}
+                    </p>
+                  )}
+                </div>
+              </div>
+              {/* Mobile: full description below the cover+title row */}
+              {rec.description && (
+                <p className="sm:hidden text-sm text-foreground/65 leading-relaxed text-pretty">
+                  {rec.description}
+                </p>
+              )}
 
-              {/* Text Content */}
-              <div className="flex flex-col justify-center min-w-0 flex-1">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-2 font-mono">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="font-serif text-lg sm:text-xl text-primary leading-snug mb-1 text-pretty">
-                  {rec.title}
-                </h3>
-                {rec.author && (
-                  <p className="text-xs sm:text-sm tracking-wide text-[#958568] mb-3 font-medium uppercase">
-                    {rec.author}
-                  </p>
-                )}
-                {rec.description && (
-                  <p className="text-sm text-foreground/65 leading-relaxed line-clamp-3 text-pretty">
-                    {rec.description}
-                  </p>
-                )}
+              {/* Desktop layout: cover left + all text right, side by side */}
+              <div className="hidden sm:flex gap-8">
+                <BookCover imageUrl={rec.image_url} title={rec.title} />
+                <div className="flex flex-col justify-center min-w-0 flex-1">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-2 font-mono">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-serif text-xl text-primary leading-snug mb-1 text-pretty">
+                    {rec.title}
+                  </h3>
+                  {rec.author && (
+                    <p className="text-xs tracking-wide text-[#958568] mb-3 font-medium uppercase">
+                      {rec.author}
+                    </p>
+                  )}
+                  {rec.description && (
+                    <p className="text-sm text-foreground/65 leading-relaxed line-clamp-4 text-pretty">
+                      {rec.description}
+                    </p>
+                  )}
+                </div>
               </div>
             </article>
           ))}
