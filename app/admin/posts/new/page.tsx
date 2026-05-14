@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft } from 'lucide-react'
 import { FileUploadField } from '@/components/admin/file-upload-field'
+import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
+import { RichEditor } from '@/components/admin/rich-editor'
 
 function generateSlug(title: string): string {
   return title
@@ -32,15 +32,15 @@ export default function NewPostPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-    
+
     const supabase = createClient()
     const slug = generateSlug(title)
-    
+
     const { error: insertError } = await supabase
       .from('blog_posts')
       .insert({
@@ -53,17 +53,17 @@ export default function NewPostPage() {
         reading_time: readingTime,
         published,
       })
-    
+
     if (insertError) {
       setError(insertError.message)
       setLoading(false)
       return
     }
-    
+
     router.push('/admin/posts')
     router.refresh()
   }
-  
+
   return (
     <div>
       <div className="mb-8">
@@ -75,28 +75,29 @@ export default function NewPostPage() {
         </Button>
         <h1 className="font-serif text-3xl text-primary">Nueva Entrada</h1>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
         <div>
           <Label htmlFor="title">Título</Label>
-          <Input
+          <SmartInput
             id="title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={setTitle}
             placeholder="El título de tu entrada"
             required
             className="mt-1"
           />
         </div>
-        
+
         <div>
           <Label htmlFor="excerpt">Extracto</Label>
-          <Textarea
+          <SmartTextarea
             id="excerpt"
             value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
+            onChange={setExcerpt}
             placeholder="Un breve resumen de la entrada..."
             rows={2}
+            showIssues={false}
             className="mt-1"
           />
         </div>
@@ -109,23 +110,22 @@ export default function NewPostPage() {
             onChange={setImageUrl}
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. Puedes también pegar una URL directamente en el campo de texto."
+            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB."
           />
         </div>
-        
+
         <div>
-          <Label htmlFor="content">Contenido</Label>
-          <Textarea
-            id="content"
+          <Label htmlFor="content" className="mb-2 block">Contenido</Label>
+          <RichEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Escribe tu entrada aquí... Usa ## para títulos y > para citas."
-            rows={15}
-            required
-            className="mt-1 font-mono text-sm"
+            onChange={setContent}
+            placeholder="Escribe tu entrada aquí..."
+            minHeight={320}
+            showQuality
+            showWordCount
           />
         </div>
-        
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="category">Categoría</Label>
@@ -143,17 +143,15 @@ export default function NewPostPage() {
           </div>
           <div>
             <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
-            <Input
+            <SmartInput
               id="readingTime"
-              type="number"
-              value={readingTime}
-              onChange={(e) => setReadingTime(parseInt(e.target.value) || 5)}
-              min={1}
+              value={String(readingTime)}
+              onChange={(v) => setReadingTime(parseInt(v) || 5)}
               className="mt-1"
             />
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Switch
             id="published"
@@ -162,11 +160,11 @@ export default function NewPostPage() {
           />
           <Label htmlFor="published">Publicar inmediatamente</Label>
         </div>
-        
+
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}
-        
+
         <div className="flex gap-4">
           <Button type="submit" disabled={loading}>
             {loading ? 'Guardando...' : 'Guardar Entrada'}

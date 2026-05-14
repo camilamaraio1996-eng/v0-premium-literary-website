@@ -5,12 +5,12 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft, Loader } from 'lucide-react'
 import { FileUploadField } from '@/components/admin/file-upload-field'
+import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
+import { RichEditor } from '@/components/admin/rich-editor'
 
 function generateSlug(title: string): string {
   return title
@@ -50,7 +50,7 @@ export default function EditPostPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  
+
   useEffect(() => {
     const fetchPost = async () => {
       const supabase = createClient()
@@ -59,13 +59,13 @@ export default function EditPostPage() {
         .select('*')
         .eq('id', postId)
         .single()
-      
+
       if (fetchError || !data) {
         setError('No se encontró la entrada')
         setLoading(false)
         return
       }
-      
+
       setPost(data as BlogPost)
       setTitle(data.title)
       setContent(data.content)
@@ -76,19 +76,19 @@ export default function EditPostPage() {
       setPublished(data.published)
       setLoading(false)
     }
-    
+
     fetchPost()
   }, [postId])
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSaving(true)
-    
+
     try {
       const supabase = createClient()
       const newSlug = generateSlug(title)
-      
+
       const { error: updateError } = await supabase
         .from('blog_posts')
         .update({
@@ -103,13 +103,13 @@ export default function EditPostPage() {
           updated_at: new Date().toISOString(),
         })
         .eq('id', postId)
-      
+
       if (updateError) {
         setError(updateError.message)
         setSaving(false)
         return
       }
-      
+
       router.push('/admin/posts')
       router.refresh()
     } catch (err: any) {
@@ -117,7 +117,7 @@ export default function EditPostPage() {
       setSaving(false)
     }
   }
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -125,7 +125,7 @@ export default function EditPostPage() {
       </div>
     )
   }
-  
+
   if (error && !post) {
     return (
       <div>
@@ -139,7 +139,7 @@ export default function EditPostPage() {
       </div>
     )
   }
-  
+
   return (
     <div>
       <div className="mb-8">
@@ -151,28 +151,29 @@ export default function EditPostPage() {
         </Button>
         <h1 className="font-serif text-3xl text-primary">Editar Entrada</h1>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
         <div>
           <Label htmlFor="title">Título</Label>
-          <Input
+          <SmartInput
             id="title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={setTitle}
             placeholder="El título de tu entrada"
             required
             className="mt-1"
           />
         </div>
-        
+
         <div>
           <Label htmlFor="excerpt">Extracto</Label>
-          <Textarea
+          <SmartTextarea
             id="excerpt"
             value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
+            onChange={setExcerpt}
             placeholder="Un breve resumen de la entrada..."
             rows={2}
+            showIssues={false}
             className="mt-1"
           />
         </div>
@@ -185,23 +186,22 @@ export default function EditPostPage() {
             onChange={setImageUrl}
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. Puedes también pegar una URL directamente en el campo de texto."
+            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB."
           />
         </div>
-        
+
         <div>
-          <Label htmlFor="content">Contenido</Label>
-          <Textarea
-            id="content"
+          <Label htmlFor="content" className="mb-2 block">Contenido</Label>
+          <RichEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Escribe tu entrada aquí... Usa ## para títulos y > para citas."
-            rows={15}
-            required
-            className="mt-1 font-mono text-sm"
+            onChange={setContent}
+            placeholder="Escribe tu entrada aquí..."
+            minHeight={320}
+            showQuality
+            showWordCount
           />
         </div>
-        
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="category">Categoría</Label>
@@ -219,17 +219,15 @@ export default function EditPostPage() {
           </div>
           <div>
             <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
-            <Input
+            <SmartInput
               id="readingTime"
-              type="number"
-              value={readingTime}
-              onChange={(e) => setReadingTime(parseInt(e.target.value) || 5)}
-              min={1}
+              value={String(readingTime)}
+              onChange={(v) => setReadingTime(parseInt(v) || 5)}
               className="mt-1"
             />
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Switch
             id="published"
@@ -238,11 +236,11 @@ export default function EditPostPage() {
           />
           <Label htmlFor="published">Publicar</Label>
         </div>
-        
+
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}
-        
+
         <div className="flex gap-4">
           <Button type="submit" disabled={saving}>
             {saving ? 'Guardando...' : 'Guardar Cambios'}

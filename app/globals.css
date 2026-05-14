@@ -169,6 +169,95 @@
     border-color: #d4ccc260;
   }
 
+  /* ── Rich Editor (TipTap) ── */
+  .rich-editor-content .tiptap {
+    padding: 0.875rem 1rem;
+    outline: none;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: var(--foreground);
+    min-height: inherit;
+  }
+
+  .rich-editor-content .tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--muted-foreground);
+    opacity: 0.6;
+    pointer-events: none;
+    height: 0;
+  }
+
+  .rich-editor-content .tiptap p { margin-bottom: 0.75em; }
+  .rich-editor-content .tiptap p:last-child { margin-bottom: 0; }
+
+  .rich-editor-content .tiptap h2 {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .rich-editor-content .tiptap h3 {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 1.25em;
+    margin-bottom: 0.4em;
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .rich-editor-content .tiptap ul,
+  .rich-editor-content .tiptap ol {
+    padding-left: 1.5em;
+    margin-bottom: 0.75em;
+  }
+
+  .rich-editor-content .tiptap ul { list-style-type: disc; }
+  .rich-editor-content .tiptap ol { list-style-type: decimal; }
+  .rich-editor-content .tiptap li { margin-bottom: 0.25em; }
+
+  .rich-editor-content .tiptap blockquote {
+    border-left: 2px solid var(--primary);
+    padding-left: 1rem;
+    margin: 1em 0;
+    font-style: italic;
+    color: var(--primary);
+    opacity: 0.85;
+  }
+
+  .rich-editor-content .tiptap strong { font-weight: 700; }
+  .rich-editor-content .tiptap em { font-style: italic; }
+  .rich-editor-content .tiptap u { text-decoration: underline; }
+
+  .rich-editor-content .tiptap hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5em 0;
+  }
+
+  .rich-editor-content .tiptap a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  .rich-editor-content .tiptap .is-empty::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--muted-foreground);
+    opacity: 0.5;
+    pointer-events: none;
+    height: 0;
+  }
+
   /* Blog prose */
   .prose-blog p {
     line-height: 1.8;

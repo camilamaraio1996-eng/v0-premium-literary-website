@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MediaUploadForm } from './media-upload-form'
+import { SmartTextarea } from './smart-input'
 import { updateBookInfo } from '@/app/admin/actions'
 
 interface BookInfo {
@@ -81,11 +81,13 @@ export function AdminBookForm({ book }: { book: BookInfo }) {
 
           <div>
             <label className="text-sm font-medium mb-2 block">Descripción</label>
-            <Textarea
+            <SmartTextarea
               value={formData.description || ''}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(v) => setFormData({ ...formData, description: v })}
               placeholder="Descripción del libro"
               rows={6}
+              showQuality
+              showIssues
             />
           </div>
         </CardContent>

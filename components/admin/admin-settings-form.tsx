@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { SmartTextarea } from './smart-input'
 import { updateSiteSettings } from '@/app/admin/actions'
 
 interface SiteSettings {
@@ -73,7 +73,7 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
           <Field label="Titulo del Sitio" id="site_title" value={get('site_title')} onChange={set('site_title')} placeholder="Camila Maraio" />
           <div>
             <Label htmlFor="site_description" className="mb-1 block">Descripcion del Sitio (SEO)</Label>
-            <Textarea id="site_description" value={get('site_description')} onChange={(e) => set('site_description')(e.target.value)} placeholder="Descripcion para SEO" rows={3} />
+            <SmartTextarea id="site_description" value={get('site_description')} onChange={set('site_description')} placeholder="Descripcion para SEO" rows={3} showIssues={false} />
           </div>
         </CardContent>
       </Card>
@@ -86,7 +86,7 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
           <Field label="Titulo principal" id="hero_title" value={get('hero_title')} onChange={set('hero_title')} placeholder="El Libro de los Sueños" />
           <div>
             <Label htmlFor="hero_description" className="mb-1 block">Descripcion / Bajada</Label>
-            <Textarea id="hero_description" value={get('hero_description')} onChange={(e) => set('hero_description')(e.target.value)} placeholder="Un viaje a traves de..." rows={4} />
+            <SmartTextarea id="hero_description" value={get('hero_description')} onChange={set('hero_description')} placeholder="Un viaje a traves de..." rows={4} showQuality showIssues />
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Boton principal — texto" id="hero_cta_primary_label" value={get('hero_cta_primary_label', 'Descubrir el Libro')} onChange={set('hero_cta_primary_label')} />

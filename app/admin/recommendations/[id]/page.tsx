@@ -7,9 +7,9 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { FileUploadField } from '@/components/admin/file-upload-field'
+import { SmartTextarea } from '@/components/admin/smart-input'
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react'
 
 interface Recommendation {
@@ -214,14 +214,15 @@ export default function EditRecommendationPage() {
 
           <div>
             <Label htmlFor="description" className="text-sm sm:text-base">Descripción *</Label>
-            <Textarea
+            <SmartTextarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={setDescription}
               placeholder="¿Por qué recomendamos este libro?"
               rows={6}
-              required
-              className="mt-1 text-base resize-none"
+              showQuality
+              showIssues
+              className="mt-1 text-base"
             />
           </div>
 

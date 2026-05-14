@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { SmartTextarea } from './smart-input'
 import Image from 'next/image'
 import { Trash2, Plus } from 'lucide-react'
 import { updateFragments, deleteFragment, createFragment } from '@/app/admin/actions'
@@ -157,11 +157,13 @@ export function AdminFragmentsForm({ fragments: initialFragments }: { fragments:
 
             <div>
               <Label>Contenido</Label>
-              <Textarea
+              <SmartTextarea
                 value={fragment.content ?? ''}
-                onChange={(e) => handleChange(fragment.id, 'content', e.target.value)}
+                onChange={(v) => handleChange(fragment.id, 'content', v)}
                 placeholder="Texto del fragmento..."
                 rows={8}
+                showQuality
+                showIssues
               />
             </div>
 
