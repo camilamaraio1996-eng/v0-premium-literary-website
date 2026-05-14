@@ -15,7 +15,7 @@ async function getPosts() {
   const supabase = await createClient()
   const { data: posts } = await supabase
     .from('blog_posts')
-    .select('*')
+    .select('id, title, slug, content, image_url, reading_time, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
   

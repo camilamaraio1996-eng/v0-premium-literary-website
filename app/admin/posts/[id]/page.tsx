@@ -26,9 +26,7 @@ interface BlogPost {
   title: string
   slug: string
   content: string
-  excerpt: string | null
   image_url: string | null
-  category: string
   reading_time: number
   published: boolean
   created_at: string
@@ -41,9 +39,7 @@ export default function EditPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [excerpt, setExcerpt] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [category, setCategory] = useState('reflexion')
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -69,9 +65,7 @@ export default function EditPostPage() {
       setPost(data as BlogPost)
       setTitle(data.title)
       setContent(data.content)
-      setExcerpt(data.excerpt || '')
       setImageUrl(data.image_url || '')
-      setCategory(data.category)
       setReadingTime(data.reading_time)
       setPublished(data.published)
       setLoading(false)
@@ -95,9 +89,7 @@ export default function EditPostPage() {
           title,
           slug: newSlug,
           content,
-          excerpt: excerpt || null,
           image_url: imageUrl || null,
-          category,
           reading_time: readingTime,
           published,
           updated_at: new Date().toISOString(),
@@ -166,19 +158,6 @@ export default function EditPostPage() {
         </div>
 
         <div>
-          <Label htmlFor="excerpt">Extracto</Label>
-          <SmartTextarea
-            id="excerpt"
-            value={excerpt}
-            onChange={setExcerpt}
-            placeholder="Un breve resumen de la entrada..."
-            rows={2}
-            showIssues={false}
-            className="mt-1"
-          />
-        </div>
-
-        <div>
           <FileUploadField
             label="Imagen de la Entrada"
             bucketName="blog-images"
@@ -202,30 +181,14 @@ export default function EditPostPage() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="category">Categoría</Label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="reflexion">Reflexión</option>
-              <option value="proceso">Proceso</option>
-              <option value="fragmentos">Fragmentos</option>
-              <option value="fotos">Fotos</option>
-            </select>
-          </div>
-          <div>
-            <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
-            <SmartInput
-              id="readingTime"
-              value={String(readingTime)}
-              onChange={(v) => setReadingTime(parseInt(v) || 5)}
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
+          <SmartInput
+            id="readingTime"
+            value={String(readingTime)}
+            onChange={(v) => setReadingTime(parseInt(v) || 5)}
+            className="mt-1"
+          />
         </div>
 
         <div className="flex items-center gap-2">

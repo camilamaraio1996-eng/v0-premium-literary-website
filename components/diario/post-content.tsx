@@ -9,11 +9,9 @@ import { Button } from '@/components/ui/button'
 interface Post {
   title: string
   content: string
-  category: string
   reading_time: number
   created_at: string
   image_url?: string | null
-  cover_image?: string | null
 }
 
 interface PostContentProps {
@@ -28,18 +26,8 @@ function formatDate(dateStr: string) {
   })
 }
 
-function categoryLabel(cat: string) {
-  const map: Record<string, string> = {
-    reflexion: 'Reflexión',
-    proceso: 'Proceso',
-    fragmentos: 'Fragmentos',
-    fotos: 'Fotos',
-  }
-  return map[cat?.toLowerCase()] ?? cat
-}
-
 export function PostContent({ post }: PostContentProps) {
-  const photo = post.image_url ?? post.cover_image
+  const photo = post.image_url
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')
@@ -97,9 +85,6 @@ export function PostContent({ post }: PostContentProps) {
           transition={{ duration: 0.6 }}
           className="mb-10"
         >
-          <span           className="text-xs uppercase tracking-[0.2em] text-[#958568] block mb-4">
-            {categoryLabel(post.category)}
-          </span>
           <h1 className="font-serif text-3xl lg:text-4xl text-primary mb-6 leading-snug text-balance">
             {post.title}
           </h1>
@@ -121,7 +106,7 @@ export function PostContent({ post }: PostContentProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="mb-10 aspect-[3/2] relative overflow-hidden"
+            className="mb-10 aspect-[3/2] relative overflow-hidden rounded-sm"
           >
             <Image src={photo} alt={post.title} fill className="object-cover" />
           </motion.div>

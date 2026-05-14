@@ -24,9 +24,7 @@ function generateSlug(title: string): string {
 export default function NewPostPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [excerpt, setExcerpt] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [category, setCategory] = useState('reflexion')
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -41,18 +39,16 @@ export default function NewPostPage() {
     const supabase = createClient()
     const slug = generateSlug(title)
 
-    const { error: insertError } = await supabase
-      .from('blog_posts')
-      .insert({
-        title,
-        slug,
-        content,
-        excerpt: excerpt || null,
-        image_url: imageUrl || null,
-        category,
-        reading_time: readingTime,
-        published,
-      })
+      const { error: insertError } = await supabase
+        .from('blog_posts')
+        .insert({
+          title,
+          slug,
+          content,
+          image_url: imageUrl || null,
+          reading_time: readingTime,
+          published,
+        })
 
     if (insertError) {
       setError(insertError.message)
@@ -90,19 +86,6 @@ export default function NewPostPage() {
         </div>
 
         <div>
-          <Label htmlFor="excerpt">Extracto</Label>
-          <SmartTextarea
-            id="excerpt"
-            value={excerpt}
-            onChange={setExcerpt}
-            placeholder="Un breve resumen de la entrada..."
-            rows={2}
-            showIssues={false}
-            className="mt-1"
-          />
-        </div>
-
-        <div>
           <FileUploadField
             label="Imagen de la Entrada"
             bucketName="blog-images"
@@ -126,30 +109,14 @@ export default function NewPostPage() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="category">Categoría</Label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 w-full border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="reflexion">Reflexión</option>
-              <option value="proceso">Proceso</option>
-              <option value="fragmentos">Fragmentos</option>
-              <option value="fotos">Fotos</option>
-            </select>
-          </div>
-          <div>
-            <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
-            <SmartInput
-              id="readingTime"
-              value={String(readingTime)}
-              onChange={(v) => setReadingTime(parseInt(v) || 5)}
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
+          <SmartInput
+            id="readingTime"
+            value={String(readingTime)}
+            onChange={(v) => setReadingTime(parseInt(v) || 5)}
+            className="mt-1"
+          />
         </div>
 
         <div className="flex items-center gap-2">

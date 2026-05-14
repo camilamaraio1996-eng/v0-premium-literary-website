@@ -10,7 +10,7 @@ async function getRecentPosts() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('blog_posts')
-    .select('id, title, slug, excerpt, image_url, category, reading_time, created_at')
+    .select('id, title, slug, image_url, reading_time, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
     .limit(3)

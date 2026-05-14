@@ -22,7 +22,6 @@ interface Post {
   id: string
   title: string
   slug: string
-  category: string
   published: boolean
   created_at: string
 }
@@ -81,7 +80,6 @@ export function PostsTable({ posts }: PostsTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Título</TableHead>
-            <TableHead>Categoría</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Fecha</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
@@ -91,9 +89,6 @@ export function PostsTable({ posts }: PostsTableProps) {
           {localPosts.map((post) => (
             <TableRow key={post.id}>
               <TableCell className="font-medium">{post.title}</TableCell>
-              <TableCell>
-                <Badge variant="secondary">{post.category}</Badge>
-              </TableCell>
               <TableCell>
                 {post.published ? (
                   <Badge variant="default">Publicado</Badge>

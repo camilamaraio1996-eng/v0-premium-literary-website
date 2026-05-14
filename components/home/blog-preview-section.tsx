@@ -12,21 +12,9 @@ interface BlogPost {
   id: string
   title: string
   slug: string
-  excerpt: string | null
   image_url: string | null
-  category: string
   reading_time: number
   created_at: string
-}
-
-const categoryLabel = (cat: string) => {
-  const labels: Record<string, string> = {
-    reflexion: 'Reflexión',
-    proceso: 'Proceso',
-    fragmentos: 'Fragmentos',
-    fotos: 'Fotos',
-  }
-  return labels[cat] || cat
 }
 
 interface BlogPreviewSectionProps {
@@ -51,7 +39,7 @@ export function BlogPreviewSection({ posts }: BlogPreviewSectionProps) {
               Diario
             </span>
             <h2 className="font-serif text-3xl lg:text-4xl text-primary">
-              Ultimas Entradas
+              Últimas Entradas
             </h2>
           </div>
           <Button asChild variant="ghost" className="mt-4 md:mt-0 group">
@@ -75,7 +63,7 @@ export function BlogPreviewSection({ posts }: BlogPreviewSectionProps) {
               <Link href={`/diario/${post.slug}`} className="block">
                 {/* Cover image */}
                 {post.image_url && (
-                  <div className="relative mb-5 overflow-hidden aspect-video bg-muted/20">
+                  <div className="relative mb-5 overflow-hidden aspect-video bg-muted/20 rounded-sm">
                     <Image
                       src={post.image_url}
                       alt={post.title}
@@ -85,26 +73,14 @@ export function BlogPreviewSection({ posts }: BlogPreviewSectionProps) {
                   </div>
                 )}
 
-                <div className="mb-3">
-                  <span className="text-xs uppercase tracking-[0.15em] text-[#958568]">
-                    {categoryLabel(post.category)}
-                  </span>
-                </div>
-
-                <h3 className="font-serif text-xl text-primary mb-3 group-hover:text-accent transition-colors leading-tight">
+                <h3 className="font-serif text-xl text-primary mb-4 group-hover:text-accent transition-colors leading-tight line-clamp-2">
                   {post.title}
                 </h3>
-
-                {post.excerpt && (
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
 
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    {format(new Date(post.created_at), "d MMM yyyy", { locale: es })}
+                    {format(new Date(post.created_at), "d MMM", { locale: es })}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
