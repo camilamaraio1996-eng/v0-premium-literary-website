@@ -7,7 +7,7 @@ interface Recommendation {
   author: string | null
   description: string | null
   image_url: string | null
-  sort_order: number
+  genre: string | null
 }
 
 function BookCover({ imageUrl, title, mobile }: { imageUrl: string | null; title: string; mobile?: boolean }) {
@@ -81,6 +81,11 @@ export function RecommendationsGrid({
                       {rec.author}
                     </p>
                   )}
+                  {rec.genre && (
+                    <span className="mt-1.5 inline-block text-[10px] tracking-[0.15em] uppercase bg-secondary/60 text-foreground/50 px-1.5 py-0.5 rounded-sm">
+                      {rec.genre}
+                    </span>
+                  )}
                 </div>
               </div>
               {/* Mobile: full description below the cover+title row */}
@@ -101,10 +106,16 @@ export function RecommendationsGrid({
                     {rec.title}
                   </h3>
                   {rec.author && (
-                    <p className="text-xs tracking-wide text-[#958568] mb-3 font-medium uppercase">
+                    <p className="text-xs tracking-wide text-[#958568] font-medium uppercase">
                       {rec.author}
                     </p>
                   )}
+                  {rec.genre && (
+                    <span className="mt-1.5 mb-3 inline-block text-[10px] tracking-[0.15em] uppercase bg-secondary/60 text-foreground/50 px-1.5 py-0.5 rounded-sm">
+                      {rec.genre}
+                    </span>
+                  )}
+                  {!rec.genre && rec.author && <div className="mb-3" />}
                   {rec.description && (
                     <p className="text-sm text-foreground/65 leading-relaxed line-clamp-4 text-pretty">
                       {rec.description}

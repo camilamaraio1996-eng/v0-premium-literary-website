@@ -15,7 +15,7 @@ async function getRecommendations() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('recommendations')
-    .select('id, title, author, description, image_url, created_at')
+    .select('id, title, author, description, image_url, genre, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
     .limit(50)

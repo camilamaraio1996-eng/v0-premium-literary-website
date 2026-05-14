@@ -16,6 +16,7 @@ interface Recommendation {
   id: string
   title: string
   author: string
+  genre: string
   description: string
   image_url: string
   published: boolean
@@ -31,6 +32,7 @@ export default function EditRecommendationPage() {
   const [rec, setRec] = useState<Recommendation | null>(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
+  const [genre, setGenre] = useState('')
   const [description, setDescription] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [published, setPublished] = useState(false)
@@ -67,6 +69,7 @@ export default function EditRecommendationPage() {
         id: String(data.id ?? ''),
         title: String(data.title ?? ''),
         author: String(data.author ?? ''),
+        genre: String(data.genre ?? ''),
         description: String(data.description ?? ''),
         image_url: String(data.image_url ?? ''),
         published: Boolean(data.published),
@@ -77,6 +80,7 @@ export default function EditRecommendationPage() {
       setRec(safe)
       setTitle(safe.title)
       setAuthor(safe.author)
+      setGenre(safe.genre)
       setDescription(safe.description)
       setImageUrl(safe.image_url)
       setPublished(safe.published)
@@ -104,6 +108,7 @@ export default function EditRecommendationPage() {
         .update({
           title: title.trim(),
           author: author.trim() || null,
+          genre: genre.trim() || null,
           description: description.trim(),
           image_url: imageUrl.trim() || null,
           published,
@@ -208,6 +213,17 @@ export default function EditRecommendationPage() {
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Nombre del autor"
+              className="mt-1 text-base"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="genre" className="text-sm sm:text-base">Género / Categoría</Label>
+            <Input
+              id="genre"
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              placeholder="ej. Novela, Ensayo, Poesía..."
               className="mt-1 text-base"
             />
           </div>

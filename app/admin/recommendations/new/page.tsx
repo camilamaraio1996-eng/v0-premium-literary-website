@@ -15,6 +15,7 @@ export default function NewRecommendationPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
+  const [genre, setGenre] = useState('')
   const [description, setDescription] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [loading, setLoading] = useState(false)
@@ -37,6 +38,7 @@ export default function NewRecommendationPage() {
       const payload = {
         title: title.trim(),
         author: author?.trim() || null,
+        genre: genre?.trim() || null,
         description: description.trim(),
         image_url: imageUrl?.trim() || null,
         published: false,
@@ -99,6 +101,17 @@ export default function NewRecommendationPage() {
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Nombre del autor"
+              className="mt-1 text-base"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="genre" className="text-sm sm:text-base">Género / Categoría</Label>
+            <Input
+              id="genre"
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              placeholder="ej. Novela, Ensayo, Poesía..."
               className="mt-1 text-base"
             />
           </div>
