@@ -17,7 +17,7 @@ export function RecommendationsHero() {
 
         {/* Subtitle */}
         <p className="text-sm sm:text-base text-foreground/60 leading-relaxed max-w-md">
-          Libros que mejoraron mis días — una selección personal de lecturas que volvería a empezar.
+          De la biblioteca a la web
         </p>
       </div>
     </section>
