@@ -1,42 +1,41 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
-// This would come from the database in production
-const previewPosts = [
-  {
-    id: '1',
-    title: 'Sobre el arte de soñar despierto',
-    excerpt: 'Hay quienes dicen que soñar despierto es perder el tiempo. Yo creo que es la forma más honesta de estar vivo.',
-    category: 'Reflexión',
-    date: '15 Mayo, 2026',
-    readingTime: 5,
-    slug: 'arte-de-sonar-despierto'
-  },
-  {
-    id: '2',
-    title: 'El proceso de escribir sobre los sueños',
-    excerpt: 'Cada noche, antes de dormir, dejo un cuaderno junto a la cama. Los sueños más reveladores son los que olvidamos primero.',
-    category: 'Proceso Creativo',
-    date: '10 Mayo, 2026',
-    readingTime: 7,
-    slug: 'proceso-escribir-suenos'
-  },
-  {
-    id: '3',
-    title: 'La memoria como materia prima',
-    excerpt: 'La ficción y la memoria comparten un secreto: ambas reconstruyen lo que alguna vez fue real.',
-    category: 'Escritura',
-    date: '5 Mayo, 2026',
-    readingTime: 4,
-    slug: 'memoria-materia-prima'
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  image_url: string | null
+  category: string
+  reading_time: number
+  created_at: string
+}
+
+const categoryLabel = (cat: string) => {
+  const labels: Record<string, string> = {
+    reflexion: 'Reflexión',
+    proceso: 'Proceso',
+    fragmentos: 'Fragmentos',
+    fotos: 'Fotos',
   }
-]
+  return labels[cat] || cat
+}
 
-export function BlogPreviewSection() {
+interface BlogPreviewSectionProps {
+  posts: BlogPost[]
+}
+
+export function BlogPreviewSection({ posts }: BlogPreviewSectionProps) {
+  if (posts.length === 0) return null
+
   return (
     <section className="py-24 lg:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -52,7 +51,7 @@ export function BlogPreviewSection() {
               Diario
             </span>
             <h2 className="font-serif text-3xl lg:text-4xl text-primary">
-              Últimas Entradas
+              Ultimas Entradas
             </h2>
           </div>
           <Button asChild variant="ghost" className="mt-4 md:mt-0 group">
@@ -64,7 +63,7 @@ export function BlogPreviewSection() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {previewPosts.map((post, index) => (
+          {posts.map((post, index) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 30 }}
@@ -74,28 +73,42 @@ export function BlogPreviewSection() {
               className="group"
             >
               <Link href={`/diario/${post.slug}`} className="block">
-                <div className="mb-4">
+                {/* Cover image */}
+                {post.image_url && (
+                  <div className="relative mb-5 overflow-hidden aspect-video bg-muted/20">
+                    <Image
+                      src={post.image_url}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
+                <div className="mb-3">
                   <span className="text-xs uppercase tracking-[0.15em] text-[#958568]">
-                    {post.category}
+                    {categoryLabel(post.category)}
                   </span>
                 </div>
-                
+
                 <h3 className="font-serif text-xl text-primary mb-3 group-hover:text-accent transition-colors leading-tight">
                   {post.title}
                 </h3>
-                
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                  {post.excerpt}
-                </p>
-                
+
+                {post.excerpt && (
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                )}
+
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    {post.date}
+                    {format(new Date(post.created_at), "d MMM yyyy", { locale: es })}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {post.readingTime} min
+                    {post.reading_time} min
                   </span>
                 </div>
               </Link>
