@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { BookOpen } from 'lucide-react'
+import { ImageLightbox } from '@/components/ui/image-lightbox'
 
 interface Recommendation {
   id: string
@@ -19,7 +20,7 @@ function BookCover({ imageUrl, title, mobile }: { imageUrl: string | null; title
   const sizeClass = mobile ? 'w-20 aspect-[3/4]' : 'w-28 md:w-32 aspect-[3/4]'
   const sizes = mobile ? '80px' : '(max-width: 768px) 112px, 128px'
 
-  return (
+  const bookCoverContent = (
     <div className={`relative flex-shrink-0 ${sizeClass} rounded-sm overflow-hidden bg-secondary/40 shadow-[0_2px_8px_rgba(0,0,0,0.07)]`}>
       {imageUrl ? (
         <Image
@@ -37,6 +38,16 @@ function BookCover({ imageUrl, title, mobile }: { imageUrl: string | null; title
         </div>
       )}
     </div>
+  )
+
+  if (!imageUrl) {
+    return bookCoverContent
+  }
+
+  return (
+    <ImageLightbox imageUrl={imageUrl} alt={`Portada de ${title}`}>
+      {bookCoverContent}
+    </ImageLightbox>
   )
 }
 
