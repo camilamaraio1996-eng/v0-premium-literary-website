@@ -3,6 +3,7 @@ import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
 import { AboutBookSection } from '@/components/home/about-book-section'
 import { BlogPreviewSection } from '@/components/home/blog-preview-section'
+import { ContactCTA } from '@/components/home/contact-cta'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
 import { createClient } from '@/lib/supabase/server'
 
@@ -42,6 +43,7 @@ export default async function HomePage() {
         />
         <AboutBookSection />
         <BlogPreviewSection posts={recentPosts} />
+        <ContactCTA />
       </main>
       <Footer />
     </>

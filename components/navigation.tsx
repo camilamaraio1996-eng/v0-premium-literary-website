@@ -17,7 +17,6 @@ const defaultNavLinks = [
   { href: '/diario', label: 'Blog' },
   { href: '/recomendaciones', label: 'Recomendaciones' },
   { href: '/autor', label: 'Autora' },
-  { href: '/contacto', label: 'Contacto' },
 ]
 
 export function Navigation({ navItems = defaultNavLinks, siteTitle = 'Camila Maraio' }: NavigationProps) {
