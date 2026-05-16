@@ -14,8 +14,6 @@ interface HeroSectionProps {
   imageAlt?: string
   ctaPrimaryLabel?: string
   ctaPrimaryHref?: string
-  ctaSecondaryLabel?: string
-  ctaSecondaryHref?: string
   videoUrl?: string | null
   buyUrl?: string | null
   buyLabel?: string
@@ -44,8 +42,6 @@ export function HeroSection({
   imageAlt = '',
   ctaPrimaryLabel = 'Descubrir el Libro',
   ctaPrimaryHref = '/libro',
-  ctaSecondaryLabel = 'Ir al Diario',
-  ctaSecondaryHref = '/diario',
   videoUrl,
   buyUrl,
   buyLabel = 'Comprar el Libro',
@@ -133,7 +129,7 @@ export function HeroSection({
           {description}
         </motion.p>
 
-        {/* Primary CTA buttons */}
+        {/* Primary CTA buttons - horizontal layout */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,36 +139,15 @@ export function HeroSection({
           <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
             <Link href={ctaPrimaryHref}>{ctaPrimaryLabel}</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors uppercase tracking-[0.15em] text-xs px-8">
-            <Link href={ctaSecondaryHref}>{ctaSecondaryLabel}</Link>
-          </Button>
         </motion.div>
 
-        {/* Hero image - if needed */}
-        {imageUrl && !embedUrl && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.8 }}
-            className="w-full max-w-3xl mx-auto mt-10 rounded-lg overflow-hidden border border-border shadow-lg h-80 sm:h-96 md:h-[500px] relative"
-          >
-            <Image
-              src={imageUrl}
-              alt={imageAlt || title}
-              fill
-              className="object-cover"
-              priority
-            />
-          </motion.div>
-        )}
-
-        {/* Buy button - final CTA */}
+        {/* Buy button - same row as primary CTA on desktop */}
         {buyUrl && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.85 }}
-            className="flex justify-center mt-10"
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex justify-center mt-4 sm:mt-0 sm:-mt-16 sm:ml-4"
           >
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 transition-colors uppercase tracking-[0.15em] text-xs px-10 gap-2">
               <a href={buyUrl} target="_blank" rel="noopener noreferrer">
