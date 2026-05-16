@@ -2,26 +2,12 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
 import { AboutBookSection } from '@/components/home/about-book-section'
-import { BlogPreviewSection } from '@/components/home/blog-preview-section'
 import { ContactCTA } from '@/components/home/contact-cta'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
-import { createClient } from '@/lib/supabase/server'
-
-async function getRecentPosts() {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('blog_posts')
-    .select('id, title, slug, image_url, reading_time, created_at')
-    .eq('published', true)
-    .order('created_at', { ascending: false })
-    .limit(3)
-  return data || []
-}
 
 export default async function HomePage() {
   const { navItems, siteTitle } = await getNavigationData()
   const settings = await getSiteSettings()
-  const recentPosts = await getRecentPosts()
 
   return (
     <>
@@ -40,7 +26,6 @@ export default async function HomePage() {
           buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
         />
         <AboutBookSection />
-        <BlogPreviewSection posts={recentPosts} />
         <ContactCTA />
       </main>
       <Footer />
