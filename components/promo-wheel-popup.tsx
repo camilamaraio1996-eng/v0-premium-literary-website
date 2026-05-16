@@ -273,14 +273,6 @@ export function PromoWheelPopup() {
                       const startAngle = index * sliceAngle
                       const midAngle = startAngle + sliceAngle / 2
                       
-                      // Convert to radians
-                      const rad = (midAngle * Math.PI) / 180
-                      
-                      // Calculate position on circle (radius ~65 for text placement)
-                      const textRadius = 65
-                      const x = Math.cos(rad - Math.PI / 2) * textRadius
-                      const y = Math.sin(rad - Math.PI / 2) * textRadius
-                      
                       return (
                         <div
                           key={`text-${index}`}
@@ -292,13 +284,15 @@ export function PromoWheelPopup() {
                         >
                           {/* Text positioned relative to slice angle */}
                           <span
-                            className="text-xs sm:text-sm font-bold text-white/95 uppercase tracking-wider text-center whitespace-nowrap absolute"
+                            className="text-[10px] sm:text-xs font-bold text-white/95 uppercase tracking-tight text-center absolute max-w-[45px]"
                             style={{
-                              // Position at top of rotated container
-                              top: '8%',
+                              // Position at top of rotated container, closer to edge
+                              top: '12%',
                               transform: 'translateX(-50%)',
                               left: '50%',
-                              lineHeight: '1.2',
+                              lineHeight: '1.1',
+                              wordBreak: 'break-word',
+                              whiteSpace: 'normal',
                             }}
                           >
                             {segment.label === '20% OFF' ? '20%\nOFF' : 'Seguí\nparticipando'}
