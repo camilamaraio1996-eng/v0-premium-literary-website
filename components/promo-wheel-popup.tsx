@@ -270,6 +270,7 @@ export function PromoWheelPopup() {
                     {SEGMENTS.map((segment, index) => {
                       const sliceAngle = SEGMENT_ANGLE
                       const midAngle = index * sliceAngle + sliceAngle / 2
+                      const isParticipando = segment.label.includes('PARTICIPANDO')
                       
                       return (
                         <div
@@ -282,13 +283,13 @@ export function PromoWheelPopup() {
                           <span
                             className="font-bold text-white/95 uppercase text-center absolute"
                             style={{
-                              fontSize: '11px',
+                              fontSize: isParticipando ? '9px' : '11px',
                               top: '15%',
                               transform: 'translateX(-50%)',
                               left: '50%',
                               lineHeight: '1.15',
                               whiteSpace: 'pre-line',
-                              letterSpacing: '0.5px',
+                              letterSpacing: isParticipando ? '0.3px' : '0.5px',
                               maxWidth: '50px',
                             }}
                           >
