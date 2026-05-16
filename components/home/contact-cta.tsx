@@ -28,8 +28,7 @@ export function ContactCTA() {
 
           {/* Description */}
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-lg mx-auto mb-8">
-            ¿Tienes preguntas, ideas para colaborar o simplemente quieres decir hola? 
-            Me encantaría saber de ti. Puedes escribirme directamente.
+            ¿Tenes ideas, preguntas, colaboraciones? Podes contactarme desde aca
           </p>
 
           {/* CTA Button/Link */}
