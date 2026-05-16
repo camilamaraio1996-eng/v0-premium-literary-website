@@ -40,7 +40,7 @@ export function HeroSection({
   description = 'Un viaje a través de los territorios más profundos de la memoria, donde los sueños y las emociones se entrelazan en una narrativa que desafía los límites de lo real.',
   imageUrl = null,
   imageAlt = '',
-  ctaPrimaryLabel = 'Descubrir el Libro',
+  ctaPrimaryLabel = 'Descubrí "Lo real y lo otro"',
   ctaPrimaryHref = '/libro',
   videoUrl,
   buyUrl,
