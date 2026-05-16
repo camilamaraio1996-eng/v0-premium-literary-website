@@ -16,9 +16,9 @@ const HOURS_24 = 24 * 60 * 60 * 1000
 
 const SEGMENTS = [
   { label: '20% OFF', isWin: true },
-  { label: 'Seguí\nparticipando', isWin: false },
+  { label: 'SEGUÍ\nPARTICIPANDO', isWin: false },
   { label: '20% OFF', isWin: true },
-  { label: 'Seguí\nparticipando', isWin: false },
+  { label: 'SEGUÍ\nPARTICIPANDO', isWin: false },
   { label: '20% OFF', isWin: true },
   { label: '20% OFF', isWin: true },
 ]
@@ -268,34 +268,31 @@ export function PromoWheelPopup() {
                   >
                     {/* Text labels - one per slice */}
                     {SEGMENTS.map((segment, index) => {
-                      // Calculate angle for this slice (middle of the slice)
                       const sliceAngle = SEGMENT_ANGLE
-                      const startAngle = index * sliceAngle
-                      const midAngle = startAngle + sliceAngle / 2
+                      const midAngle = index * sliceAngle + sliceAngle / 2
                       
                       return (
                         <div
                           key={`text-${index}`}
                           className="absolute w-full h-full flex items-center justify-center pointer-events-none"
                           style={{
-                            // Rotate the entire div to align with slice
                             transform: `rotate(${midAngle}deg)`,
                           }}
                         >
-                          {/* Text positioned relative to slice angle */}
                           <span
-                            className="text-[10px] sm:text-xs font-bold text-white/95 uppercase tracking-tight text-center absolute max-w-[45px]"
+                            className="font-bold text-white/95 uppercase text-center absolute"
                             style={{
-                              // Position at top of rotated container, closer to edge
-                              top: '12%',
+                              fontSize: '11px',
+                              top: '15%',
                               transform: 'translateX(-50%)',
                               left: '50%',
-                              lineHeight: '1.1',
-                              wordBreak: 'break-word',
-                              whiteSpace: 'normal',
+                              lineHeight: '1.15',
+                              whiteSpace: 'pre-line',
+                              letterSpacing: '0.5px',
+                              maxWidth: '50px',
                             }}
                           >
-                            {segment.label === '20% OFF' ? '20%\nOFF' : 'Seguí\nparticipando'}
+                            {segment.label}
                           </span>
                         </div>
                       )
