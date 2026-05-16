@@ -19,10 +19,9 @@ export async function getNavigationData() {
   const navItems: NavItem[] = [
     { href: '/', label: settingsMap['nav_inicio'] || 'Inicio' },
     { href: '/libro', label: settingsMap['nav_libro'] || 'El Libro' },
-    { href: '/diario', label: settingsMap['nav_diario'] || 'Diario' },
+    { href: '/diario', label: settingsMap['nav_diario'] || 'Blog' },
     { href: '/recomendaciones', label: settingsMap['nav_recomendaciones'] || 'Recomendaciones' },
     { href: '/autor', label: settingsMap['nav_autor'] || 'Autora' },
-    { href: '/contacto', label: settingsMap['nav_contacto'] || 'Contacto' },
   ]
 
   return {
