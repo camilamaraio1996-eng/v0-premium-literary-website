@@ -33,7 +33,7 @@ export default async function HomePage() {
           description={settings['hero_description'] || 'Un libro de relatos cortos, realistas. '}
           imageUrl={settings['home_hero_image_url'] || null}
           imageAlt={settings['home_hero_image_alt'] || ''}
-          ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrí el libro'}
+          ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrí "Lo real y lo otro"'}
           ctaPrimaryHref={settings['hero_cta_primary_href'] || '/libro'}
           ctaSecondaryLabel={settings['hero_cta_secondary_label'] || 'Ir al Diario'}
           ctaSecondaryHref={settings['hero_cta_secondary_href'] || '/diario'}
