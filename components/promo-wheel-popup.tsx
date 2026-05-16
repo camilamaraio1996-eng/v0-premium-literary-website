@@ -255,7 +255,7 @@ export function PromoWheelPopup() {
                 <div className="relative w-52 h-52 sm:w-60 sm:h-60 mx-auto">
                   <motion.div
                     ref={wheelRef}
-                    className="w-full h-full rounded-full border-[3px] border-primary/25 shadow-lg overflow-hidden"
+                    className="w-full h-full rounded-full border-[3px] border-primary/25 shadow-lg overflow-hidden relative flex items-center justify-center"
                     style={{
                       background: `conic-gradient(${WHEEL_COLORS.map((c, i) => `${c} ${i * SEGMENT_ANGLE}deg ${(i + 1) * SEGMENT_ANGLE}deg`).join(', ')})`,
                       filter: hasWon === true ? 'drop-shadow(0 0 12px rgba(127,39,100,0.5))' : undefined,
@@ -266,19 +266,55 @@ export function PromoWheelPopup() {
                       ease: [0.15, 0.85, 0.25, 1],
                     }}
                   >
-                    {/* Labels */}
+                    {/* SVG for radial text */}
+                    <svg
+                      viewBox="0 0 200 200"
+                      className="absolute inset-0 w-full h-full pointer-events-none"
+                      style={{ rotate: `${-rotation}deg` }}
+                    >
+                      <defs>
+                        <path
+                          id="wheelCircle"
+                          d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0"
+                          fill="none"
+                        />
+                      </defs>
+
+                      {SEGMENTS.map((segment, index) => {
+                        const startAngle = index * SEGMENT_ANGLE
+                        const offsetPercent = (startAngle + SEGMENT_ANGLE / 2) / 360
+                        return (
+                          <text
+                            key={index}
+                            className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wide fill-white/95 text-center"
+                            style={{ dominantBaseline: 'middle', textAnchor: 'middle' }}
+                          >
+                            <textPath href="#wheelCircle" startOffset={`${offsetPercent * 100}%`} method="align">
+                              {segment.label.replace('\n', ' ')}
+                            </textPath>
+                          </text>
+                        )
+                      })}
+                    </svg>
+
+                    {/* Fallback: CSS positioned labels for mobile */}
                     {SEGMENTS.map((segment, index) => {
                       const angle = index * SEGMENT_ANGLE + SEGMENT_ANGLE / 2
+                      const radians = (angle * Math.PI) / 180
+                      const radius = 70
+                      const x = Math.cos(radians - Math.PI / 2) * radius
+                      const y = Math.sin(radians - Math.PI / 2) * radius
                       return (
                         <div
-                          key={index}
-                          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                          style={{ transform: `rotate(${angle}deg)` }}
+                          key={`label-${index}`}
+                          className="hidden sm:flex absolute items-center justify-center pointer-events-none"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle}deg)`,
+                          }}
                         >
-                          <span
-                            className="absolute text-[9px] sm:text-[10px] font-bold text-white/95 uppercase tracking-wide text-center leading-tight whitespace-pre-line"
-                            style={{ transform: 'translateY(-68px) sm:translateY(-78px)' }}
-                          >
+                          <span className="text-[8px] font-bold text-white/95 uppercase tracking-wide text-center leading-tight whitespace-pre-line max-w-[50px]">
                             {segment.label}
                           </span>
                         </div>
