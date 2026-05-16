@@ -100,28 +100,6 @@ export function PostContent({ post }: PostContentProps) {
           </div>
         </motion.header>
 
-        {/* Featured image */}
-        {photo && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="mb-12 w-full rounded-lg overflow-hidden bg-muted/10"
-          >
-            <div className="relative w-full" style={{ aspectRatio: 'auto' }}>
-              <Image 
-                src={photo} 
-                alt={post.title} 
-                width={800}
-                height={600}
-                className="w-full h-auto object-contain"
-                quality={85}
-                priority
-              />
-            </div>
-          </motion.div>
-        )}
-
         {/* Content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -151,6 +129,27 @@ export function PostContent({ post }: PostContentProps) {
             <Link href="/diario">Ver más entradas</Link>
           </Button>
         </motion.div>
+
+        {/* Featured image - at the end */}
+        {photo && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-12 w-full rounded-lg overflow-hidden bg-muted/10"
+          >
+            <div className="relative w-full" style={{ aspectRatio: 'auto' }}>
+              <Image 
+                src={photo} 
+                alt={post.title} 
+                width={800}
+                height={600}
+                className="w-full h-auto object-contain"
+                quality={85}
+              />
+            </div>
+          </motion.div>
+        )}
       </div>
     </article>
   )
