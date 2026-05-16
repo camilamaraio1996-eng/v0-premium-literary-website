@@ -129,25 +129,13 @@ export function HeroSection({
           {description}
         </motion.p>
 
-        {/* Primary CTA buttons - horizontal layout */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.75 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8"
-        >
-          <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
-            <Link href={ctaPrimaryHref}>{ctaPrimaryLabel}</Link>
-          </Button>
-        </motion.div>
-
-        {/* Buy button - same row as primary CTA on desktop */}
+        {/* Buy button - first CTA */}
         {buyUrl && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex justify-center mt-4 sm:mt-0 sm:-mt-16 sm:ml-4"
+            transition={{ duration: 0.8, delay: 0.75 }}
+            className="flex justify-center"
           >
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 transition-colors uppercase tracking-[0.15em] text-xs px-10 gap-2">
               <a href={buyUrl} target="_blank" rel="noopener noreferrer">
@@ -157,6 +145,18 @@ export function HeroSection({
             </Button>
           </motion.div>
         )}
+
+        {/* Primary CTA button - below buy button */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="flex flex-col items-center justify-center gap-4 mt-4"
+        >
+          <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
+            <Link href={ctaPrimaryHref}>{ctaPrimaryLabel}</Link>
+          </Button>
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}
