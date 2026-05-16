@@ -168,10 +168,10 @@ export function PromoWheelPopup() {
                   <Gift className="w-7 h-7 text-primary" />
                 </div>
                 <h2 className="font-serif text-2xl sm:text-3xl text-primary mb-3 text-balance">
-                  Gana un descuento para comprar el libro
+                  Ganá un descuento para comprar el libro
                 </h2>
                 <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto">
-                  Girando la ruleta podes desbloquear un descuento exclusivo para usar en tu compra.
+                  Probá suerte girando la ruleta y descubrí si desbloqueás un descuento exclusivo.
                 </p>
               </div>
 
