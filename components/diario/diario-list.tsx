@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -65,20 +64,6 @@ export function DiarioList({ posts }: { posts: BlogPost[] }) {
                     <h3 className="font-serif text-2xl sm:text-3xl lg:text-3xl text-primary group-hover:text-accent transition-colors duration-300">
                       {post.title}
                     </h3>
-
-                    {/* Image if present - smaller, more editorial */}
-                    {post.image_url && (
-                      <div className="relative overflow-hidden rounded-sm bg-muted/20 aspect-[16/9] sm:aspect-[2/1] w-full max-w-md">
-                        <Image
-                          src={post.image_url}
-                          alt={post.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 500px"
-                          quality={75}
-                        />
-                      </div>
-                    )}
 
                     {/* Content preview - elegant and editorial */}
                     <p className="text-sm sm:text-base leading-relaxed text-foreground/70 max-w-2xl line-clamp-3 group-hover:text-foreground/80 transition-colors duration-300">
