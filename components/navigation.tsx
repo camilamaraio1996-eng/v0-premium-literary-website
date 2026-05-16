@@ -57,21 +57,25 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'Camila Mar
             </Link>
           </div>
           
-          {/* Mobile Navigation Links - Wrapped with proper spacing */}
-          <div className="flex flex-wrap justify-center gap-x-2 sm:gap-x-3 gap-y-1.5 pb-2 sm:pb-3 px-2">
-            {navItems.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'text-[10px] sm:text-xs tracking-[0.1em] uppercase link-underline transition-colors whitespace-nowrap',
-                  pathname === link.href
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-primary'
+          {/* Mobile Navigation Links - with elegant separators */}
+          <div className="flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-2 sm:gap-y-2.5 pb-2 sm:pb-3 px-2">
+            {navItems.map((link, index) => (
+              <React.Fragment key={link.href}>
+                <Link
+                  href={link.href}
+                  className={cn(
+                    'text-[10px] sm:text-xs tracking-[0.1em] uppercase transition-colors duration-300 hover:text-primary',
+                    pathname === link.href
+                      ? 'text-primary font-semibold'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  {link.label}
+                </Link>
+                {index < navItems.length - 1 && (
+                  <span className="text-muted-foreground/40 text-[8px] sm:text-[10px]">·</span>
                 )}
-              >
-                {link.label}
-              </Link>
+              </React.Fragment>
             ))}
           </div>
         </div>
@@ -87,20 +91,24 @@ export function Navigation({ navItems = defaultNavLinks, siteTitle = 'Camila Mar
             </span>
           </Link>
 
-          <div className="flex items-center gap-8">
-            {navItems.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'text-sm tracking-wider uppercase link-underline transition-colors',
-                  pathname === link.href
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-primary'
+          <div className="flex items-center gap-10 lg:gap-12">
+            {navItems.map((link, index) => (
+              <React.Fragment key={link.href}>
+                <Link
+                  href={link.href}
+                  className={cn(
+                    'text-sm tracking-widest uppercase transition-all duration-300',
+                    pathname === link.href
+                      ? 'text-primary font-semibold'
+                      : 'text-muted-foreground hover:text-primary'
+                  )}
+                >
+                  {link.label}
+                </Link>
+                {index < navItems.length - 1 && (
+                  <span className="text-muted-foreground/30 text-xs">·</span>
                 )}
-              >
-                {link.label}
-              </Link>
+              </React.Fragment>
             ))}
           </div>
         </div>
