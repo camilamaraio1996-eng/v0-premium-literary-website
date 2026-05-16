@@ -3,6 +3,7 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { BookHero } from '@/components/book/book-hero'
 import { BookFragments } from '@/components/book/book-fragments'
+import { DiscountWheel } from '@/components/book/discount-wheel'
 import { createClient } from '@/lib/supabase/server'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
 import type { Book, BookFragment } from '@/types/book'
@@ -78,6 +79,9 @@ export default async function LibroPage() {
           buyUrl={settings['book_buy_url'] as string | null}
           buyLabel={(settings['book_buy_label'] as string) || 'Comprar Ahora'}
         />
+        
+        {/* Discount Wheel Section */}
+        <DiscountWheel />
         
         {/* Fragments Section */}
         <BookFragments fragments={fragments} />
