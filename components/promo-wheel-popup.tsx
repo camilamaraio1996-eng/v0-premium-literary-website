@@ -2,13 +2,17 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Gift, Copy, Check, RotateCcw, X } from 'lucide-react'
+import { Gift, Copy, Check, RotateCcw, X, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import confetti from 'canvas-confetti'
 
 const DISCOUNT_CODE = '536V72'
 const WIN_PROBABILITY = 0.6
-const POPUP_DELAY_MS = 1000 // Show after 1 second
-const STORAGE_KEY = 'promo_wheel_won'
+const POPUP_DELAY_MS = 1000
+const STORAGE_PLAYED_KEY = 'roulettePlayed'
+const STORAGE_RESULT_KEY = 'rouletteResult'
+const STORAGE_CLOSED_KEY = 'rouletteClosed'
+const HOURS_24 = 24 * 60 * 60 * 1000
 
 const SEGMENTS = [
   { label: '20% OFF', isWin: true },
@@ -21,32 +25,66 @@ const SEGMENTS = [
 
 const SEGMENT_ANGLE = 360 / SEGMENTS.length
 
+// Wheel colors alternating primary / accent
+const WHEEL_COLORS = ['#7f2764', '#6c6823', '#7f2764', '#6c6823', '#7f2764', '#8a3070']
+
+function fireConfetti() {
+  const count = 120
+  const defaults = { startVelocity: 28, spread: 90, ticks: 80, zIndex: 10000 }
+
+  function randomInRange(min: number, max: number) {
+    return Math.random() * (max - min) + min
+  }
+
+  confetti({ ...defaults, particleCount: count * 0.4, origin: { x: randomInRange(0.1, 0.3), y: 0.55 }, colors: ['#7f2764', '#f2ede6', '#6c6823', '#d3b1c2', '#a87890'] })
+  confetti({ ...defaults, particleCount: count * 0.4, origin: { x: randomInRange(0.7, 0.9), y: 0.55 }, colors: ['#7f2764', '#f2ede6', '#6c6823', '#d3b1c2', '#a87890'] })
+  confetti({ ...defaults, particleCount: count * 0.2, origin: { x: 0.5, y: 0.5 }, colors: ['#f2ede6', '#d3b1c2'] })
+}
+
 export function PromoWheelPopup() {
   const [isOpen, setIsOpen] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
+  const [hasPlayed, setHasPlayed] = useState(false)
   const [hasWon, setHasWon] = useState<boolean | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [copied, setCopied] = useState(false)
   const [rotation, setRotation] = useState(0)
   const wheelRef = useRef<HTMLDivElement>(null)
+  const spinLock = useRef(false)
 
-  // Show popup after delay, unless user already won
   useEffect(() => {
     try {
-      const alreadyWon = sessionStorage.getItem(STORAGE_KEY)
-      if (alreadyWon) return
+      // Check if already played
+      const alreadyPlayed = localStorage.getItem(STORAGE_PLAYED_KEY)
+      if (alreadyPlayed) {
+        const result = localStorage.getItem(STORAGE_RESULT_KEY)
+        setHasPlayed(true)
+        setHasWon(result === 'won')
+        setShowResult(true)
+        // Still show popup so they can see their result
+        const timer = setTimeout(() => setIsOpen(true), POPUP_DELAY_MS)
+        return () => clearTimeout(timer)
+      }
+
+      // Check if closed without playing (24h cooldown)
+      const closedAt = localStorage.getItem(STORAGE_CLOSED_KEY)
+      if (closedAt) {
+        const elapsed = Date.now() - parseInt(closedAt, 10)
+        if (elapsed < HOURS_24) return
+        // 24h passed, remove the flag and show again
+        localStorage.removeItem(STORAGE_CLOSED_KEY)
+      }
+
+      const timer = setTimeout(() => setIsOpen(true), POPUP_DELAY_MS)
+      return () => clearTimeout(timer)
     } catch {
-      // sessionStorage unavailable
+      // localStorage unavailable
+      const timer = setTimeout(() => setIsOpen(true), POPUP_DELAY_MS)
+      return () => clearTimeout(timer)
     }
-
-    const timer = setTimeout(() => {
-      setIsOpen(true)
-    }, POPUP_DELAY_MS)
-
-    return () => clearTimeout(timer)
   }, [])
 
-  // Lock/unlock body scroll when popup opens/closes
+  // Lock/unlock body scroll
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -61,76 +99,81 @@ export function PromoWheelPopup() {
   const handleClose = useCallback(() => {
     if (isSpinning) return
     setIsOpen(false)
-  }, [isSpinning])
+
+    // If they close without playing, record timestamp for 24h cooldown
+    if (!hasPlayed) {
+      try {
+        localStorage.setItem(STORAGE_CLOSED_KEY, String(Date.now()))
+      } catch {
+        // unavailable
+      }
+    }
+  }, [isSpinning, hasPlayed])
 
   // Close on ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !isSpinning) {
-        handleClose()
-      }
+      if (e.key === 'Escape' && isOpen && !isSpinning) handleClose()
     }
     window.addEventListener('keydown', handleEsc)
     return () => window.removeEventListener('keydown', handleEsc)
   }, [isOpen, isSpinning, handleClose])
 
   const handleSpin = useCallback(() => {
-    if (isSpinning || hasWon === true) return
-
+    if (isSpinning || spinLock.current || hasPlayed) return
+    spinLock.current = true
     setIsSpinning(true)
     setShowResult(false)
-    setHasWon(null)
 
     const wins = Math.random() < WIN_PROBABILITY
 
     const winningIndices = SEGMENTS.map((s, i) => (s.isWin ? i : -1)).filter((i) => i !== -1)
     const losingIndices = SEGMENTS.map((s, i) => (!s.isWin ? i : -1)).filter((i) => i !== -1)
-
     const targetIndices = wins ? winningIndices : losingIndices
     const targetIndex = targetIndices[Math.floor(Math.random() * targetIndices.length)]
 
-    const fullRotations = 4 + Math.floor(Math.random() * 3)
+    const fullRotations = 4 + Math.floor(Math.random() * 3) // 4–6 full turns
     const segmentCenter = targetIndex * SEGMENT_ANGLE + SEGMENT_ANGLE / 2
     const targetRotation = fullRotations * 360 + (360 - segmentCenter + 90)
 
     setRotation((prev) => prev + targetRotation)
 
     const spinDuration = 3500 + Math.random() * 1000
+
     setTimeout(() => {
       setIsSpinning(false)
+      spinLock.current = false
       setHasWon(wins)
+      setHasPlayed(true)
       setShowResult(true)
 
+      const result = wins ? 'won' : 'lost'
+      try {
+        localStorage.setItem(STORAGE_PLAYED_KEY, 'true')
+        localStorage.setItem(STORAGE_RESULT_KEY, result)
+      } catch {
+        // unavailable
+      }
+
       if (wins) {
-        try {
-          sessionStorage.setItem(STORAGE_KEY, 'true')
-        } catch {
-          // sessionStorage unavailable
-        }
+        setTimeout(() => fireConfetti(), 300)
       }
     }, spinDuration)
-  }, [isSpinning, hasWon])
+  }, [isSpinning, hasPlayed])
 
   const handleCopyCode = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(DISCOUNT_CODE)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     } catch {
-      const textArea = document.createElement('textarea')
-      textArea.value = DISCOUNT_CODE
-      document.body.appendChild(textArea)
-      textArea.select()
+      const el = document.createElement('textarea')
+      el.value = DISCOUNT_CODE
+      document.body.appendChild(el)
+      el.select()
       document.execCommand('copy')
-      document.body.removeChild(textArea)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      document.body.removeChild(el)
     }
-  }, [])
-
-  const handleRetry = useCallback(() => {
-    setShowResult(false)
-    setHasWon(null)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
   }, [])
 
   return (
@@ -140,93 +183,101 @@ export function PromoWheelPopup() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          transition={{ duration: 0.35 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget && !isSpinning) handleClose()
           }}
         >
           {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
-          />
+          <div className="absolute inset-0 bg-foreground/45 backdrop-blur-sm" />
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 20 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-background rounded-xl shadow-2xl border border-border/50"
+            exit={{ opacity: 0, scale: 0.9, y: 24 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-[420px] max-h-[92vh] overflow-y-auto bg-background rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.22)] border border-border/40"
           >
             {/* Close button */}
             <button
               onClick={handleClose}
               disabled={isSpinning}
-              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="absolute top-3.5 right-3.5 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               aria-label="Cerrar"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="px-6 pt-8 pb-8">
+            <div className="px-5 sm:px-7 pt-7 pb-7">
               {/* Header */}
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-4">
-                  <Gift className="w-7 h-7 text-primary" />
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+                  <Gift className="w-6 h-6 text-primary" />
                 </div>
-                <h2 className="font-serif text-2xl sm:text-3xl text-primary mb-3 text-balance">
+                <h2 className="font-serif text-2xl text-primary mb-2.5 text-balance leading-snug">
                   Ganá un descuento para comprar el libro
                 </h2>
-                <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto">
+                <p className="text-muted-foreground text-sm leading-relaxed max-w-[300px] mx-auto">
                   Probá suerte girando la ruleta y descubrí si desbloqueás un descuento exclusivo.
                 </p>
               </div>
 
+              {/* Already played state */}
+              {hasPlayed && !isSpinning && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 text-center"
+                >
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                    Ya utilizaste tu oportunidad
+                  </p>
+                </motion.div>
+              )}
+
               {/* Wheel */}
               <div className="relative flex flex-col items-center">
                 {/* Pointer */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10 -mt-1">
-                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[18px] border-l-transparent border-r-transparent border-t-primary drop-shadow-md" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10 -mt-0.5">
+                  <div
+                    className="w-0 h-0 drop-shadow-md"
+                    style={{
+                      borderLeft: '9px solid transparent',
+                      borderRight: '9px solid transparent',
+                      borderTop: '16px solid #7f2764',
+                    }}
+                  />
                 </div>
 
-                {/* Wheel circle */}
-                <div className="relative w-56 h-56 sm:w-64 sm:h-64">
+                {/* Wheel */}
+                <div className="relative w-52 h-52 sm:w-60 sm:h-60 mx-auto">
                   <motion.div
                     ref={wheelRef}
-                    className="w-full h-full rounded-full shadow-xl overflow-hidden border-[3px] border-primary/20"
+                    className="w-full h-full rounded-full border-[3px] border-primary/25 shadow-lg overflow-hidden"
                     style={{
-                      background: `conic-gradient(
-                        from 0deg,
-                        #7f2764 0deg 60deg,
-                        #6c6823 60deg 120deg,
-                        #7f2764 120deg 180deg,
-                        #6c6823 180deg 240deg,
-                        #7f2764 240deg 300deg,
-                        #7f2764 300deg 360deg
-                      )`,
+                      background: `conic-gradient(${WHEEL_COLORS.map((c, i) => `${c} ${i * SEGMENT_ANGLE}deg ${(i + 1) * SEGMENT_ANGLE}deg`).join(', ')})`,
+                      filter: hasWon === true ? 'drop-shadow(0 0 12px rgba(127,39,100,0.5))' : undefined,
                     }}
                     animate={{ rotate: rotation }}
                     transition={{
-                      duration: isSpinning ? 4 : 0,
-                      ease: [0.2, 0.8, 0.3, 1],
+                      duration: isSpinning ? 4.2 : 0,
+                      ease: [0.15, 0.85, 0.25, 1],
                     }}
                   >
-                    {/* Segment Labels */}
+                    {/* Labels */}
                     {SEGMENTS.map((segment, index) => {
                       const angle = index * SEGMENT_ANGLE + SEGMENT_ANGLE / 2
                       return (
                         <div
                           key={index}
-                          className="absolute inset-0 flex items-center justify-center"
+                          className="absolute inset-0 flex items-center justify-center pointer-events-none"
                           style={{ transform: `rotate(${angle}deg)` }}
                         >
                           <span
-                            className="absolute text-[9px] sm:text-[11px] font-bold text-white/90 uppercase tracking-wide text-center whitespace-pre-line leading-tight"
-                            style={{ transform: 'translateY(-75px)' }}
+                            className="absolute text-[9px] sm:text-[10px] font-bold text-white/95 uppercase tracking-wide text-center leading-tight whitespace-pre-line"
+                            style={{ transform: 'translateY(-68px) sm:translateY(-78px)' }}
                           >
                             {segment.label}
                           </span>
@@ -234,25 +285,25 @@ export function PromoWheelPopup() {
                       )
                     })}
 
-                    {/* Center circle */}
+                    {/* Center hub */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-background border-[3px] border-primary/25 flex items-center justify-center shadow-inner">
-                        <Gift className="w-5 h-5 text-primary/70" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-background border-[2.5px] border-primary/20 flex items-center justify-center shadow-inner">
+                        <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-primary/60" />
                       </div>
                     </div>
                   </motion.div>
                 </div>
 
-                {/* Spin Button */}
-                <div className="mt-6">
+                {/* Spin button */}
+                <div className="mt-5">
                   <Button
                     onClick={handleSpin}
-                    disabled={isSpinning || hasWon === true}
+                    disabled={isSpinning || hasPlayed}
                     size="lg"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.15em] text-xs px-10 gap-2 transition-all shadow-lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.12em] text-xs px-10 gap-2 shadow-md transition-all"
                   >
                     <RotateCcw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
-                    {isSpinning ? 'Girando...' : 'Girar ruleta'}
+                    {isSpinning ? 'Girando...' : hasPlayed ? 'Ya giraste' : 'Girar ruleta'}
                   </Button>
                 </div>
 
@@ -260,38 +311,41 @@ export function PromoWheelPopup() {
                 <AnimatePresence>
                   {showResult && (
                     <motion.div
-                      initial={{ opacity: 0, y: 16, scale: 0.95 }}
+                      initial={{ opacity: 0, y: 14, scale: 0.97 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                      transition={{ duration: 0.35 }}
-                      className="mt-6 w-full"
+                      transition={{ duration: 0.4, delay: 0.1 }}
+                      className="mt-5 w-full"
                     >
                       {hasWon ? (
-                        <div className="bg-card border border-accent/20 rounded-lg p-5 text-center">
-                          <h3 className="font-serif text-lg text-primary mb-2">
-                            Felicitaciones!
-                          </h3>
+                        <div className="bg-card border border-primary/15 rounded-xl p-5 text-center shadow-sm">
+                          <div className="flex items-center justify-center gap-1.5 mb-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            <h3 className="font-serif text-lg text-primary">
+                              Felicitaciones!
+                            </h3>
+                            <Sparkles className="w-4 h-4 text-primary" />
+                          </div>
                           <p className="text-muted-foreground text-sm mb-4">
                             Ganaste un{' '}
-                            <span className="font-bold text-accent">20% de descuento</span> para
+                            <span className="font-bold text-primary">20% de descuento</span> para
                             comprar el libro.
                           </p>
-                          <div className="bg-muted/40 rounded-md p-3 mb-4">
-                            <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-widest">
+                          <div className="bg-muted/50 rounded-lg p-3 mb-1">
+                            <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] mb-1.5">
                               Tu codigo de descuento
                             </p>
-                            <p className="font-mono text-xl text-primary font-bold tracking-[0.2em]">
+                            <p className="font-mono text-2xl text-primary font-bold tracking-[0.3em]">
                               {DISCOUNT_CODE}
                             </p>
                           </div>
-                          <p className="text-[11px] text-muted-foreground mb-3">
-                            Usa el codigo al final de la compra
+                          <p className="text-[10px] text-muted-foreground mb-3.5">
+                            Ingresa el codigo al finalizar la compra.
                           </p>
                           <Button
                             onClick={handleCopyCode}
                             variant="outline"
                             size="sm"
-                            className="border-accent text-accent hover:bg-accent hover:text-accent-foreground uppercase tracking-wider text-xs gap-2"
+                            className="border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-wider text-[10px] gap-1.5 transition-all"
                           >
                             {copied ? (
                               <>
@@ -307,22 +361,13 @@ export function PromoWheelPopup() {
                           </Button>
                         </div>
                       ) : (
-                        <div className="bg-card border border-border rounded-lg p-5 text-center">
-                          <h3 className="font-serif text-lg text-primary mb-2">
-                            Esta vez no salio
+                        <div className="bg-card border border-border/60 rounded-xl p-5 text-center">
+                          <h3 className="font-serif text-base text-primary mb-1.5">
+                            Esta vez no salio.
                           </h3>
-                          <p className="text-muted-foreground text-sm mb-4">
-                            No te desanimes! Segui participando.
+                          <p className="text-muted-foreground text-sm">
+                            Segui explorando la pagina.
                           </p>
-                          <Button
-                            onClick={handleRetry}
-                            variant="outline"
-                            size="sm"
-                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-wider text-xs gap-2"
-                          >
-                            <RotateCcw className="w-3 h-3" />
-                            Intentar de nuevo
-                          </Button>
                         </div>
                       )}
                     </motion.div>
