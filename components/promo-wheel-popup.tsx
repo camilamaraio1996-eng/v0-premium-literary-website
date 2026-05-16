@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 const DISCOUNT_CODE = '536V72'
 const WIN_PROBABILITY = 0.6
-const POPUP_DELAY_MS = 1500 // Show after 1.5 seconds
+const POPUP_DELAY_MS = 1000 // Show after 1 second
 const STORAGE_KEY = 'promo_wheel_won'
 
 const SEGMENTS = [
@@ -41,16 +41,27 @@ export function PromoWheelPopup() {
 
     const timer = setTimeout(() => {
       setIsOpen(true)
-      document.body.style.overflow = 'hidden'
     }, POPUP_DELAY_MS)
 
     return () => clearTimeout(timer)
   }, [])
 
+  // Lock/unlock body scroll when popup opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   const handleClose = useCallback(() => {
+    if (isSpinning) return
     setIsOpen(false)
-    document.body.style.overflow = ''
-  }, [])
+  }, [isSpinning])
 
   // Close on ESC
   useEffect(() => {
