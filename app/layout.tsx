@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { Julius_Sans_One, Archivo_Narrow } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { PromoWheelPopup } from '@/components/promo-wheel-popup'
 import './globals.css'
 
 const juliusSansOne = Julius_Sans_One({
@@ -90,6 +91,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased min-h-screen">
         {children}
+        <PromoWheelPopup />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
