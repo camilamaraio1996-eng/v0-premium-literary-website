@@ -266,56 +266,42 @@ export function PromoWheelPopup() {
                       ease: [0.15, 0.85, 0.25, 1],
                     }}
                   >
-                    {/* SVG for radial text */}
-                    <svg
-                      viewBox="0 0 200 200"
-                      className="absolute inset-0 w-full h-full pointer-events-none"
-                      style={{ rotate: `${-rotation}deg` }}
-                    >
-                      <defs>
-                        <path
-                          id="wheelCircle"
-                          d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0"
-                          fill="none"
-                        />
-                      </defs>
-
-                      {SEGMENTS.map((segment, index) => {
-                        const startAngle = index * SEGMENT_ANGLE
-                        const offsetPercent = (startAngle + SEGMENT_ANGLE / 2) / 360
-                        return (
-                          <text
-                            key={index}
-                            className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wide fill-white/95 text-center"
-                            style={{ dominantBaseline: 'middle', textAnchor: 'middle' }}
-                          >
-                            <textPath href="#wheelCircle" startOffset={`${offsetPercent * 100}%`} method="align">
-                              {segment.label.replace('\n', ' ')}
-                            </textPath>
-                          </text>
-                        )
-                      })}
-                    </svg>
-
-                    {/* Fallback: CSS positioned labels for mobile */}
+                    {/* Text labels - one per slice */}
                     {SEGMENTS.map((segment, index) => {
-                      const angle = index * SEGMENT_ANGLE + SEGMENT_ANGLE / 2
-                      const radians = (angle * Math.PI) / 180
-                      const radius = 70
-                      const x = Math.cos(radians - Math.PI / 2) * radius
-                      const y = Math.sin(radians - Math.PI / 2) * radius
+                      // Calculate angle for this slice (middle of the slice)
+                      const sliceAngle = SEGMENT_ANGLE
+                      const startAngle = index * sliceAngle
+                      const midAngle = startAngle + sliceAngle / 2
+                      
+                      // Convert to radians
+                      const rad = (midAngle * Math.PI) / 180
+                      
+                      // Calculate position on circle (radius ~65 for text placement)
+                      const textRadius = 65
+                      const x = Math.cos(rad - Math.PI / 2) * textRadius
+                      const y = Math.sin(rad - Math.PI / 2) * textRadius
+                      
                       return (
                         <div
-                          key={`label-${index}`}
-                          className="hidden sm:flex absolute items-center justify-center pointer-events-none"
+                          key={`text-${index}`}
+                          className="absolute w-full h-full flex items-center justify-center pointer-events-none"
                           style={{
-                            left: '50%',
-                            top: '50%',
-                            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle}deg)`,
+                            // Rotate the entire div to align with slice
+                            transform: `rotate(${midAngle}deg)`,
                           }}
                         >
-                          <span className="text-[8px] font-bold text-white/95 uppercase tracking-wide text-center leading-tight whitespace-pre-line max-w-[50px]">
-                            {segment.label}
+                          {/* Text positioned relative to slice angle */}
+                          <span
+                            className="text-xs sm:text-sm font-bold text-white/95 uppercase tracking-wider text-center whitespace-nowrap absolute"
+                            style={{
+                              // Position at top of rotated container
+                              top: '8%',
+                              transform: 'translateX(-50%)',
+                              left: '50%',
+                              lineHeight: '1.2',
+                            }}
+                          >
+                            {segment.label === '20% OFF' ? '20%\nOFF' : 'Seguí\nparticipando'}
                           </span>
                         </div>
                       )
