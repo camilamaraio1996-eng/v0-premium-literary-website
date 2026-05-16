@@ -198,28 +198,28 @@ export function PromoWheelPopup() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 24 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-[420px] max-h-[92vh] overflow-y-auto bg-background rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.22)] border border-border/40"
+            className="relative w-full max-w-[420px] max-h-[90vh] sm:max-h-[92vh] overflow-y-auto bg-background rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.22)] border border-border/40"
           >
-            {/* Close button */}
+            {/* Close button - sticky */}
             <button
               onClick={handleClose}
               disabled={isSpinning}
-              className="absolute top-3.5 right-3.5 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="sticky top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed z-20 ml-auto"
               aria-label="Cerrar"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="px-5 sm:px-7 pt-7 pb-7">
+            <div className="px-4 sm:px-6 pt-3 pb-6 sm:pt-4 sm:pb-7">
               {/* Header */}
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-                  <Gift className="w-6 h-6 text-primary" />
+              <div className="text-center mb-4 sm:mb-5">
+                <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 mb-2.5 sm:mb-3">
+                  <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
-                <h2 className="font-serif text-2xl text-primary mb-2.5 text-balance leading-snug">
+                <h2 className="font-serif text-xl sm:text-2xl text-primary mb-2 sm:mb-2.5 text-balance leading-snug">
                   Ganá un descuento para comprar el libro
                 </h2>
-                <p className="text-muted-foreground text-sm leading-relaxed max-w-[300px] mx-auto">
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed max-w-[280px] sm:max-w-[300px] mx-auto">
                   Probá suerte girando la ruleta y descubrí si desbloqueás un descuento exclusivo.
                 </p>
               </div>
@@ -229,15 +229,15 @@ export function PromoWheelPopup() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 text-center"
+                  className="mb-3 text-center"
                 >
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                     Ya utilizaste tu oportunidad
                   </p>
                 </motion.div>
               )}
 
-              {/* Wheel */}
+              {/* Wheel - shrinks after spin */}
               <div className="relative flex flex-col items-center">
                 {/* Pointer */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10 -mt-0.5">
@@ -251,8 +251,12 @@ export function PromoWheelPopup() {
                   />
                 </div>
 
-                {/* Wheel */}
-                <div className="relative w-52 h-52 sm:w-60 sm:h-60 mx-auto">
+                {/* Wheel container */}
+                <motion.div
+                  className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto"
+                  animate={{ scale: showResult ? 0.65 : 1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
                   <motion.div
                     ref={wheelRef}
                     className="w-full h-full rounded-full border-[3px] border-primary/25 shadow-lg overflow-hidden relative flex items-center justify-center"
@@ -266,7 +270,7 @@ export function PromoWheelPopup() {
                       ease: [0.15, 0.85, 0.25, 1],
                     }}
                   >
-                    {/* Text labels - one per slice */}
+                    {/* Text labels */}
                     {SEGMENTS.map((segment, index) => {
                       const sliceAngle = SEGMENT_ANGLE
                       const midAngle = index * sliceAngle + sliceAngle / 2
@@ -301,22 +305,22 @@ export function PromoWheelPopup() {
 
                     {/* Center hub */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-background border-[2.5px] border-primary/20 flex items-center justify-center shadow-inner">
-                        <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-primary/60" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background border-[2.5px] border-primary/20 flex items-center justify-center shadow-inner">
+                        <Gift className="w-3 h-3 sm:w-4 sm:h-4 text-primary/60" />
                       </div>
                     </div>
                   </motion.div>
-                </div>
+                </motion.div>
 
                 {/* Spin button */}
-                <div className="mt-5">
+                <div className="mt-4 sm:mt-5">
                   <Button
                     onClick={handleSpin}
                     disabled={isSpinning || hasPlayed}
                     size="lg"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.12em] text-xs px-10 gap-2 shadow-md transition-all"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.12em] text-xs px-8 gap-2 shadow-md transition-all"
                   >
-                    <RotateCcw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
+                    <RotateCcw className={`w-3.5 h-3.5 ${isSpinning ? 'animate-spin' : ''}`} />
                     {isSpinning ? 'Girando...' : hasPlayed ? 'Ya giraste' : 'Girar ruleta'}
                   </Button>
                 </div>
@@ -325,61 +329,61 @@ export function PromoWheelPopup() {
                 <AnimatePresence>
                   {showResult && (
                     <motion.div
-                      initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                      initial={{ opacity: 0, y: 12, scale: 0.97 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.4, delay: 0.1 }}
-                      className="mt-5 w-full"
+                      transition={{ duration: 0.4, delay: 0.15 }}
+                      className="mt-3 sm:mt-4 w-full"
                     >
                       {hasWon ? (
-                        <div className="bg-card border border-primary/15 rounded-xl p-5 text-center shadow-sm">
+                        <div className="bg-card border border-primary/15 rounded-lg p-4 sm:p-5 text-center shadow-sm">
                           <div className="flex items-center justify-center gap-1.5 mb-2">
                             <Sparkles className="w-4 h-4 text-primary" />
-                            <h3 className="font-serif text-lg text-primary">
+                            <h3 className="font-serif text-base sm:text-lg text-primary">
                               Felicitaciones!
                             </h3>
                             <Sparkles className="w-4 h-4 text-primary" />
                           </div>
-                          <p className="text-muted-foreground text-sm mb-4">
+                          <p className="text-muted-foreground text-xs sm:text-sm mb-3">
                             Ganaste un{' '}
                             <span className="font-bold text-primary">20% de descuento</span> para
                             comprar el libro.
                           </p>
-                          <div className="bg-muted/50 rounded-lg p-3 mb-1">
-                            <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] mb-1.5">
+                          <div className="bg-muted/50 rounded-lg p-2.5 sm:p-3 mb-1">
+                            <p className="text-[8px] sm:text-[9px] text-muted-foreground uppercase tracking-[0.2em] mb-1">
                               Tu codigo de descuento
                             </p>
-                            <p className="font-mono text-2xl text-primary font-bold tracking-[0.3em]">
+                            <p className="font-mono text-xl sm:text-2xl text-primary font-bold tracking-[0.3em]">
                               {DISCOUNT_CODE}
                             </p>
                           </div>
-                          <p className="text-[10px] text-muted-foreground mb-3.5">
+                          <p className="text-[9px] sm:text-[10px] text-muted-foreground mb-2.5">
                             Ingresa el codigo al finalizar la compra.
                           </p>
                           <Button
                             onClick={handleCopyCode}
                             variant="outline"
                             size="sm"
-                            className="border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-wider text-[10px] gap-1.5 transition-all"
+                            className="border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-wider text-[9px] sm:text-[10px] gap-1 transition-all h-8"
                           >
                             {copied ? (
                               <>
                                 <Check className="w-3 h-3" />
-                                Codigo copiado
+                                Copiado
                               </>
                             ) : (
                               <>
                                 <Copy className="w-3 h-3" />
-                                Copiar codigo
+                                Copiar
                               </>
                             )}
                           </Button>
                         </div>
                       ) : (
-                        <div className="bg-card border border-border/60 rounded-xl p-5 text-center">
-                          <h3 className="font-serif text-base text-primary mb-1.5">
+                        <div className="bg-card border border-border/60 rounded-lg p-4 sm:p-5 text-center">
+                          <h3 className="font-serif text-sm sm:text-base text-primary mb-1">
                             Esta vez no salio.
                           </h3>
-                          <p className="text-muted-foreground text-sm">
+                          <p className="text-muted-foreground text-xs sm:text-sm">
                             Segui explorando la pagina.
                           </p>
                         </div>
