@@ -10,18 +10,18 @@ import confetti from 'canvas-confetti'
 const DISCOUNT_CODE = '536V72'
 const WIN_PROBABILITY = 0.6
 const POPUP_DELAY_MS = 1000
-const STORAGE_PLAYED_KEY = 'roulettePlayed'
-const STORAGE_RESULT_KEY = 'rouletteResult'
-const STORAGE_CLOSED_KEY = 'rouletteClosed'
-const HOURS_24 = 24 * 60 * 60 * 1000
+const STORAGE_PLAYED_KEY = 'bookWheelHasSpun'
+const STORAGE_SEGMENT_TYPE_KEY = 'bookWheelSegmentType'
+const STORAGE_SEGMENT_LABEL_KEY = 'bookWheelSegmentLabel'
+const STORAGE_SEGMENT_INDEX_KEY = 'bookWheelSegmentIndex'
 
 const SEGMENTS = [
-  { label: '20% OFF', isWin: true },
-  { label: 'SEGUÍ\nPARTICIPANDO', isWin: false },
-  { label: '20% OFF', isWin: true },
-  { label: 'SEGUÍ\nPARTICIPANDO', isWin: false },
-  { label: '20% OFF', isWin: true },
-  { label: '20% OFF', isWin: true },
+  { label: '20% OFF', type: 'discount' },
+  { label: 'SEGUÍ\nPARTICIPANDO', type: 'tryAgain' },
+  { label: '20% OFF', type: 'discount' },
+  { label: 'SEGUÍ\nPARTICIPANDO', type: 'tryAgain' },
+  { label: '20% OFF', type: 'discount' },
+  { label: '20% OFF', type: 'discount' },
 ]
 
 const SEGMENT_ANGLE = 360 / SEGMENTS.length
@@ -47,7 +47,7 @@ export function PromoWheelPopup() {
   const [isOpen, setIsOpen] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
   const [hasPlayed, setHasPlayed] = useState(false)
-  const [hasWon, setHasWon] = useState<boolean | null>(null)
+  const [selectedSegment, setSelectedSegment] = useState<{ label: string; type: 'discount' | 'tryAgain'; index: number } | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [copied, setCopied] = useState(false)
   const [rotation, setRotation] = useState(0)
@@ -76,8 +76,17 @@ export function PromoWheelPopup() {
 
       if (alreadyPlayed) {
         setHasPlayed(true)
-        const result = localStorage.getItem(STORAGE_RESULT_KEY)
-        setHasWon(result === 'true')
+        const storedType = localStorage.getItem(STORAGE_SEGMENT_TYPE_KEY)
+        const storedLabel = localStorage.getItem(STORAGE_SEGMENT_LABEL_KEY)
+        const storedIndex = localStorage.getItem(STORAGE_SEGMENT_INDEX_KEY)
+        
+        if (storedType && storedLabel && storedIndex) {
+          setSelectedSegment({
+            type: storedType as 'discount' | 'tryAgain',
+            label: storedLabel,
+            index: parseInt(storedIndex),
+          })
+        }
       }
     } catch {
       // localStorage unavailable
@@ -122,49 +131,44 @@ export function PromoWheelPopup() {
     setIsSpinning(true)
     setShowResult(false)
 
-    // Step 1: Decide result based on probability (60% win, 40% lose)
-    const isWin = Math.random() < WIN_PROBABILITY
+    // Step 1: Decide result type based on probability (60% discount, 40% tryAgain)
+    const resultType = Math.random() < WIN_PROBABILITY ? 'discount' : 'tryAgain'
 
-    // Step 2: Select target segment based on result
-    // Win segments: 0, 2, 4, 5 (indices of "20% OFF")
-    // Lose segments: 1, 3 (indices of "SEGUÍ PARTICIPANDO")
-    const winSegments = [0, 2, 4, 5]
-    const loseSegments = [1, 3]
-    const targetSegmentIndex = isWin 
-      ? winSegments[Math.floor(Math.random() * winSegments.length)]
-      : loseSegments[Math.floor(Math.random() * loseSegments.length)]
+    // Step 2: Filter segments that match the result type
+    const validSegments = SEGMENTS
+      .map((segment, index) => ({ ...segment, index }))
+      .filter(segment => segment.type === resultType)
 
-    // Step 3: Calculate rotation to land on the selected segment
-    // The indicator is at the top (0 degrees), so we need the segment to be at the top
-    // Each segment spans SEGMENT_ANGLE degrees
-    // We add full rotations (5-7 spins) and then the exact angle to land on the segment
-    const spins = 5 + Math.random() * 2 // 5-7 full rotations for visual effect
-    const segmentStartAngle = targetSegmentIndex * SEGMENT_ANGLE
-    const segmentCenterAngle = segmentStartAngle + SEGMENT_ANGLE / 2
-    
-    // We want the center of the segment to point to the top indicator
-    // So the final rotation should be such that we land precisely at this segment
-    const finalRotation = spins * 360 + segmentCenterAngle
+    // Step 3: Randomly select one of the valid segments
+    const selectedSeg = validSegments[Math.floor(Math.random() * validSegments.length)]
 
-    // Step 4: Animate to final rotation
+    // Step 4: Calculate rotation to land exactly on the selected segment
+    const spins = 5 + Math.random() * 3 // 5-8 full rotations for natural effect
+    const segmentCenterAngle = selectedSeg.index * SEGMENT_ANGLE + SEGMENT_ANGLE / 2
+    const finalRotation = spins * 360 + (360 - segmentCenterAngle)
+
+    // Step 5: Animate the wheel
     setRotation(finalRotation)
+    setSelectedSegment(selectedSeg)
 
-    // Step 5: After animation completes, show result
+    // Step 6: After animation, show result and save to localStorage
     setTimeout(() => {
       setIsSpinning(false)
-      setHasWon(isWin)
       setShowResult(true)
 
       try {
         localStorage.setItem(STORAGE_PLAYED_KEY, 'true')
-        localStorage.setItem(STORAGE_RESULT_KEY, isWin ? 'true' : 'false')
+        localStorage.setItem(STORAGE_SEGMENT_TYPE_KEY, selectedSeg.type)
+        localStorage.setItem(STORAGE_SEGMENT_LABEL_KEY, selectedSeg.label)
+        localStorage.setItem(STORAGE_SEGMENT_INDEX_KEY, selectedSeg.index.toString())
       } catch {
         // localStorage unavailable
       }
 
       setHasPlayed(true)
 
-      if (isWin) {
+      // Fire confetti only if discount
+      if (selectedSeg.type === 'discount') {
         setTimeout(() => {
           fireConfetti()
         }, 300)
@@ -261,7 +265,7 @@ export function PromoWheelPopup() {
                     className="w-full h-full rounded-full border-[3px] border-primary/25 shadow-lg overflow-hidden relative flex items-center justify-center"
                     style={{
                       background: `conic-gradient(${WHEEL_COLORS.map((c, i) => `${c} ${i * SEGMENT_ANGLE}deg ${(i + 1) * SEGMENT_ANGLE}deg`).join(', ')})`,
-                      filter: hasWon === true ? 'drop-shadow(0 0 12px rgba(127,39,100,0.5))' : undefined,
+                      filter: selectedSegment?.type === 'discount' ? 'drop-shadow(0 0 12px rgba(127,39,100,0.5))' : undefined,
                     }}
                     animate={{ rotate: rotation }}
                     transition={{
@@ -328,26 +332,24 @@ export function PromoWheelPopup() {
 
                 {/* Result */}
                 <AnimatePresence>
-                  {showResult && (
+                  {showResult && selectedSegment && (
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.97 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.15 }}
                       className="mt-2.5 sm:mt-3 w-full px-1"
                     >
-                      {hasWon ? (
+                      {selectedSegment.type === 'discount' ? (
                         <div className="bg-card border border-primary/15 rounded-lg p-3 sm:p-4 text-center shadow-sm">
                           <div className="flex items-center justify-center gap-1 mb-1.5">
                             <Sparkles className="w-3.5 h-3.5 text-primary" />
                             <h3 className="font-serif text-sm sm:text-base text-primary">
-                              Felicitaciones!
+                              ¡Ganaste 20% OFF!
                             </h3>
                             <Sparkles className="w-3.5 h-3.5 text-primary" />
                           </div>
                           <p className="text-muted-foreground text-[10px] sm:text-xs mb-2">
-                            Ganaste un{' '}
-                            <span className="font-bold text-primary">20% de descuento</span> para
-                            comprar el libro.
+                            Usá tu descuento para comprar el libro.
                           </p>
                           <div className="bg-muted/50 rounded-md p-2 sm:p-2.5 mb-1">
                             <p className="text-[8px] text-muted-foreground uppercase tracking-[0.15em] mb-0.5">
