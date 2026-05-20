@@ -10,14 +10,13 @@ export function RecommendationsHero() {
         {/* Title + rule */}
         <div className="flex items-baseline gap-6 mb-6">
           <h1 className="font-serif text-2xl sm:text-3xl text-primary shrink-0">
-            Recomendaciones
+            Biblioteca
           </h1>
           <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
         </div>
 
         {/* Subtitle */}
         <p className="text-sm sm:text-base text-foreground/60 leading-relaxed max-w-md">
-          De la biblioteca a la web
         </p>
       </div>
     </section>
