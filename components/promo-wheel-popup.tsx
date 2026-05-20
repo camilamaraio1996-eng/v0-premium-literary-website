@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Gift, Copy, Check, RotateCcw, X, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -40,6 +41,9 @@ function fireConfetti() {
 }
 
 export function PromoWheelPopup() {
+  const pathname = usePathname()
+  const isOnLibroPage = pathname === '/libro'
+  
   const [isOpen, setIsOpen] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
   const [hasPlayed, setHasPlayed] = useState(false)
@@ -47,38 +51,52 @@ export function PromoWheelPopup() {
   const [showResult, setShowResult] = useState(false)
   const [copied, setCopied] = useState(false)
   const [rotation, setRotation] = useState(0)
+  const [isMounted, setIsMounted] = useState(false)
   const wheelRef = useRef<HTMLDivElement>(null)
   const spinLockRef = useRef(false)
 
-  // Initialize state on mount
+  // Initialize state on mount and when page changes
   useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Handle route changes - close popup if we leave /libro
+  useEffect(() => {
+    if (!isOnLibroPage && isOpen) {
+      setIsOpen(false)
+    }
+  }, [isOnLibroPage, isOpen])
+
+  // Initialize popup only when on /libro page
+  useEffect(() => {
+    if (!isMounted || !isOnLibroPage) return
+
     try {
       const alreadyPlayed = localStorage.getItem(STORAGE_PLAYED_KEY)
-      const storedClosed = localStorage.getItem(STORAGE_CLOSED_KEY)
 
       if (alreadyPlayed) {
         setHasPlayed(true)
         const result = localStorage.getItem(STORAGE_RESULT_KEY)
         setHasWon(result === 'true')
-      } else if (storedClosed) {
-        const closedTime = parseInt(storedClosed)
-        const now = Date.now()
-        if (now - closedTime < HOURS_24) {
-          return
-        } else {
-          localStorage.removeItem(STORAGE_CLOSED_KEY)
-        }
       }
     } catch {
       // localStorage unavailable
     }
 
     const timer = setTimeout(() => {
-      setIsOpen(true)
+      // Only open if not already played and still on /libro page
+      try {
+        const alreadyPlayed = localStorage.getItem(STORAGE_PLAYED_KEY)
+        if (!alreadyPlayed) {
+          setIsOpen(true)
+        }
+      } catch {
+        // localStorage unavailable
+      }
     }, POPUP_DELAY_MS)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [isOnLibroPage, isMounted])
 
   // Lock/unlock body scroll
   useEffect(() => {
@@ -94,17 +112,8 @@ export function PromoWheelPopup() {
 
   const handleClose = useCallback(() => {
     if (isSpinning) return
-    
-    if (!hasPlayed) {
-      try {
-        localStorage.setItem(STORAGE_CLOSED_KEY, Date.now().toString())
-      } catch {
-        // localStorage unavailable
-      }
-    }
-    
     setIsOpen(false)
-  }, [isSpinning, hasPlayed])
+  }, [isSpinning])
 
   const handleSpin = useCallback(() => {
     if (spinLockRef.current || isSpinning || hasPlayed) return
