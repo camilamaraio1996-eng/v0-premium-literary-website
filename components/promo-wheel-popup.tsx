@@ -122,16 +122,34 @@ export function PromoWheelPopup() {
     setIsSpinning(true)
     setShowResult(false)
 
+    // Step 1: Decide result based on probability (60% win, 40% lose)
     const isWin = Math.random() < WIN_PROBABILITY
-    const targetSegment = isWin ? Math.floor(Math.random() * 4) * 2 : [1, 3][Math.floor(Math.random() * 2)]
-    const baseRotation = targetSegment * SEGMENT_ANGLE
-    const spins = 5 + Math.random() * 2
-    const finalRotation = spins * 360 + baseRotation
-    const randomOffset = (Math.random() - 0.5) * (SEGMENT_ANGLE * 0.6)
-    const adjustedRotation = finalRotation + randomOffset
 
-    setRotation(adjustedRotation)
+    // Step 2: Select target segment based on result
+    // Win segments: 0, 2, 4, 5 (indices of "20% OFF")
+    // Lose segments: 1, 3 (indices of "SEGUÍ PARTICIPANDO")
+    const winSegments = [0, 2, 4, 5]
+    const loseSegments = [1, 3]
+    const targetSegmentIndex = isWin 
+      ? winSegments[Math.floor(Math.random() * winSegments.length)]
+      : loseSegments[Math.floor(Math.random() * loseSegments.length)]
 
+    // Step 3: Calculate rotation to land on the selected segment
+    // The indicator is at the top (0 degrees), so we need the segment to be at the top
+    // Each segment spans SEGMENT_ANGLE degrees
+    // We add full rotations (5-7 spins) and then the exact angle to land on the segment
+    const spins = 5 + Math.random() * 2 // 5-7 full rotations for visual effect
+    const segmentStartAngle = targetSegmentIndex * SEGMENT_ANGLE
+    const segmentCenterAngle = segmentStartAngle + SEGMENT_ANGLE / 2
+    
+    // We want the center of the segment to point to the top indicator
+    // So the final rotation should be such that we land precisely at this segment
+    const finalRotation = spins * 360 + segmentCenterAngle
+
+    // Step 4: Animate to final rotation
+    setRotation(finalRotation)
+
+    // Step 5: After animation completes, show result
     setTimeout(() => {
       setIsSpinning(false)
       setHasWon(isWin)
@@ -364,10 +382,10 @@ export function PromoWheelPopup() {
                       ) : (
                         <div className="bg-card border border-border/60 rounded-lg p-3 sm:p-4 text-center">
                           <h3 className="font-serif text-xs sm:text-sm text-primary mb-0.5">
-                            Esta vez no salio.
+                            Seguí participando
                           </h3>
                           <p className="text-muted-foreground text-[9px] sm:text-xs">
-                            Segui explorando la pagina.
+                            Esta vez no ganaste descuento.
                           </p>
                         </div>
                       )}
