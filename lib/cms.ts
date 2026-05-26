@@ -16,12 +16,21 @@ export async function getNavigationData() {
     settingsMap[key] = value || ''
   })
 
+  // Override nav_recomendaciones to ensure it always shows BIBLIOTECA
+  const navRecomendacionesValue = settingsMap['nav_recomendaciones'] || 'BIBLIOTECA'
+  const normalizedValue = 
+    navRecomendacionesValue === 'Recomendaciones' || 
+    navRecomendacionesValue === 'recomendaciones' ||
+    navRecomendacionesValue === 'RECOMENDACIONES'
+      ? 'BIBLIOTECA'
+      : navRecomendacionesValue || 'BIBLIOTECA'
+
   const navItems: NavItem[] = [
-    { href: '/', label: settingsMap['nav_inicio'] || 'Inicio' },
-    { href: '/libro', label: settingsMap['nav_libro'] || 'El Libro' },
-    { href: '/diario', label: settingsMap['nav_diario'] || 'Blog' },
-    { href: '/recomendaciones', label: settingsMap['nav_recomendaciones'] || 'Biblioteca' },
-    { href: '/autor', label: settingsMap['nav_autor'] || 'Autora' },
+    { href: '/', label: settingsMap['nav_inicio'] || 'INICIO' },
+    { href: '/libro', label: settingsMap['nav_libro'] || 'EL LIBRO' },
+    { href: '/diario', label: settingsMap['nav_diario'] || 'BLOG' },
+    { href: '/recomendaciones', label: normalizedValue },
+    { href: '/autor', label: settingsMap['nav_autor'] || 'AUTORA' },
   ]
 
   return {
