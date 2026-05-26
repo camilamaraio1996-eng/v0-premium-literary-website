@@ -159,7 +159,7 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
         {filtered.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-sm text-foreground/40 tracking-wide leading-relaxed">
-              No hay recomendaciones disponibles<br />
+              No hay libros en la BIBLIOTECA disponibles<br />
               para este género todavía.
             </p>
             <button
