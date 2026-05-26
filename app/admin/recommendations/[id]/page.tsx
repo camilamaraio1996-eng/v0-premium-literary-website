@@ -155,9 +155,9 @@ export default function EditRecommendationPage() {
             </Link>
           </Button>
           <div className="bg-card/50 border border-border rounded-lg p-6 sm:p-8 text-center">
-            <p className="font-serif text-xl text-primary mb-2">Recomendación no encontrada</p>
+            <p className="font-serif text-xl text-primary mb-2">Libro no encontrado</p>
             <p className="text-muted-foreground text-sm">
-              No existe ninguna recomendación con el ID proporcionado.
+              No existe ningún libro con el ID proporcionado.
             </p>
           </div>
         </main>

@@ -151,7 +151,7 @@ export function AdminSettingsForm({ settings }: { settings: SiteSettings }) {
             { key: 'nav_inicio', default: 'Inicio' },
             { key: 'nav_libro', default: 'El Libro' },
             { key: 'nav_diario', default: 'Diario' },
-            { key: 'nav_recomendaciones', default: 'Recomendaciones' },
+            { key: 'nav_recomendaciones', default: 'Biblioteca' },
             { key: 'nav_autor', default: 'Autora' },
             { key: 'nav_contacto', default: 'Contacto' },
           ].map(({ key, default: def }) => (

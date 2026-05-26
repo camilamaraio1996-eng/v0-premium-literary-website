@@ -15,7 +15,7 @@ const navItems = [
   { href: '/admin/fragments-edit', label: 'Fragmentos', icon: FileText },
   { href: '/admin/pages', label: 'Páginas', icon: FileJson },
   { href: '/admin/posts', label: 'Entradas', icon: FileText },
-  { href: '/admin/recommendations', label: 'Recomendaciones', icon: Heart },
+  { href: '/admin/recommendations', label: 'Biblioteca', icon: Heart },
   { href: '/admin/preorders', label: 'Reservas', icon: Users },
   { href: '/admin/messages', label: 'Mensajes', icon: Mail },
 ]

@@ -20,7 +20,7 @@ export async function getNavigationData() {
     { href: '/', label: settingsMap['nav_inicio'] || 'Inicio' },
     { href: '/libro', label: settingsMap['nav_libro'] || 'El Libro' },
     { href: '/diario', label: settingsMap['nav_diario'] || 'Blog' },
-    { href: '/recomendaciones', label: settingsMap['nav_recomendaciones'] || 'Recomendaciones' },
+    { href: '/recomendaciones', label: settingsMap['nav_recomendaciones'] || 'Biblioteca' },
     { href: '/autor', label: settingsMap['nav_autor'] || 'Autora' },
   ]
 

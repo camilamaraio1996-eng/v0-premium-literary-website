@@ -43,11 +43,11 @@ export default function RecommendationsError({
           </div>
 
           <h1 className="font-serif text-2xl text-primary mb-2">
-            Error al cargar Recomendaciones
+            Error al cargar Biblioteca
           </h1>
 
           <p className="text-muted-foreground text-sm mb-6">
-            Hubo un problema al intentar cargar la página de recomendaciones.
+            Hubo un problema al intentar cargar la página de biblioteca.
           </p>
 
           <div className="bg-destructive/5 border border-destructive/20 rounded p-4 mb-6 text-left">
