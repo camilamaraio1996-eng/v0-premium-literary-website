@@ -137,7 +137,7 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
       <section className="py-16 lg:py-24">
         <div className="max-w-3xl mx-auto px-6 lg:px-8 text-center">
           <p className="text-sm text-muted-foreground tracking-wide">
-            No hay recomendaciones publicadas todavía.
+            No hay libros en la biblioteca todavía.
           </p>
         </div>
       </section>

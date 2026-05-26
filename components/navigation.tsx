@@ -15,7 +15,7 @@ const defaultNavLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/libro', label: 'El Libro' },
   { href: '/diario', label: 'Blog' },
-  { href: '/recomendaciones', label: 'biblioteca' },
+  { href: '/recomendaciones', label: 'Biblioteca' },
   { href: '/autor', label: 'Autora' },
 ]
 

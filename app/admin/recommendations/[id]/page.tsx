@@ -151,7 +151,7 @@ export default function EditRecommendationPage() {
           <Button variant="ghost" size="sm" asChild className="mb-6">
             <Link href="/admin/recommendations">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver a Recomendaciones
+              Volver a Biblioteca
             </Link>
           </Button>
           <div className="bg-card/50 border border-border rounded-lg p-6 sm:p-8 text-center">
@@ -174,7 +174,7 @@ export default function EditRecommendationPage() {
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </Button>
-          <h1 className="font-serif text-2xl sm:text-3xl text-primary">Editar Recomendación</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl text-primary">Editar Libro</h1>
         </div>
 
         <form

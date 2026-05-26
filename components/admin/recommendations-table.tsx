@@ -66,9 +66,9 @@ export function RecommendationsTable({ recommendations }: RecommendationsTablePr
   if (items.length === 0) {
     return (
       <div className="text-center py-12 bg-card/50 rounded-lg border border-border">
-        <p className="text-muted-foreground mb-4">No hay recomendaciones todavía.</p>
+        <p className="text-muted-foreground mb-4">No hay libros en la biblioteca todavía.</p>
         <Button asChild>
-          <Link href="/admin/recommendations/new">Crear Primera Recomendación</Link>
+          <Link href="/admin/recommendations/new">Agregar Primer Libro</Link>
         </Button>
       </div>
     )
