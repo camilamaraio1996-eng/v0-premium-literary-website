@@ -74,7 +74,13 @@ function GenreFilter({
   const options = ['Todos', ...genres]
 
   return (
-    <div className="relative mb-10 lg:mb-12 flex justify-center lg:justify-start">
+    <div className="mb-10 lg:mb-12 flex flex-col justify-center lg:justify-start">
+      {/* Genre Label */}
+      <label className="mb-3 text-xs tracking-[0.15em] uppercase font-medium text-foreground/60">
+        Género
+      </label>
+      
+      {/* Genre Selector */}
       <div className="w-full sm:w-auto lg:w-full">
         <Select value={active} onValueChange={onChange}>
           <SelectTrigger className="w-full sm:w-64 lg:max-w-sm justify-between px-5 py-2.5 rounded-md border border-border/60 bg-transparent text-sm font-medium tracking-wide text-foreground/80 hover:border-primary/40 hover:text-primary data-[state=open]:border-primary/60 data-[state=open]:text-primary transition-colors duration-200">
