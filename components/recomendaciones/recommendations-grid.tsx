@@ -4,6 +4,13 @@ import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { BookOpen } from 'lucide-react'
 import { ImageLightbox } from '@/components/ui/image-lightbox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface Recommendation {
   id: string
@@ -51,7 +58,7 @@ function BookCover({ imageUrl, title, mobile }: { imageUrl: string | null; title
   )
 }
 
-// ── Genre Filter Bar ─────────────────────────────────────────────────────────
+// ── Genre Dropdown Filter ───────────────────────────────────────────────────
 
 function GenreFilter({
   genres,
@@ -64,43 +71,28 @@ function GenreFilter({
 }) {
   if (genres.length === 0) return null
 
-  const all = ['Todos', ...genres]
+  const options = ['Todos', ...genres]
 
   return (
-    <div className="relative mb-10 lg:mb-12">
-      {/* Horizontal scroll container */}
-      <div
-        className="flex gap-2 overflow-x-auto pb-1 scrollbar-none"
-        style={{ WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}
-        role="list"
-        aria-label="Filtrar por género"
-      >
-        {all.map((g) => {
-          const isActive = active === g
-          return (
-            <button
-              key={g}
-              role="listitem"
-              onClick={() => onChange(g)}
-              aria-pressed={isActive}
-              className={[
-                'relative flex-shrink-0 px-4 py-1.5 rounded-full text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-200',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
-                isActive
-                  ? 'bg-primary text-background shadow-sm'
-                  : 'bg-transparent text-foreground/50 border border-border/60 hover:border-primary/40 hover:text-primary',
-              ].join(' ')}
-            >
-              {g}
-            </button>
-          )
-        })}
+    <div className="relative mb-10 lg:mb-12 flex justify-center lg:justify-start">
+      <div className="w-full sm:w-auto lg:w-full">
+        <Select value={active} onValueChange={onChange}>
+          <SelectTrigger className="w-full sm:w-64 lg:max-w-sm justify-between px-5 py-2.5 rounded-md border border-border/60 bg-transparent text-sm font-medium tracking-wide text-foreground/80 hover:border-primary/40 hover:text-primary data-[state=open]:border-primary/60 data-[state=open]:text-primary transition-colors duration-200">
+            <SelectValue placeholder="Todos los géneros" />
+          </SelectTrigger>
+          <SelectContent align="start" className="min-w-[240px] rounded-md border border-border/60 bg-background shadow-md">
+            {options.map((option) => (
+              <SelectItem
+                key={option}
+                value={option}
+                className="cursor-pointer text-sm font-medium tracking-wide uppercase text-foreground/70 hover:text-primary hover:bg-secondary/40 data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary focus-visible:bg-secondary/40 focus-visible:text-primary transition-colors duration-150"
+              >
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      {/* Right fade mask for overflow hint */}
-      <div
-        className="pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-background to-transparent"
-        aria-hidden="true"
-      />
     </div>
   )
 }
@@ -148,7 +140,7 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
     <section className="pb-24 lg:pb-32">
       <div className="max-w-3xl mx-auto px-6 lg:px-8">
 
-        {/* Genre filter bar */}
+        {/* Genre filter dropdown */}
         <GenreFilter
           genres={genres}
           active={activeGenre}
@@ -260,7 +252,6 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .scrollbar-none::-webkit-scrollbar { display: none; }
       `}</style>
     </section>
   )
