@@ -140,25 +140,21 @@ export function PostContent({ post }: PostContentProps) {
           </motion.div>
         )}
 
-        {/* Gallery - Multiple Images Grid */}
+        {/* Gallery - Multiple Images Grid SEPARATE FROM PROSE */}
         {galleryImages.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="mt-16 lg:mt-20"
           >
             <div className="gallery-grid">
               {galleryImages.map((url, index) => (
                 <div key={index} className="gallery-item">
-                  <Image
+                  <img
                     src={url}
                     alt={`${post.title} - Imagen ${index + 1}`}
-                    width={280}
-                    height={210}
-                    className="gallery-image"
-                    quality={80}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
               ))}
