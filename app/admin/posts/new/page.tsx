@@ -48,7 +48,7 @@ export default function NewPostPage() {
         slug,
         content,
         image_url: imageUrl || null,
-        gallery_images: galleryImages.length > 0 ? galleryImages : null,
+        gallery_images: galleryImages.length > 0 ? galleryImages : [],
         reading_time: readingTime,
         published,
       })

@@ -94,7 +94,7 @@ export default function EditPostPage() {
           slug: newSlug,
           content,
           image_url: imageUrl || null,
-          gallery_images: galleryImages.length > 0 ? galleryImages : null,
+          gallery_images: galleryImages.length > 0 ? galleryImages : [],
           reading_time: readingTime,
           published,
           updated_at: new Date().toISOString(),
