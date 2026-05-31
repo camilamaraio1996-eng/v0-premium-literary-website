@@ -23,6 +23,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
   Undo,
   Redo,
   Link as LinkIcon,
@@ -99,7 +100,7 @@ export function RichEditor({
       CharacterCount,
       Underline,
       Typography,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      TextAlign.configure({ types: ['heading', 'paragraph'], alignments: ['left', 'center', 'right', 'justify'] }),
     ],
     content: value,
     editable: !disabled,
@@ -269,6 +270,13 @@ export function RichEditor({
               title="Alinear derecha"
             >
               <AlignRight className="w-3.5 h-3.5" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+              active={editor.isActive({ textAlign: 'justify' })}
+              title="Justificar"
+            >
+              <AlignJustify className="w-3.5 h-3.5" />
             </ToolbarButton>
 
             <ToolbarDivider />
