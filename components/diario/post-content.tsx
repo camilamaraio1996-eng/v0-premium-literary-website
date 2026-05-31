@@ -12,6 +12,7 @@ interface Post {
   reading_time: number
   created_at: string
   image_url?: string | null
+  gallery_images?: string[] | null
 }
 
 interface PostContentProps {
@@ -28,6 +29,7 @@ function formatDate(dateStr: string) {
 
 export function PostContent({ post }: PostContentProps) {
   const photo = post.image_url
+  const galleryImages = post.gallery_images || []
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')
@@ -117,20 +119,7 @@ export function PostContent({ post }: PostContentProps) {
           )}
         </motion.div>
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mt-14 pt-10 border-t border-border text-center"
-        >
-          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-[0.12em] text-xs">
-            <Link href="/diario">Ver más entradas</Link>
-          </Button>
-        </motion.div>
-
-        {/* Featured image - at the end */}
+        {/* Featured image - at the end (single image, if exists) */}
         {photo && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -150,6 +139,45 @@ export function PostContent({ post }: PostContentProps) {
             </div>
           </motion.div>
         )}
+
+        {/* Gallery - Multiple Images Grid */}
+        {galleryImages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-16 lg:mt-20"
+          >
+            <div className="gallery-grid">
+              {galleryImages.map((url, index) => (
+                <div key={index} className="gallery-item">
+                  <Image
+                    src={url}
+                    alt={`${post.title} - Imagen ${index + 1}`}
+                    width={280}
+                    height={210}
+                    className="gallery-image"
+                    quality={80}
+                  />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mt-14 lg:mt-20 pt-10 border-t border-border text-center"
+        >
+          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-[0.12em] text-xs">
+            <Link href="/diario">Ver más entradas</Link>
+          </Button>
+        </motion.div>
       </div>
     </article>
   )

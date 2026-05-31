@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft, Loader } from 'lucide-react'
 import { FileUploadField } from '@/components/admin/file-upload-field'
+import { MultiImageUploadField } from '@/components/admin/multi-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
 
@@ -27,6 +28,7 @@ interface BlogPost {
   slug: string
   content: string
   image_url: string | null
+  gallery_images: string[] | null
   reading_time: number
   published: boolean
   created_at: string
@@ -40,6 +42,7 @@ export default function EditPostPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [galleryImages, setGalleryImages] = useState<string[]>([])
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -66,6 +69,7 @@ export default function EditPostPage() {
       setTitle(data.title)
       setContent(data.content)
       setImageUrl(data.image_url || '')
+      setGalleryImages(data.gallery_images || [])
       setReadingTime(data.reading_time)
       setPublished(data.published)
       setLoading(false)
@@ -90,6 +94,7 @@ export default function EditPostPage() {
           slug: newSlug,
           content,
           image_url: imageUrl || null,
+          gallery_images: galleryImages.length > 0 ? galleryImages : null,
           reading_time: readingTime,
           published,
           updated_at: new Date().toISOString(),
@@ -159,13 +164,13 @@ export default function EditPostPage() {
 
         <div>
           <FileUploadField
-            label="Imagen de la Entrada"
+            label="Imagen Principal de la Entrada"
             bucketName="blog-images"
             value={imageUrl}
             onChange={setImageUrl}
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB."
+            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. (Opcional)"
           />
         </div>
 
@@ -178,6 +183,19 @@ export default function EditPostPage() {
             minHeight={320}
             showQuality
             showWordCount
+          />
+        </div>
+
+        <div>
+          <MultiImageUploadField
+            label="Galería de Imágenes"
+            value={galleryImages}
+            onChange={setGalleryImages}
+            bucketName="blog-images"
+            accept="image/jpeg,image/png,image/webp"
+            maxSize={5 * 1024 * 1024}
+            maxImages={10}
+            helpText="Sube múltiples imágenes para mostrar como galería debajo del contenido."
           />
         </div>
 

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft } from 'lucide-react'
 import { FileUploadField } from '@/components/admin/file-upload-field'
+import { MultiImageUploadField } from '@/components/admin/multi-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
 
@@ -25,6 +26,7 @@ export default function NewPostPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [galleryImages, setGalleryImages] = useState<string[]>([])
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -39,16 +41,17 @@ export default function NewPostPage() {
     const supabase = createClient()
     const slug = generateSlug(title)
 
-      const { error: insertError } = await supabase
-        .from('blog_posts')
-        .insert({
-          title,
-          slug,
-          content,
-          image_url: imageUrl || null,
-          reading_time: readingTime,
-          published,
-        })
+    const { error: insertError } = await supabase
+      .from('blog_posts')
+      .insert({
+        title,
+        slug,
+        content,
+        image_url: imageUrl || null,
+        gallery_images: galleryImages.length > 0 ? galleryImages : null,
+        reading_time: readingTime,
+        published,
+      })
 
     if (insertError) {
       setError(insertError.message)
@@ -87,13 +90,13 @@ export default function NewPostPage() {
 
         <div>
           <FileUploadField
-            label="Imagen de la Entrada"
+            label="Imagen Principal de la Entrada"
             bucketName="blog-images"
             value={imageUrl}
             onChange={setImageUrl}
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB."
+            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. (Opcional)"
           />
         </div>
 
@@ -106,6 +109,19 @@ export default function NewPostPage() {
             minHeight={320}
             showQuality
             showWordCount
+          />
+        </div>
+
+        <div>
+          <MultiImageUploadField
+            label="Galería de Imágenes"
+            value={galleryImages}
+            onChange={setGalleryImages}
+            bucketName="blog-images"
+            accept="image/jpeg,image/png,image/webp"
+            maxSize={5 * 1024 * 1024}
+            maxImages={10}
+            helpText="Sube múltiples imágenes para mostrar como galería debajo del contenido."
           />
         </div>
 
