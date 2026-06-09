@@ -107,6 +107,7 @@ function GenreFilter({
 
 export function RecommendationsGrid({ recommendations }: { recommendations: Recommendation[] }) {
   const [activeGenre, setActiveGenre] = useState('Todos')
+  const [expandedBooks, setExpandedBooks] = useState<Record<string, boolean>>({})
 
   // Derive unique genres from data — order by first appearance
   const genres = useMemo(() => {
@@ -129,6 +130,13 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
         : recommendations.filter((r) => r.genre === activeGenre),
     [recommendations, activeGenre]
   )
+
+  const toggleBook = (id: string) => {
+    setExpandedBooks((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
 
   if (recommendations.length === 0) {
     return (
@@ -212,11 +220,21 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
                         </span>
                       )}
                       
-                      {/* Description */}
+                      {/* Description with expand/collapse */}
                       {rec.description && (
-                        <p className="mt-1 text-[11px] text-foreground/60 leading-tight line-clamp-3">
-                          {rec.description}
-                        </p>
+                        <div className="mt-1">
+                          <p className={`text-[11px] text-foreground/60 leading-tight ${
+                            expandedBooks[rec.id] ? 'book-description-expanded' : 'book-description-collapsed'
+                          }`}>
+                            {rec.description}
+                          </p>
+                          <button
+                            onClick={() => toggleBook(rec.id)}
+                            className="mt-1.5 text-[10px] tracking-[0.08em] uppercase font-medium text-primary/70 hover:text-primary transition-colors duration-150 hover:underline"
+                          >
+                            {expandedBooks[rec.id] ? 'Ver menos' : 'Ver más'}
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -257,9 +275,19 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
                       )}
                       {!rec.genre && rec.author && <div className="mb-3" />}
                       {rec.description && (
-                        <p className="text-sm text-foreground/65 leading-relaxed line-clamp-4 text-pretty">
-                          {rec.description}
-                        </p>
+                        <div>
+                          <p className={`text-sm text-foreground/65 leading-relaxed text-pretty ${
+                            expandedBooks[rec.id] ? 'book-description-expanded' : 'book-description-collapsed-desktop'
+                          }`}>
+                            {rec.description}
+                          </p>
+                          <button
+                            onClick={() => toggleBook(rec.id)}
+                            className="mt-2 text-[10px] tracking-[0.08em] uppercase font-medium text-primary/70 hover:text-primary transition-colors duration-150 hover:underline"
+                          >
+                            {expandedBooks[rec.id] ? 'Ver menos' : 'Ver más'}
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

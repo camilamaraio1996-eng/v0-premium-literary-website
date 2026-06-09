@@ -397,3 +397,24 @@
     }
   }
 }
+
+/* Book Description Expand/Collapse */
+.book-description-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-description-collapsed-desktop {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-description-expanded {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
