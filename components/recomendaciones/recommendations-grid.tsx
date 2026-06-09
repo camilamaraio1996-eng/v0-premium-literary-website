@@ -169,7 +169,63 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
           </div>
         ) : (
           <>
-            <div className="divide-y divide-border/60">
+            {/* Mobile: Grid of 2 columns */}
+            <div className="grid grid-cols-2 gap-4 sm:hidden mb-12">
+              {filtered.map((rec, i) => (
+                <article
+                  key={rec.id}
+                  className="group"
+                  style={{
+                    animation: 'fadeSlideIn 350ms ease both',
+                    animationDelay: `${Math.min(i * 45, 250)}ms`,
+                  }}
+                >
+                  <div className="flex flex-col h-full">
+                    {/* Book Cover */}
+                    <div className="mb-2">
+                      <BookCover imageUrl={rec.image_url} title={rec.title} mobile />
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="flex flex-col justify-start flex-1 min-w-0">
+                      {/* Number */}
+                      <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-1 font-mono">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      
+                      {/* Title */}
+                      <h3 className="font-serif text-sm text-primary leading-snug mb-0.5 text-pretty line-clamp-2">
+                        {rec.title}
+                      </h3>
+                      
+                      {/* Author */}
+                      {rec.author && (
+                        <p className="text-[10px] tracking-wide text-[#958568] font-medium uppercase line-clamp-1">
+                          {rec.author}
+                        </p>
+                      )}
+                      
+                      {/* Genre */}
+                      {rec.genre && (
+                        <span className="mt-1 inline-block text-[9px] tracking-[0.15em] uppercase bg-secondary/60 text-foreground/50 px-1 py-0.5 rounded-sm w-fit">
+                          {rec.genre}
+                        </span>
+                      )}
+                      
+                      {/* Description */}
+                      {rec.description && (
+                        <p className="mt-1 text-[11px] text-foreground/60 leading-tight line-clamp-3">
+                          {rec.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Desktop: Vertical list */}
+            <div className="hidden sm:block divide-y divide-border/60">
               {filtered.map((rec, i) => (
                 <article
                   key={rec.id}
@@ -179,36 +235,8 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
                     animationDelay: `${Math.min(i * 45, 250)}ms`,
                   }}
                 >
-                  {/* Mobile */}
-                  <div className="flex gap-4 mb-4 sm:hidden">
-                    <BookCover imageUrl={rec.image_url} title={rec.title} mobile />
-                    <div className="flex flex-col justify-start min-w-0 flex-1 pt-1">
-                      <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-2 font-mono">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <h3 className="font-serif text-base text-primary leading-snug mb-1 text-pretty">
-                        {rec.title}
-                      </h3>
-                      {rec.author && (
-                        <p className="text-[11px] tracking-wide text-[#958568] font-medium uppercase">
-                          {rec.author}
-                        </p>
-                      )}
-                      {rec.genre && (
-                        <span className="mt-1.5 inline-block text-[10px] tracking-[0.15em] uppercase bg-secondary/60 text-foreground/50 px-1.5 py-0.5 rounded-sm">
-                          {rec.genre}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {rec.description && (
-                    <p className="sm:hidden text-sm text-foreground/65 leading-relaxed text-pretty">
-                      {rec.description}
-                    </p>
-                  )}
-
-                  {/* Desktop */}
-                  <div className="hidden sm:flex gap-8">
+                  {/* Desktop layout */}
+                  <div className="flex gap-8">
                     <BookCover imageUrl={rec.image_url} title={rec.title} />
                     <div className="flex flex-col justify-center min-w-0 flex-1">
                       <span className="text-[10px] tracking-[0.3em] uppercase text-[#958568]/60 mb-2 font-mono">
