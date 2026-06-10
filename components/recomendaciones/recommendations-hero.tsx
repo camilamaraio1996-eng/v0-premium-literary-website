@@ -1,23 +1,23 @@
+'use client'
+
+import { motion } from 'framer-motion'
+
 export function RecommendationsHero() {
   return (
-    <section className="pt-16 pb-12 lg:pt-20 lg:pb-16">
-      <div className="max-w-3xl mx-auto px-6 lg:px-8">
-        {/* Eyebrow */}
-        <span className="text-[10px] uppercase tracking-[0.35em] text-[#958568]/70 mb-6 block font-mono">
-          Comunidad lectora
-        </span>
-
-        {/* Title + rule */}
-        <div className="flex items-baseline gap-6 mb-6">
-          <h1 className="font-serif text-2xl sm:text-3xl text-primary shrink-0">
+    <section className="pt-8 pb-6 sm:pt-20 sm:pb-8 lg:pt-24 lg:pb-12 border-b border-border">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <h1 className="font-serif text-4xl lg:text-6xl text-primary leading-tight mb-6">
             Biblioteca
           </h1>
-          <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
-        </div>
-
-        {/* Subtitle */}
-        <p className="text-sm sm:text-base text-foreground/60 leading-relaxed max-w-md">
-        </p>
+          <p className="text-muted-foreground leading-relaxed max-w-xl text-sm">
+            Comunidad lectora
+          </p>
+        </motion.div>
       </div>
     </section>
   )
