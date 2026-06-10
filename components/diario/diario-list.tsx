@@ -20,7 +20,7 @@ interface BlogPost {
 export function DiarioList({ posts }: { posts: BlogPost[] }) {
   if (posts.length === 0) {
     return (
-      <section className="py-24 lg:py-32">
+      <section className="py-8 sm:py-12 lg:py-24">
         <div className="max-w-3xl mx-auto px-6 lg:px-8">
           <div className="text-center py-12 bg-card/50 rounded-lg border border-border">
             <p className="text-muted-foreground">No hay entradas todavía. Regresa pronto.</p>
@@ -31,10 +31,10 @@ export function DiarioList({ posts }: { posts: BlogPost[] }) {
   }
 
   return (
-    <section className="py-24 lg:py-32">
+    <section className="py-8 sm:py-12 lg:py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Mobile: 2-column grid */}
-        <div className="grid grid-cols-2 gap-4 sm:hidden mb-12">
+        <div className="grid grid-cols-2 gap-6 sm:gap-8 sm:hidden mb-12">
           {posts.map((post, i) => {
             const preview = extractTextPreview(post.content, 120)
             
@@ -45,7 +45,7 @@ export function DiarioList({ posts }: { posts: BlogPost[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: '-100px' }}
-                className="group"
+                className="group pb-4 border-b border-border/30"
               >
                 <Link href={`/diario/${post.slug}`} className="block h-full">
                   <div className="flex flex-col h-full">

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export function DiarioHero() {
   return (
-    <section className="pt-24 pb-16 lg:pt-32 lg:pb-20 border-b border-border">
+    <section className="pt-20 pb-8 sm:pt-24 sm:pb-12 lg:pt-32 lg:pb-20 border-b border-border">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
