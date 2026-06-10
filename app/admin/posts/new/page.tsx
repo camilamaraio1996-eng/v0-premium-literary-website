@@ -99,6 +99,18 @@ export default function NewPostPage() {
         </div>
 
         <div>
+          <Label htmlFor="content" className="mb-2 block">Contenido</Label>
+          <RichEditor
+            value={content}
+            onChange={setContent}
+            placeholder="Escribe tu entrada aquí..."
+            minHeight={320}
+            showQuality
+            showWordCount
+          />
+        </div>
+
+        <div>
           <Label htmlFor="readingTime">Tiempo de lectura (min)</Label>
           <SmartInput
             id="readingTime"
