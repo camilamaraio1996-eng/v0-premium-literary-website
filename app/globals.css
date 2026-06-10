@@ -308,41 +308,36 @@
     }
   }
 
-  /* Clear floats after paragraphs when needed */
-  .prose-blog p:last-of-type {
-    clear: both;
-  }
-
   /* --- Editorial intercalated blog images --- */
   .blog-post-content {
     text-align: justify;
     line-height: 1.85;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .blog-inline-image {
     float: right;
-    width: 150px;
+    width: 145px;
     height: auto;
     object-fit: cover;
-    margin: 10px 0 18px 20px;
-    border-radius: 3px;
+    margin: 8px 0 16px 20px;
+    border-radius: 10px;
     border: 1px solid rgba(127, 39, 100, 0.15);
-    display: block;
-    flex-shrink: 0;
   }
 
   .blog-inline-image--left {
     float: left;
-    margin: 10px 20px 18px 0;
+    margin: 8px 20px 16px 0;
   }
 
   @media (min-width: 768px) {
     .blog-inline-image {
-      width: 245px;
-      margin: 14px 0 22px 28px;
+      width: 250px;
+      margin: 10px 0 20px 28px;
     }
     .blog-inline-image--left {
-      margin: 14px 28px 22px 0;
+      margin: 10px 28px 20px 0;
     }
   }
 

@@ -59,20 +59,29 @@ export function PostContent({ post }: PostContentProps) {
       const chunks = splitHTMLIntoParagraphs(post.content)
       const positions = getImagePositions(chunks.length, allImages.length)
 
+      const elements: React.ReactNode[] = []
+
+      chunks.forEach((chunk, i) => {
+        elements.push(
+          <span key={`chunk-${i}`} dangerouslySetInnerHTML={{ __html: chunk }} />
+        )
+
+        const imgIdx = positions.indexOf(i)
+        if (imgIdx !== -1 && allImages[imgIdx]) {
+          elements.push(
+            <img
+              key={`img-${imgIdx}`}
+              src={allImages[imgIdx]}
+              alt={`${post.title} - imagen ${imgIdx + 1}`}
+              className={`blog-inline-image${imgIdx % 2 === 0 ? '' : ' blog-inline-image--left'}`}
+            />
+          )
+        }
+      })
+
       return (
-        <div className="blog-post-content prose-blog clearfix">
-          {chunks.map((chunk, i) => (
-            <span key={i}>
-              <span dangerouslySetInnerHTML={{ __html: chunk }} />
-              {positions.includes(i) && allImages[positions.indexOf(i)] && (
-                <img
-                  src={allImages[positions.indexOf(i)]}
-                  alt={`${post.title} - imagen ${positions.indexOf(i) + 1}`}
-                  className={`blog-inline-image${positions.indexOf(i) % 2 === 1 ? ' blog-inline-image--left' : ''}`}
-                />
-              )}
-            </span>
-          ))}
+        <div className="blog-post-content prose-blog">
+          {elements}
         </div>
       )
     }
@@ -80,47 +89,46 @@ export function PostContent({ post }: PostContentProps) {
     // Plain-text renderer
     const paragraphs = post.content.split(/\n\n+/).map(p => p.trim()).filter(Boolean)
     const positions = getImagePositions(paragraphs.length, allImages.length)
+    const elements: React.ReactNode[] = []
+
+    paragraphs.forEach((para, i) => {
+      const imgIdx = positions.indexOf(i)
+
+      if (para.startsWith('## ')) {
+        elements.push(
+          <h2 key={`h-${i}`} className="font-serif text-xl text-primary mt-10 mb-4">
+            {para.slice(3)}
+          </h2>
+        )
+      } else if (para.startsWith('> ')) {
+        elements.push(
+          <blockquote key={`bq-${i}`} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
+            {para.slice(2)}
+          </blockquote>
+        )
+      } else {
+        elements.push(
+          <p key={`p-${i}`} className="mb-5 text-justify leading-[1.85] text-foreground">
+            {para}
+          </p>
+        )
+      }
+
+      if (imgIdx !== -1 && allImages[imgIdx]) {
+        elements.push(
+          <img
+            key={`img-${imgIdx}`}
+            src={allImages[imgIdx]}
+            alt={`${post.title} - imagen ${imgIdx + 1}`}
+            className={`blog-inline-image${imgIdx % 2 === 0 ? '' : ' blog-inline-image--left'}`}
+          />
+        )
+      }
+    })
 
     return (
-      <div className="blog-post-content clearfix">
-        {paragraphs.map((para, i) => {
-          const imgIdx = positions.indexOf(i)
-          const imageUrl = imgIdx !== -1 ? allImages[imgIdx] : null
-
-          let block: React.ReactNode
-          if (para.startsWith('## ')) {
-            block = (
-              <h2 key={`b-${i}`} className="font-serif text-xl text-primary mt-10 mb-4">
-                {para.slice(3)}
-              </h2>
-            )
-          } else if (para.startsWith('> ')) {
-            block = (
-              <blockquote key={`b-${i}`} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
-                {para.slice(2)}
-              </blockquote>
-            )
-          } else {
-            block = (
-              <p key={`b-${i}`} className="mb-5 text-justify leading-[1.85] text-foreground">
-                {para}
-              </p>
-            )
-          }
-
-          return (
-            <span key={i}>
-              {block}
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt={`${post.title} - imagen ${imgIdx + 1}`}
-                  className={`blog-inline-image${imgIdx % 2 === 1 ? ' blog-inline-image--left' : ''}`}
-                />
-              )}
-            </span>
-          )
-        })}
+      <div className="blog-post-content">
+        {elements}
       </div>
     )
   }
