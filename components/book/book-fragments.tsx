@@ -99,7 +99,7 @@ export const BookFragments = memo(function BookFragments({ fragments }: BookFrag
   }
 
   return (
-    <section className="py-12 lg:py-20 bg-secondary/20" id="fragmentos">
+    <section className="py-8 sm:py-12 lg:py-20 bg-secondary/20" id="fragmentos">
       <div className="max-w-3xl mx-auto px-6 lg:px-8">
         {/* Title */}
         <motion.div

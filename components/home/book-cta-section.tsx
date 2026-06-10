@@ -21,7 +21,7 @@ export function BookCTA({
   description = 'Un libro de relatos cortos, realistas.',
 }: BookCTAProps) {
   return (
-    <section className="py-16 lg:py-20 bg-background">
+    <section className="py-8 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-3xl mx-auto px-6 lg:px-8 text-center">
         {/* Description */}
         <motion.p

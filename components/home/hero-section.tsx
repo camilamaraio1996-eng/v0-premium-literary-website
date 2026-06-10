@@ -55,8 +55,8 @@ export function HeroSection({
   const isIframe = videoUrl && (videoUrl.includes('youtube') || videoUrl.includes('vimeo'))
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-start overflow-hidden bg-background pt-28 md:pt-36 lg:pt-44">
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 w-full">
+    <section className="relative sm:min-h-screen flex flex-col justify-start overflow-hidden bg-background pt-20 md:pt-36 lg:pt-44">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 w-full pb-8 sm:pb-0">
         {/* Author name - small eyebrow */}
         {eyebrow && (
           <motion.span
