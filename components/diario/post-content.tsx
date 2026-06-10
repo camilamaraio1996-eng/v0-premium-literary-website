@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -27,40 +26,65 @@ function formatDate(dateStr: string) {
   })
 }
 
+// Positions (paragraph index after which) each image appears
+const IMAGE_POSITIONS = [0, 2, 4]
+
 export function PostContent({ post }: PostContentProps) {
   // Prefer new `images` column, fall back to legacy `image_url`
-  const allImages = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : [])
-  const photo = allImages[0] || null
+  const allImages =
+    post.images && post.images.length > 0
+      ? post.images
+      : post.image_url
+      ? [post.image_url]
+      : []
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')
 
-  // Plain-text fallback renderer
+  // Plain-text renderer with images intercalated between paragraphs
   const renderPlainText = (content: string) => {
     const paragraphs = content.split(/\n\n+/)
-    return paragraphs.map((para, i) => {
+    const result: React.ReactNode[] = []
+
+    paragraphs.forEach((para, i) => {
       const trimmed = para.trim()
-      if (!trimmed) return null
+      if (!trimmed) return
+
       if (trimmed.startsWith('## ')) {
-        return (
-          <h2 key={i} className="font-serif text-xl text-primary mt-10 mb-4">
+        result.push(
+          <h2 key={`h-${i}`} className="font-serif text-xl text-primary mt-10 mb-4">
             {trimmed.slice(3)}
           </h2>
         )
-      }
-      if (trimmed.startsWith('> ')) {
-        return (
-          <blockquote key={i} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
+      } else if (trimmed.startsWith('> ')) {
+        result.push(
+          <blockquote key={`bq-${i}`} className="border-l-2 border-accent pl-6 my-8 italic text-muted-foreground">
             {trimmed.slice(2)}
           </blockquote>
         )
+      } else {
+        result.push(
+          <p key={`p-${i}`} className="mb-5 leading-relaxed text-foreground">
+            {trimmed}
+          </p>
+        )
       }
-      return (
-        <p key={i} className="mb-5 leading-relaxed text-foreground">
-          {trimmed}
-        </p>
-      )
+
+      // Insert image after the configured paragraph positions
+      const imgIndex = IMAGE_POSITIONS.indexOf(i)
+      if (imgIndex !== -1 && allImages[imgIndex]) {
+        result.push(
+          <img
+            key={`img-${imgIndex}`}
+            src={allImages[imgIndex]}
+            alt={`${post.title} - imagen ${imgIndex + 1}`}
+            className={`blog-inline-image${imgIndex % 2 === 1 ? ' blog-inline-image--left' : ''}`}
+          />
+        )
+      }
     })
+
+    return result
   }
 
   return (
@@ -111,35 +135,30 @@ export function PostContent({ post }: PostContentProps) {
           className="text-[15px] leading-relaxed"
         >
           {isHTML ? (
-            <div
-              className="prose-blog"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <>
+              {/* HTML content - images injected via float CSS inside prose-blog */}
+              <div
+                className="prose-blog"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+              {/* Show any images not already in the HTML below the content */}
+              {allImages.length > 0 && (
+                <div className="mt-10 clearfix">
+                  {allImages.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`${post.title} - imagen ${idx + 1}`}
+                      className={`blog-inline-image${idx % 2 === 1 ? ' blog-inline-image--left' : ''}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           ) : (
-            <div className="prose-blog">{renderPlainText(post.content)}</div>
+            <div className="prose-blog clearfix">{renderPlainText(post.content)}</div>
           )}
         </motion.div>
-
-        {/* Featured image - at the end (single image, if exists) */}
-        {photo && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-12 w-full rounded-lg overflow-hidden bg-muted/10"
-          >
-            <div className="relative w-full" style={{ aspectRatio: 'auto' }}>
-              <Image 
-                src={photo} 
-                alt={post.title} 
-                width={800}
-                height={600}
-                className="w-full h-auto object-contain"
-                quality={85}
-              />
-            </div>
-          </motion.div>
-        )}
 
         {/* Footer */}
         <motion.div
