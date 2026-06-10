@@ -12,25 +12,25 @@ export function AuthorHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Biography with integrated image */}
+          {/* Biography with inline floating image - editorial layout */}
           <div className="text-sm leading-relaxed text-muted-foreground">
-            <p className="text-justify mb-6">
-              Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante.
-            </p>
-
-            {/* Integrated author photo - responsive sizing */}
-            <div className="my-8 flex justify-center lg:float-right lg:ml-8 lg:mb-6">
-              <div className="relative w-44 lg:w-64 aspect-[3/4] overflow-hidden rounded-md border border-border/30 flex-shrink-0">
+            {/* Floating author photo - inline with text */}
+            <div className="float-right mb-3.5 ml-4.5 sm:mb-6 sm:ml-8 w-32 sm:w-72 flex-shrink-0">
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-md border border-border/30">
                 <Image
                   src="/images/author-photo-new.jpg"
                   alt="Camila Maraio - Autora"
                   fill
                   className="object-cover"
                   priority
-                  sizes="(max-width: 768px) 176px, 256px"
+                  sizes="(max-width: 640px) 128px, 288px"
                 />
               </div>
             </div>
+
+            <p className="text-justify mb-6">
+              Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante.
+            </p>
 
             <p className="text-justify mb-6">
               Participó de distintos talleres literarios y escribe a diario. Encuentra su pasión en relatar hechos de la vida cotidiana a través del humor y la sensibilidad.
@@ -44,5 +44,6 @@ export function AuthorHero() {
     </section>
   )
 }
+
 
 
