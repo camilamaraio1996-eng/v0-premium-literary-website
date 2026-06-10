@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export function RecommendationsHero() {
   return (
-    <section className="pt-8 pb-12 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20 border-b border-border">
+    <section className="pt-8 pb-6 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20 border-b border-border">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

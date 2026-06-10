@@ -151,7 +151,7 @@ export function RecommendationsGrid({ recommendations }: { recommendations: Reco
   }
 
   return (
-    <section className="pb-24 lg:pb-32">
+    <section className="pt-6 sm:pt-0 pb-24 lg:pb-32">
       <div className="max-w-3xl mx-auto px-6 lg:px-8">
 
         {/* Genre filter dropdown */}
