@@ -85,7 +85,7 @@ export function HeroSection({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.55 }}
-            className="relative mt-10 md:mt-14 w-full max-w-3xl md:max-w-4xl mx-auto md:ml-[18%] md:mr-auto md:-translate-x-6"
+            className="relative mt-10 md:mt-14 w-full md:max-w-4xl md:ml-[18%] md:mr-auto md:-translate-x-6"
           >
             {/* Subtle glow background */}
             <div className="absolute -inset-6 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent rounded-2xl blur-3xl opacity-60" />
@@ -93,14 +93,15 @@ export function HeroSection({
             {/* Video container */}
             <div className="relative rounded-2xl p-1 bg-gradient-to-br from-accent/20 via-accent/10 to-transparent border border-accent/30 shadow-2xl overflow-hidden">
               <div className="relative rounded-xl overflow-hidden bg-background border border-border/50 backdrop-blur-sm">
-                <div className="relative aspect-video bg-muted">
+                <div className="relative w-full aspect-video bg-muted">
                   {isIframe ? (
                     <iframe
                       src={embedUrl}
-                      title="Video"
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      title="Lo real y lo otro - Camila Maraio"
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
+                      loading="lazy"
                     />
                   ) : (
                     <video src={embedUrl} className="w-full h-full object-cover" controls controlsList="nodownload" />
