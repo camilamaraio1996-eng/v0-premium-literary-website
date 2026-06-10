@@ -1,7 +1,7 @@
 'use server'
 
 import { google } from 'googleapis'
-import { JWT } from 'google-auth-library-nodejs'
+import type { JWT } from 'google-auth-library'
 
 interface GoogleDriveConfig {
   projectId: string
@@ -26,7 +26,7 @@ function getGoogleDriveConfig(): GoogleDriveConfig {
 async function getGoogleDriveClient() {
   const config = getGoogleDriveConfig()
 
-  const auth = new JWT({
+  const auth = new google.auth.JWT({
     email: config.email,
     key: config.privateKey,
     scopes: [
@@ -46,6 +46,7 @@ interface CreateDocumentParams {
   title: string
   content: string
   images: string[]
+  blogUrl: string
 }
 
 /** Crea un Google Doc con contenido e imágenes */
@@ -92,7 +93,7 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
       },
       {
         insertText: {
-          text: `\n\n${params.content}`,
+          text: `\n\n${params.content}\n\n---\nURL: ${params.blogUrl}`,
           location: { index: params.title.length + 1 },
         },
       },
@@ -141,6 +142,7 @@ interface UpdateDocumentParams {
   title: string
   content: string
   images: string[]
+  blogUrl: string
 }
 
 /** Actualiza un Google Doc existente */
@@ -172,7 +174,7 @@ export async function updateGoogleDoc(params: UpdateDocumentParams) {
     // 3. Insertar nuevo contenido
     requests.push({
       insertText: {
-        text: `${params.title}\n\n${params.content}`,
+        text: `${params.title}\n\n${params.content}\n\n---\nURL: ${params.blogUrl}`,
         location: { index: 1 },
       },
     })
@@ -216,6 +218,20 @@ export async function updateGoogleDoc(params: UpdateDocumentParams) {
     return { success: true }
   } catch (error: any) {
     console.error('[v0] Error updating Google Doc:', error.message)
+    throw error
+  }
+}
+
+/** Elimina un Google Doc */
+export async function deleteGoogleDoc(docId: string) {
+  try {
+    const { drive } = await getGoogleDriveClient()
+    await drive.files.delete({
+      fileId: docId,
+    })
+    return { success: true }
+  } catch (error: any) {
+    console.error('[v0] Error deleting Google Doc:', error.message)
     throw error
   }
 }
