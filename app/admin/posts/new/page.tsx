@@ -36,28 +36,48 @@ export default function NewPostPage() {
     setError('')
     setLoading(true)
 
-    const supabase = createClient()
-    const slug = generateSlug(title)
+    try {
+      const supabase = createClient()
+      const slug = generateSlug(title)
 
-    const { error: insertError } = await supabase
-      .from('blog_posts')
-      .insert({
+      console.log('[v0] Creating new post with images:', {
+        imagesCount: images.length,
+        images: images,
+        title,
+      })
+
+      // Prepare payload - save all images to the images column
+      const payload = {
         title,
         slug,
         content,
-        image_url: images.length > 0 ? images[0] : null,
+        image_url: images.length > 0 ? images[0] : null, // Legacy: keep first image in image_url
+        images: images.length > 0 ? images : [], // New: save all images in images column
         reading_time: readingTime,
         published,
-      })
+      }
 
-    if (insertError) {
-      setError(insertError.message)
+      console.log('[v0] Payload before insert:', payload)
+
+      const { error: insertError } = await supabase
+        .from('blog_posts')
+        .insert(payload)
+
+      if (insertError) {
+        console.error('[v0] Insert error:', insertError)
+        setError(insertError.message)
+        setLoading(false)
+        return
+      }
+
+      console.log('[v0] Post created successfully')
+      router.push('/admin/posts')
+      router.refresh()
+    } catch (err: any) {
+      console.error('[v0] Unexpected error:', err)
+      setError(err.message || 'Error desconocido')
       setLoading(false)
-      return
     }
-
-    router.push('/admin/posts')
-    router.refresh()
   }
 
   return (

@@ -12,6 +12,7 @@ interface Post {
   reading_time: number
   created_at: string
   image_url?: string | null
+  images?: string[] | null
 }
 
 interface PostContentProps {
@@ -27,7 +28,11 @@ function formatDate(dateStr: string) {
 }
 
 export function PostContent({ post }: PostContentProps) {
-  const photo = post.image_url
+  // Load images from new images column or fall back to legacy image_url
+  const images = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : [])
+  const photo = images[0] || null
+
+  console.log('[v0] PostContent - loaded images:', { count: images.length, images })
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')
