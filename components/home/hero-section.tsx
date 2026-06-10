@@ -118,16 +118,6 @@ export function HeroSection({
             </div>
           </motion.div>
         )}
-
-        {/* Subtitle - below video */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.65 }}
-          className="text-base md:text-lg text-foreground/70 max-w-2xl mx-auto text-center mt-8 leading-relaxed"
-        >
-          {description}
-        </motion.p>
       </div>
 
       {/* Scroll indicator */}
