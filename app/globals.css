@@ -313,7 +313,12 @@
     clear: both;
   }
 
-  /* --- Plain-text intercalated images (rendered outside prose-blog) --- */
+  /* --- Editorial intercalated blog images --- */
+  .blog-post-content {
+    text-align: justify;
+    line-height: 1.85;
+  }
+
   .blog-inline-image {
     float: right;
     width: 150px;
@@ -323,6 +328,7 @@
     border-radius: 3px;
     border: 1px solid rgba(127, 39, 100, 0.15);
     display: block;
+    flex-shrink: 0;
   }
 
   .blog-inline-image--left {
@@ -332,7 +338,7 @@
 
   @media (min-width: 768px) {
     .blog-inline-image {
-      width: 250px;
+      width: 245px;
       margin: 14px 0 22px 28px;
     }
     .blog-inline-image--left {
@@ -342,11 +348,11 @@
 
   @media (max-width: 420px) {
     .blog-inline-image {
-      width: 140px;
-      margin: 10px 0 16px 16px;
+      width: 135px;
+      margin: 8px 0 14px 16px;
     }
     .blog-inline-image--left {
-      margin: 10px 16px 16px 0;
+      margin: 8px 16px 14px 0;
     }
   }
 
