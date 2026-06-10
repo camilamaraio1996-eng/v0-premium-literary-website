@@ -7,10 +7,11 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { ArrowLeft, Loader } from 'lucide-react'
+import { ArrowLeft, Loader, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react'
 import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
+import { syncBlogPostToGoogleDrive } from '@/lib/sync-blog-action'
 
 function generateSlug(title: string): string {
   return title
@@ -32,6 +33,10 @@ interface BlogPost {
   published: boolean
   created_at: string
   updated_at: string
+  google_doc_id?: string | null
+  google_doc_url?: string | null
+  sync_status?: string | null
+  synced_at?: string | null
 }
 
 export default function EditPostPage() {
@@ -45,6 +50,7 @@ export default function EditPostPage() {
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
 
@@ -119,6 +125,28 @@ export default function EditPostPage() {
     } catch (err: any) {
       setError(err.message || 'Error desconocido')
       setSaving(false)
+    }
+  }
+
+  const handleSyncToGoogleDrive = async () => {
+    setSyncing(true)
+    setError('')
+    try {
+      await syncBlogPostToGoogleDrive(postId)
+      // Recargar datos del post
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', postId)
+        .single()
+      if (data) {
+        setPost(data as BlogPost)
+      }
+    } catch (err: any) {
+      setError(`Error sincronizando: ${err.message}`)
+    } finally {
+      setSyncing(false)
     }
   }
 
@@ -212,6 +240,32 @@ export default function EditPostPage() {
           <Label htmlFor="published">Publicar</Label>
         </div>
 
+        {/* Google Drive Sync Status */}
+        {post?.google_doc_url && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              {post.sync_status === 'synced' ? (
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+              )}
+              <span className="font-medium text-sm">
+                {post.sync_status === 'synced' ? 'Sincronizado' : 'Pendiente de sincronización'}
+              </span>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(post.google_doc_url, '_blank')}
+              className="gap-2"
+            >
+              Abrir en Google Drive
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}
@@ -219,6 +273,14 @@ export default function EditPostPage() {
         <div className="flex gap-4">
           <Button type="submit" disabled={saving}>
             {saving ? 'Guardando...' : 'Guardar Cambios'}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSyncToGoogleDrive}
+            disabled={syncing}
+          >
+            {syncing ? 'Sincronizando...' : 'Sincronizar con Drive'}
           </Button>
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/posts">Cancelar</Link>

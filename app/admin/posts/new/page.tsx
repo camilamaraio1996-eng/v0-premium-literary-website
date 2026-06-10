@@ -11,6 +11,7 @@ import { ArrowLeft } from 'lucide-react'
 import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
+import { syncBlogPostToGoogleDrive } from '@/lib/sync-blog-action'
 
 function generateSlug(title: string): string {
   return title
@@ -28,7 +29,9 @@ export default function NewPostPage() {
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState('')
+  const [createdPostId, setCreatedPostId] = useState<string | null>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +43,7 @@ export default function NewPostPage() {
       const supabase = createClient()
       const slug = generateSlug(title)
 
-      const { error: insertError } = await supabase
+      const { data, error: insertError } = await supabase
         .from('blog_posts')
         .insert({
           title,
@@ -52,11 +55,27 @@ export default function NewPostPage() {
           reading_time: readingTime,
           published,
         })
+        .select()
 
       if (insertError) {
         setError(insertError.message)
         setLoading(false)
         return
+      }
+
+      if (data && data.length > 0) {
+        setCreatedPostId(data[0].id)
+        // Sincronizar automáticamente si está publicada
+        if (published) {
+          setSyncing(true)
+          try {
+            await syncBlogPostToGoogleDrive(data[0].id)
+          } catch (syncErr) {
+            console.error('Error syncing to Google Drive:', syncErr)
+            // Continuar de todas formas
+          }
+          setSyncing(false)
+        }
       }
 
       router.push('/admin/posts')
