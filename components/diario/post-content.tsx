@@ -28,11 +28,9 @@ function formatDate(dateStr: string) {
 }
 
 export function PostContent({ post }: PostContentProps) {
-  // Load images from new images column or fall back to legacy image_url
-  const images = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : [])
-  const photo = images[0] || null
-
-  console.log('[v0] PostContent - loaded images:', { count: images.length, images })
+  // Prefer new `images` column, fall back to legacy `image_url`
+  const allImages = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : [])
+  const photo = allImages[0] || null
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')

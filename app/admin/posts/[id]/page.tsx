@@ -67,15 +67,14 @@ export default function EditPostPage() {
       setTitle(data.title)
       setContent(data.content)
       
-      // Load images from the images column (new) or image_url (legacy compatibility)
-      const loadedImages: string[] = []
-      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-        loadedImages.push(...data.images)
-      } else if (data.image_url) {
-        loadedImages.push(data.image_url)
-      }
+      // Load images: prefer new `images` column, fall back to legacy `image_url`
+      const loadedImages: string[] =
+        data.images && Array.isArray(data.images) && data.images.length > 0
+          ? data.images
+          : data.image_url
+          ? [data.image_url]
+          : []
       setImages(loadedImages)
-      console.log('[v0] Loaded images from post:', loadedImages)
       
       setReadingTime(data.reading_time)
       setPublished(data.published)
@@ -94,44 +93,30 @@ export default function EditPostPage() {
       const supabase = createClient()
       const newSlug = generateSlug(title)
 
-      console.log('[v0] Saving post with images:', {
-        imagesCount: images.length,
-        images: images,
-        title,
-        postId,
-      })
-
-      // Prepare payload - save all images to the images column
-      const payload = {
-        title,
-        slug: newSlug,
-        content,
-        image_url: images.length > 0 ? images[0] : null, // Legacy: keep first image in image_url
-        images: images.length > 0 ? images : [], // New: save all images in images column
-        reading_time: readingTime,
-        published,
-        updated_at: new Date().toISOString(),
-      }
-
-      console.log('[v0] Payload before update:', payload)
-
       const { error: updateError } = await supabase
         .from('blog_posts')
-        .update(payload)
+        .update({
+          title,
+          slug: newSlug,
+          content,
+          cover_image: images.length > 0 ? images[0] : null,
+          image_url: images.length > 0 ? images[0] : null,
+          images: images,
+          reading_time: readingTime,
+          published,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', postId)
 
       if (updateError) {
-        console.error('[v0] Update error:', updateError)
         setError(updateError.message)
         setSaving(false)
         return
       }
 
-      console.log('[v0] Post updated successfully')
       router.push('/admin/posts')
       router.refresh()
     } catch (err: any) {
-      console.error('[v0] Unexpected error:', err)
       setError(err.message || 'Error desconocido')
       setSaving(false)
     }

@@ -35,16 +35,11 @@ export function BlogImageUploadField({
     const files = e.target.files
     if (!files) return
 
-    console.log('[v0] Files selected:', { count: files.length, images: Array.from(files).map(f => f.name) })
-
     for (const file of Array.from(files)) {
       if (images.length >= maxImages) {
         setError(`Máximo ${maxImages} imágenes permitidas`)
-        console.warn('[v0] Max images reached')
         break
       }
-
-      console.log('[v0] Starting upload for file:', { name: file.name, size: file.size, type: file.type })
 
       setIsUploading(true)
       setError('')
@@ -62,36 +57,28 @@ export function BlogImageUploadField({
           body: formData,
         })
 
-        console.log('[v0] Upload response status:', response.status)
-
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: `HTTP ${response.status}` }))
-          console.error('[v0] Upload failed:', errorData)
           setError(errorData?.message || `Error al subir`)
           setIsUploading(false)
           continue
         }
 
         const result = await response.json()
-        console.log('[v0] Upload result:', { success: result.success, url: result.url, fileName: result.fileName })
 
         if (!result.success) {
-          console.error('[v0] Upload not successful:', result.message)
           setError(result.message || 'Error al subir imagen')
           setIsUploading(false)
           continue
         }
 
         setUploadProgress(100)
-        const newImages = [...images, result.url]
-        console.log('[v0] Images updated:', { count: newImages.length, urls: newImages })
-        onChange(newImages)
+        onChange([...images, result.url])
 
         if (fileInputRef.current) {
           fileInputRef.current.value = ''
         }
       } catch (err: any) {
-        console.error('[v0] Upload exception:', err)
         setError(err?.message || 'Error al subir')
       } finally {
         setIsUploading(false)
