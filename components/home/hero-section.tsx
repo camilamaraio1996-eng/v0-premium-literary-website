@@ -128,35 +128,6 @@ export function HeroSection({
         >
           {description}
         </motion.p>
-
-        {/* Buy button - first CTA */}
-        {buyUrl && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.75 }}
-            className="flex justify-center"
-          >
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 transition-colors uppercase tracking-[0.15em] text-xs px-10 gap-2">
-              <a href={buyUrl} target="_blank" rel="noopener noreferrer">
-                <ShoppingBag className="w-4 h-4" />
-                {buyLabel}
-              </a>
-            </Button>
-          </motion.div>
-        )}
-
-        {/* Primary CTA button - below buy button */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex flex-col items-center justify-center gap-4 mt-4"
-        >
-          <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
-            <Link href={ctaPrimaryHref}>{ctaPrimaryLabel}</Link>
-          </Button>
-        </motion.div>
       </div>
 
       {/* Scroll indicator */}

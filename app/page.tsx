@@ -2,6 +2,7 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
 import { BookFragments } from '@/components/book/book-fragments'
+import { BookCTA } from '@/components/home/book-cta-section'
 import { ContactCTA } from '@/components/home/contact-cta'
 import { createClient } from '@/lib/supabase/server'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
@@ -53,6 +54,14 @@ export default async function HomePage() {
         />
         {/* Fragments Section */}
         <BookFragments fragments={fragments} />
+        {/* Book CTA Section - Buttons below fragments */}
+        <BookCTA
+          buyUrl={settings['home_buy_url'] || null}
+          buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
+          ctaPrimaryLabel={settings['hero_cta_primary_label'] || 'Descubrí "Lo real y lo otro"'}
+          ctaPrimaryHref={settings['hero_cta_primary_href'] || '/libro'}
+          description={settings['hero_description'] || 'Un libro de relatos cortos, realistas.'}
+        />
         <ContactCTA />
       </main>
       <Footer />
