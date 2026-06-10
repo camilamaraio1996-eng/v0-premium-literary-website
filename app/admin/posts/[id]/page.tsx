@@ -27,7 +27,6 @@ interface BlogPost {
   slug: string
   content: string
   image_url: string | null
-  gallery_images: string[] | null
   reading_time: number
   published: boolean
   created_at: string
@@ -67,13 +66,10 @@ export default function EditPostPage() {
       setTitle(data.title)
       setContent(data.content)
       
-      // Unify images: first image from image_url, rest from gallery_images
+      // Convert image_url to images array for unified system
       const unifiedImages: string[] = []
       if (data.image_url) {
         unifiedImages.push(data.image_url)
-      }
-      if (data.gallery_images && Array.isArray(data.gallery_images)) {
-        unifiedImages.push(...data.gallery_images)
       }
       setImages(unifiedImages)
       
@@ -101,7 +97,6 @@ export default function EditPostPage() {
           slug: newSlug,
           content,
           image_url: images.length > 0 ? images[0] : null,
-          gallery_images: images.length > 1 ? images.slice(1) : [],
           reading_time: readingTime,
           published,
           updated_at: new Date().toISOString(),
@@ -177,7 +172,7 @@ export default function EditPostPage() {
             bucketName="blog-images"
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Subí hasta 3 imágenes. La primera será la imagen principal."
+            helpText="Subí hasta 3 imágenes. Solo la primera se guardará como imagen principal de la entrada. Las adicionales pueden servir para el contenido del texto."
           />
         </div>
 

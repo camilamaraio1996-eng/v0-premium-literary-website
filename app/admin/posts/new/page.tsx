@@ -46,7 +46,6 @@ export default function NewPostPage() {
         slug,
         content,
         image_url: images.length > 0 ? images[0] : null,
-        gallery_images: images.length > 1 ? images.slice(1) : [],
         reading_time: readingTime,
         published,
       })
@@ -94,7 +93,7 @@ export default function NewPostPage() {
             bucketName="blog-images"
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            helpText="Subí hasta 3 imágenes. La primera será la imagen principal."
+            helpText="Subí hasta 3 imágenes. Solo la primera se guardará como imagen principal de la entrada. Las adicionales pueden servir para el contenido del texto."
           />
         </div>
 

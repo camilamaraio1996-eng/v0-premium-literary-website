@@ -12,7 +12,6 @@ interface Post {
   reading_time: number
   created_at: string
   image_url?: string | null
-  gallery_images?: string[] | null
 }
 
 interface PostContentProps {
@@ -29,7 +28,6 @@ function formatDate(dateStr: string) {
 
 export function PostContent({ post }: PostContentProps) {
   const photo = post.image_url
-  const galleryImages = post.gallery_images || []
 
   // Content is already HTML from the DB; render directly
   const isHTML = post.content.trim().startsWith('<')
@@ -136,28 +134,6 @@ export function PostContent({ post }: PostContentProps) {
                 className="w-full h-auto object-contain"
                 quality={85}
               />
-            </div>
-          </motion.div>
-        )}
-
-        {/* Gallery - Multiple Images Grid SEPARATE FROM PROSE */}
-        {galleryImages.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="gallery-grid">
-              {galleryImages.map((url, index) => (
-                <div key={index} className="gallery-item">
-                  <img
-                    src={url}
-                    alt={`${post.title} - Imagen ${index + 1}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
-              ))}
             </div>
           </motion.div>
         )}
