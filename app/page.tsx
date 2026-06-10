@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
+import { QuickAccessSection } from '@/components/home/quick-access-section'
 import { BookFragments } from '@/components/book/book-fragments'
 import { BookCTA } from '@/components/home/book-cta-section'
 import { ContactCTA } from '@/components/home/contact-cta'
@@ -52,6 +53,8 @@ export default async function HomePage() {
           buyUrl={settings['home_buy_url'] || null}
           buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
         />
+        {/* Quick Access Section - Links to Biblioteca and Blog */}
+        <QuickAccessSection />
         {/* Fragments Section */}
         <BookFragments fragments={fragments} title="FRAGMENTOS DEL LIBRO" />
         {/* Book CTA Section - Buttons below fragments */}
