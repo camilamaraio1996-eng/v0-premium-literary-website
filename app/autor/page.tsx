@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
+import { AuthorHeader } from '@/components/autor/author-header'
 import { AuthorHero } from '@/components/autor/author-hero'
 import { AuthorBio } from '@/components/autor/author-bio'
 import { getNavigationData } from '@/lib/cms'
@@ -17,6 +18,7 @@ export default async function AutorPage() {
     <>
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
+        <AuthorHeader />
         <AuthorHero />
         <AuthorBio />
       </main>

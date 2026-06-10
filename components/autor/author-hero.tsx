@@ -5,60 +5,45 @@ import Image from 'next/image'
 
 export function AuthorHero() {
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/20 via-transparent to-transparent" />
-      
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Author Image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="order-2 lg:order-1"
-          >
-            <div className="relative mx-auto w-64 lg:w-80 aspect-[3/4]">
-              {/* Ambient glow */}
-              <div className="absolute inset-0 bg-accent/10 blur-3xl" />
-              
-              {/* Author photo */}
-              <div className="relative bg-muted rounded-lg overflow-hidden h-full">
+    <section className="py-12 lg:py-20 bg-background">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start"
+        >
+          {/* Author photo - appears first on mobile, left on desktop */}
+          <div className="w-full lg:w-auto lg:flex-shrink-0">
+            <div className="mx-auto lg:mx-0 w-48 lg:w-72">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-md border border-border/30">
                 <Image
-                  src="/images/author-photo.jpg"
-                  alt="Camila Maraio - Author"
-                  width={400}
-                  height={533}
-                  className="w-full h-full object-cover"
+                  src="/images/author-photo-new.jpg"
+                  alt="Camila Maraio - Autora"
+                  fill
+                  className="object-cover"
                   priority
+                  sizes="(max-width: 768px) 192px, 288px"
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="order-1 lg:order-2"
-          >
-            <span className="text-sm uppercase tracking-[0.2em] text-accent mb-4 block">
-              La autora
-            </span>
-            <h1 className="font-serif text-3xl lg:text-3xl text-primary mb-6 leading-tight">
-              Camila Maraio
-            </h1>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-              {`Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante. 
-
-Participó de distintos talleres literarios y escribe a diario. 
-Encuentra su pasión en relatar hechos de la vida cotidiana a través del humor y la sensibilidad. 
-
-En el 2026 saca su primer libro de relatos "Lo real y lo otro" de la mano de la editorial Orsai.`}
+          {/* Biography text - justified */}
+          <div className="flex-1 text-sm leading-relaxed text-muted-foreground">
+            <p className="text-justify mb-4">
+              Nació en Buenos Aires en 1996. Es técnica en Trabajo Social (UNLaM), vendedora y comerciante.
             </p>
-          </motion.div>
-        </div>
+            <p className="text-justify mb-4">
+              Participó de distintos talleres literarios y escribe a diario. Encuentra su pasión en relatar hechos de la vida cotidiana a través del humor y la sensibilidad.
+            </p>
+            <p className="text-justify">
+              En el 2026 saca su primer libro de relatos &quot;Lo real y lo otro&quot; de la mano de la editorial Orsai.
+            </p>
+          </div>
+        </motion.div>
       </div>
     </section>
   )
 }
+
