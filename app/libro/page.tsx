@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
+import { BookHeader } from '@/components/book/book-header'
 import { BookHero } from '@/components/book/book-hero'
 import { BookFragments } from '@/components/book/book-fragments'
 import { createClient } from '@/lib/supabase/server'
@@ -72,6 +73,7 @@ export default async function LibroPage() {
     <>
       <Navigation navItems={navItems} siteTitle={siteTitle} />
       <main className="pt-20">
+        <BookHeader />
         <BookHero
           coverImage={book.cover_image_url}
           bookTitle={book.title}
