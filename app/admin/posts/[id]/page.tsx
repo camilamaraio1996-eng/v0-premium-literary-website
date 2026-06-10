@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft, Loader } from 'lucide-react'
-import { FileUploadField } from '@/components/admin/file-upload-field'
-import { MultiImageUploadField } from '@/components/admin/multi-image-upload-field'
+import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
 
@@ -41,8 +40,7 @@ export default function EditPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
-  const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>([])
   const [readingTime, setReadingTime] = useState(5)
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -68,8 +66,17 @@ export default function EditPostPage() {
       setPost(data as BlogPost)
       setTitle(data.title)
       setContent(data.content)
-      setImageUrl(data.image_url || '')
-      setGalleryImages(data.gallery_images || [])
+      
+      // Unify images: first image from image_url, rest from gallery_images
+      const unifiedImages: string[] = []
+      if (data.image_url) {
+        unifiedImages.push(data.image_url)
+      }
+      if (data.gallery_images && Array.isArray(data.gallery_images)) {
+        unifiedImages.push(...data.gallery_images)
+      }
+      setImages(unifiedImages)
+      
       setReadingTime(data.reading_time)
       setPublished(data.published)
       setLoading(false)
@@ -93,8 +100,8 @@ export default function EditPostPage() {
           title,
           slug: newSlug,
           content,
-          image_url: imageUrl || null,
-          gallery_images: galleryImages.length > 0 ? galleryImages : [],
+          image_url: images.length > 0 ? images[0] : null,
+          gallery_images: images.length > 1 ? images.slice(1) : [],
           reading_time: readingTime,
           published,
           updated_at: new Date().toISOString(),
@@ -163,39 +170,14 @@ export default function EditPostPage() {
         </div>
 
         <div>
-          <FileUploadField
-            label="Imagen Principal de la Entrada"
-            bucketName="blog-images"
-            value={imageUrl}
-            onChange={setImageUrl}
-            accept="image/jpeg,image/png,image/webp"
-            maxSize={5 * 1024 * 1024}
-            helpText="Sube una imagen JPG, PNG o WebP. Máximo 5MB. (Opcional)"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="content" className="mb-2 block">Contenido</Label>
-          <RichEditor
-            value={content}
-            onChange={setContent}
-            placeholder="Escribe tu entrada aquí..."
-            minHeight={320}
-            showQuality
-            showWordCount
-          />
-        </div>
-
-        <div>
-          <MultiImageUploadField
-            label="Galería de Imágenes"
-            value={galleryImages}
-            onChange={setGalleryImages}
+          <BlogImageUploadField
+            label="Imágenes de la Entrada"
+            value={images}
+            onChange={setImages}
             bucketName="blog-images"
             accept="image/jpeg,image/png,image/webp"
             maxSize={5 * 1024 * 1024}
-            maxImages={10}
-            helpText="Sube múltiples imágenes para mostrar como galería debajo del contenido."
+            helpText="Subí hasta 3 imágenes. La primera será la imagen principal."
           />
         </div>
 
