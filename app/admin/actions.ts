@@ -2,6 +2,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createGoogleDoc, updateGoogleDoc, deleteGoogleDoc } from '@/lib/google-drive'
 
 export async function updateSiteSettings(settings: Record<string, string>) {
   const supabase = await createClient()
@@ -267,5 +268,101 @@ export async function deleteRecommendation(formData: FormData) {
       id,
     })
     throw error
+  }
+}
+
+/** Sincroniza una entrada del blog con Google Drive */
+export async function syncBlogPostToGoogleDrive(postId: string) {
+  const supabase = await createClient()
+
+  try {
+    console.log('[v0] Syncing blog post to Google Drive:', postId)
+
+    // 1. Obtener la entrada del blog
+    const { data: post, error: fetchError } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('id', postId)
+      .single()
+
+    if (fetchError || !post) {
+      throw new Error('Entrada de blog no encontrada')
+    }
+
+    console.log('[v0] Post fetched:', { title: post.title, hasDocId: !!post.google_doc_id })
+
+    // 2. Construir URL del blog
+    const blogUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/diario/${post.slug}`
+
+    // 3. Preparar imágenes (si existen)
+    const images = post.images || (post.image_url ? [post.image_url] : [])
+
+    // 4. Crear o actualizar Google Doc
+    let result
+    if (post.google_doc_id) {
+      console.log('[v0] Updating existing Google Doc:', post.google_doc_id)
+      result = await updateGoogleDoc({
+        docId: post.google_doc_id,
+        title: post.title,
+        content: post.content,
+        images,
+        blogUrl,
+      })
+    } else {
+      console.log('[v0] Creating new Google Doc')
+      result = await createGoogleDoc({
+        title: post.title,
+        content: post.content,
+        images,
+        blogUrl,
+      })
+    }
+
+    // 5. Guardar información del Doc en la BD
+    const { error: updateError } = await supabase
+      .from('blog_posts')
+      .update({
+        google_doc_id: result.docId,
+        google_doc_url: result.docUrl,
+        sync_status: 'synced',
+        synced_at: new Date().toISOString(),
+      })
+      .eq('id', postId)
+
+    if (updateError) {
+      throw updateError
+    }
+
+    console.log('[v0] Blog post synced successfully')
+
+    // 6. Revalidar caché
+    revalidatePath('/admin/posts')
+    revalidatePath(`/diario/${post.slug}`)
+    revalidateTag('blog-posts', 'max')
+
+    return {
+      success: true,
+      message: 'Entrada sincronizada con Google Drive',
+      docUrl: result.docUrl,
+    }
+  } catch (error: any) {
+    console.error('[v0] Error syncing to Google Drive:', error.message)
+
+    // Actualizar estado a error
+    try {
+      await supabase
+        .from('blog_posts')
+        .update({
+          sync_status: 'error',
+        })
+        .eq('id', postId)
+    } catch (e) {
+      console.error('[v0] Error updating sync status:', e)
+    }
+
+    return {
+      success: false,
+      message: `Error sincronizando: ${error.message}`,
+    }
   }
 }
