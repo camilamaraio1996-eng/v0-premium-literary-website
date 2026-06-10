@@ -32,8 +32,9 @@ function getImagePositions(paragraphCount: number, imageCount: number): number[]
   if (imageCount === 0) return []
   if (imageCount === 1) return [1]
   if (imageCount === 2) return [1, Math.floor(paragraphCount / 2)]
-  // 3 images
-  return [1, Math.floor(paragraphCount / 2), paragraphCount - 2]
+  // 3 images: place 3rd image in the second-to-last paragraph (before the very last one)
+  // so it stays within the article content, not after it
+  return [1, Math.floor(paragraphCount / 2), Math.max(2, paragraphCount - 3)]
 }
 
 export function PostContent({ post }: PostContentProps) {
@@ -183,13 +184,13 @@ export function PostContent({ post }: PostContentProps) {
           {renderContent()}
         </motion.div>
 
-        {/* Footer */}
+        {/* Footer with clear to prevent floats from invading */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mt-14 lg:mt-20 pt-10 border-t border-border text-center"
+          className="mt-14 lg:mt-20 pt-10 border-t border-border text-center clear-both"
         >
           <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-[0.12em] text-xs">
             <Link href="/diario">Ver más entradas</Link>
