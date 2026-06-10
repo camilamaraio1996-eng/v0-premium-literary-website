@@ -79,14 +79,6 @@ export function HeroSection({
           {title}
         </motion.h1>
 
-        {/* Decorative line */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.7, delay: 0.45 }}
-          className="w-12 h-px bg-accent mb-10 md:mb-14 origin-left"
-        />
-
         {/* Premium video wrapper - asymmetric positioning */}
         {embedUrl && (
           <motion.div

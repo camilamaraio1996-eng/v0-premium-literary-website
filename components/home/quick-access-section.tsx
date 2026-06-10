@@ -34,7 +34,7 @@ export function QuickAccessSection() {
               transition={{ duration: 0.6, delay: item.delay }}
               className="flex flex-col items-start justify-between p-6 sm:p-8 rounded-lg border border-border/40 bg-card/30 hover:bg-card/50 hover:border-border/60 transition-all duration-300 group"
             >
-              <h3 className="font-serif text-lg sm:text-xl text-primary mb-4 group-hover:text-accent transition-colors duration-300">
+              <h3 className="font-serif text-sm sm:text-lg md:text-xl text-primary mb-4 group-hover:text-accent transition-colors duration-300 tracking-wide">
                 {item.title}
               </h3>
               <Button
