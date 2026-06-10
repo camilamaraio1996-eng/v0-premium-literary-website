@@ -1,7 +1,6 @@
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/home/hero-section'
-import { AboutBookSection } from '@/components/home/about-book-section'
 import { ContactCTA } from '@/components/home/contact-cta'
 import { getNavigationData, getSiteSettings } from '@/lib/cms'
 
@@ -25,7 +24,6 @@ export default async function HomePage() {
           buyUrl={settings['home_buy_url'] || null}
           buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
         />
-        <AboutBookSection />
         <ContactCTA />
       </main>
       <Footer />
