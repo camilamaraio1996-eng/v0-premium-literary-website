@@ -280,10 +280,37 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
+  
+  /* Editorial inline blog images - float right, integrated with text */
   .prose-blog img {
+    float: right;
+    margin: 0.75rem 0 0.75rem 1rem;
     border-radius: 2px;
-    width: 100%;
+    width: 150px;
     height: auto;
+    object-fit: cover;
+    border: 1px solid rgba(127, 39, 100, 0.15);
+  }
+
+  /* Tablet size images */
+  @media (min-width: 768px) {
+    .prose-blog img {
+      width: 240px;
+      margin: 0.875rem 0 1rem 1.5rem;
+    }
+  }
+
+  /* Mobile optimized inline images */
+  @media (max-width: 640px) {
+    .prose-blog img {
+      width: 140px;
+      margin: 0.5rem 0 0.75rem 1rem;
+    }
+  }
+
+  /* Clear floats after paragraphs when needed */
+  .prose-blog p:last-of-type {
+    clear: both;
   }
 
   /* Gallery Grid for Blog Entries — SEPARATE FROM PROSE */
