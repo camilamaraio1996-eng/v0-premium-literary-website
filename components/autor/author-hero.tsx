@@ -38,7 +38,7 @@ export function AuthorHero() {
               Participó de distintos talleres literarios y escribe a diario. Encuentra su pasión en relatar hechos de la vida cotidiana a través del humor y la sensibilidad.
             </p>
             <p className="text-justify">
-              En el 2026 saca su primer libro de relatos &quot;Lo real y lo otro&quot; de la mano de la editorial Orsai.
+              En el 2026 sacó su primer libro de relatos &quot;Lo real y lo otro&quot; de la mano de la editorial Orsai.
             </p>
           </div>
         </motion.div>
