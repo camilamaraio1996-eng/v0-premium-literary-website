@@ -99,21 +99,18 @@ export const BookFragments = memo(function BookFragments({ fragments }: BookFrag
   }
 
   return (
-    <section className="py-24 lg:py-32 bg-secondary/20" id="fragmentos">
+    <section className="py-12 lg:py-20 bg-secondary/20" id="fragmentos">
       <div className="max-w-3xl mx-auto px-6 lg:px-8">
-        {/* Subtitle */}
+        {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-14 text-center"
+          className="mb-10 text-center"
         >
-          <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block mb-3">
-            Un libro de relatos
-          </span>
           <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block">
-            Frangmentos
+            FRAGMENTOS
           </span>
         </motion.div>
 

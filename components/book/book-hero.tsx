@@ -24,7 +24,7 @@ export const BookHero = memo(function BookHero({
   const displayCoverImage = coverImage || DEFAULT_COVER_IMAGE
 
   return (
-    <section className="py-24 lg:py-32 bg-background">
+    <section className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Mobile Layout: Title -> Cover -> Meta -> Button */}
         {/* Desktop Layout: Cover (left) | Content (right) */}
