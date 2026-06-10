@@ -43,7 +43,7 @@ export default async function HomePage() {
       <main>
         <HeroSection
           eyebrow={settings['hero_eyebrow'] || ''}
-          title={settings['hero_title'] || 'Lo real y lo otro'}
+          title={settings['hero_title'] || 'Lo real y lo otro, Editorial Orsai'}
           description={settings['hero_description'] || 'Un libro de relatos cortos, realistas. '}
           imageUrl={settings['home_hero_image_url'] || null}
           imageAlt={settings['home_hero_image_alt'] || ''}
