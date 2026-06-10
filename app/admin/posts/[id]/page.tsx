@@ -11,7 +11,7 @@ import { ArrowLeft, Loader, CheckCircle, AlertCircle, ExternalLink } from 'lucid
 import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
-import { syncBlogPostToGoogleDrive } from '@/lib/sync-blog-action'
+import { syncBlogPostToGoogleDrive } from '@/app/admin/actions'
 
 function generateSlug(title: string): string {
   return title
@@ -120,6 +120,18 @@ export default function EditPostPage() {
         return
       }
 
+      // Sincronizar con Drive automáticamente al guardar si está publicada
+      if (published) {
+        setSyncing(true)
+        try {
+          await syncBlogPostToGoogleDrive(postId)
+        } catch (syncErr: any) {
+          // No bloquear el guardado si falla Drive
+          console.error('Drive sync error:', syncErr)
+        }
+        setSyncing(false)
+      }
+
       router.push('/admin/posts')
       router.refresh()
     } catch (err: any) {
@@ -132,17 +144,19 @@ export default function EditPostPage() {
     setSyncing(true)
     setError('')
     try {
-      await syncBlogPostToGoogleDrive(postId)
-      // Recargar datos del post
+      const result = await syncBlogPostToGoogleDrive(postId)
+      if (!result.success) {
+        setError(result.message)
+        return
+      }
+      // Recargar datos del post para mostrar estado actualizado
       const supabase = createClient()
       const { data } = await supabase
         .from('blog_posts')
         .select('*')
         .eq('id', postId)
         .single()
-      if (data) {
-        setPost(data as BlogPost)
-      }
+      if (data) setPost(data as BlogPost)
     } catch (err: any) {
       setError(`Error sincronizando: ${err.message}`)
     } finally {
@@ -240,47 +254,72 @@ export default function EditPostPage() {
           <Label htmlFor="published">Publicar</Label>
         </div>
 
-        {/* Google Drive Sync Status */}
-        {post?.google_doc_url && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              {post.sync_status === 'synced' ? (
-                <CheckCircle className="w-5 h-5 text-green-600" />
+        {/* Google Drive Sync */}
+        <div className={`p-4 rounded-lg border ${
+          post?.sync_status === 'synced'
+            ? 'bg-green-50 border-green-200'
+            : post?.sync_status === 'error'
+            ? 'bg-red-50 border-red-200'
+            : 'bg-muted/40 border-border'
+        }`}>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              {post?.sync_status === 'synced' ? (
+                <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
+              ) : post?.sync_status === 'error' ? (
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <AlertCircle className="w-5 h-5 text-muted-foreground shrink-0" />
               )}
-              <span className="font-medium text-sm">
-                {post.sync_status === 'synced' ? 'Sincronizado' : 'Pendiente de sincronización'}
-              </span>
+              <div>
+                <p className="text-sm font-medium">
+                  {post?.sync_status === 'synced'
+                    ? 'Sincronizado con Google Drive'
+                    : post?.sync_status === 'error'
+                    ? 'Error al sincronizar'
+                    : 'No sincronizado aun'}
+                </p>
+                {post?.synced_at && (
+                  <p className="text-xs text-muted-foreground">
+                    Ultima sync: {new Date(post.synced_at).toLocaleString('es-AR')}
+                  </p>
+                )}
+              </div>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(post.google_doc_url, '_blank')}
-              className="gap-2"
-            >
-              Abrir en Google Drive
-              <ExternalLink className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2 shrink-0">
+              {post?.google_doc_url && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(post.google_doc_url!, '_blank')}
+                  className="gap-1.5 text-xs"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Abrir en Drive
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSyncToGoogleDrive}
+                disabled={syncing}
+                className="text-xs"
+              >
+                {syncing ? 'Sincronizando...' : post?.google_doc_id ? 'Actualizar en Drive' : 'Sincronizar con Drive'}
+              </Button>
+            </div>
           </div>
-        )}
+        </div>
 
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}
 
-        <div className="flex gap-4">
-          <Button type="submit" disabled={saving}>
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleSyncToGoogleDrive}
-            disabled={syncing}
-          >
-            {syncing ? 'Sincronizando...' : 'Sincronizar con Drive'}
+        <div className="flex gap-3">
+          <Button type="submit" disabled={saving || syncing}>
+            {saving ? 'Guardando...' : syncing ? 'Sincronizando con Drive...' : 'Guardar Cambios'}
           </Button>
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/posts">Cancelar</Link>

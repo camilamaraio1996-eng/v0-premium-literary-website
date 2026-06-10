@@ -11,7 +11,7 @@ import { ArrowLeft } from 'lucide-react'
 import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field'
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
-import { syncBlogPostToGoogleDrive } from '@/lib/sync-blog-action'
+import { syncBlogPostToGoogleDrive } from '@/app/admin/actions'
 
 function generateSlug(title: string): string {
   return title
@@ -158,9 +158,9 @@ export default function NewPostPage() {
           <p className="text-sm text-destructive">{error}</p>
         )}
 
-        <div className="flex gap-4">
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar Entrada'}
+        <div className="flex gap-3">
+          <Button type="submit" disabled={loading || syncing}>
+            {loading ? 'Guardando...' : syncing ? 'Sincronizando con Drive...' : 'Guardar Entrada'}
           </Button>
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/posts">Cancelar</Link>
