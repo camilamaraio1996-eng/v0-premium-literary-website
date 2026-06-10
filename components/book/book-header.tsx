@@ -11,7 +11,7 @@ export function BookHeader() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <h1 className="font-serif text-4xl lg:text-6xl text-primary leading-tight mb-6">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-primary leading-tight mb-6 whitespace-nowrap">
             Lo real y lo otro
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-xl text-sm">
