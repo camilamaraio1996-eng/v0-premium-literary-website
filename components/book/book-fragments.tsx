@@ -9,6 +9,7 @@ import type { BookFragment } from '@/types/book'
 
 interface BookFragmentsProps {
   fragments: BookFragment[]
+  title?: string
 }
 
 // Memoized fragment item to prevent unnecessary re-renders
@@ -80,7 +81,7 @@ const FragmentItem = memo(function FragmentItem({
   )
 })
 
-export const BookFragments = memo(function BookFragments({ fragments }: BookFragmentsProps) {
+export const BookFragments = memo(function BookFragments({ fragments, title = 'FRAGMENTOS' }: BookFragmentsProps) {
   const [openId, setOpenId] = useState<string | null>(
     fragments.length > 0 ? fragments[0].id : null
   )
@@ -110,7 +111,7 @@ export const BookFragments = memo(function BookFragments({ fragments }: BookFrag
           className="mb-10 text-center"
         >
           <span className="text-xs uppercase tracking-[0.25em] text-[#958568] block">
-            FRAGMENTOS
+            {title}
           </span>
         </motion.div>
 

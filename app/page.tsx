@@ -53,7 +53,7 @@ export default async function HomePage() {
           buyLabel={settings['home_buy_label'] || 'Comprar el Libro'}
         />
         {/* Fragments Section */}
-        <BookFragments fragments={fragments} />
+        <BookFragments fragments={fragments} title="FRAGMENTOS DEL LIBRO" />
         {/* Book CTA Section - Buttons below fragments */}
         <BookCTA
           buyUrl={settings['home_buy_url'] || null}
