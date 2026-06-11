@@ -16,6 +16,13 @@ function getGoogleDriveConfig(): GoogleDriveConfig {
   const privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
+  console.log('[v0] Google Drive Config:', {
+    projectId: projectId ? projectId.substring(0, 20) + '...' : 'MISSING',
+    email: email ? 'SET' : 'MISSING',
+    privateKey: privateKey ? 'SET' : 'MISSING',
+    folderId: folderId ? folderId.substring(0, 20) + '...' : 'MISSING',
+  })
+
   if (!projectId || !email || !privateKey || !folderId) {
     throw new Error('Credenciales de Google Drive no configuradas')
   }
