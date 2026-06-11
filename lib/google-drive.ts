@@ -26,19 +26,32 @@ function getGoogleDriveConfig(): GoogleDriveConfig {
 async function getGoogleDriveClient() {
   const config = getGoogleDriveConfig()
 
-  const auth = new google.auth.JWT({
-    email: config.email,
-    key: config.privateKey,
-    scopes: [
-      'https://www.googleapis.com/auth/drive',
-      'https://www.googleapis.com/auth/documents',
-    ],
-  })
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        type: 'service_account',
+        project_id: config.projectId,
+        private_key_id: 'key-id',
+        private_key: config.privateKey.replace(/\\n/g, '\n'),
+        client_email: config.email,
+        client_id: '1',
+        auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+        token_uri: 'https://oauth2.googleapis.com/token',
+        auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+      },
+      scopes: [
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/documents',
+      ],
+    })
 
-  return {
-    auth,
-    drive: google.drive({ version: 'v3', auth }),
-    docs: google.docs({ version: 'v1', auth }),
+    return {
+      drive: google.drive({ version: 'v3', auth }),
+      docs: google.docs({ version: 'v1', auth }),
+    }
+  } catch (error: any) {
+    console.error('[v0] Error initializing Google Auth:', error.message)
+    throw new Error(`Error inicializando autenticación de Google: ${error.message}`)
   }
 }
 
@@ -52,12 +65,13 @@ interface CreateDocumentParams {
 /** Crea un Google Doc con contenido e imágenes */
 export async function createGoogleDoc(params: CreateDocumentParams) {
   try {
+    console.log('[v0] Creating Google Doc:', params.title)
     const config = getGoogleDriveConfig()
-    const { drive, docs, auth } = await getGoogleDriveClient()
+    const { drive, docs } = await getGoogleDriveClient()
 
     // 1. Crear documento en blanco
+    console.log('[v0] Creating blank document...')
     const docResponse = await docs.documents.create({
-      auth,
       requestBody: {
         title: params.title,
       },
@@ -65,16 +79,26 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
 
     const docId = docResponse.data.documentId
     if (!docId) throw new Error('No document ID returned')
+    console.log('[v0] Document created with ID:', docId)
 
     // 2. Mover documento a la carpeta de blog
+    console.log('[v0] Moving document to folder:', config.folderId)
     await drive.files.update({
       fileId: docId,
       addParents: config.folderId,
       removeParents: 'root',
+      fields: 'id, parents',
     })
 
     // 3. Insertar contenido (título y contenido)
-    const requests = [
+    const plainContent = params.content
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+
+    const requests: any[] = [
       {
         insertText: {
           text: params.title,
@@ -93,14 +117,15 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
       },
       {
         insertText: {
-          text: `\n\n${params.content}\n\n---\nURL: ${params.blogUrl}`,
+          text: `\n\n${plainContent}\n\n---\nURL: ${params.blogUrl}`,
           location: { index: params.title.length + 1 },
         },
       },
     ]
 
     // 4. Insertar imágenes (embedidas en el documento)
-    let insertIndex = params.title.length + params.content.length + 3
+    console.log('[v0] Adding', params.images.length, 'images to document')
+    let insertIndex = params.title.length + plainContent.length + params.blogUrl.length + 15
     for (const imageUrl of params.images) {
       requests.push({
         insertInlineImage: {
@@ -118,6 +143,7 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
     }
 
     // 5. Aplicar cambios al documento
+    console.log('[v0] Applying batch updates to document')
     await docs.documents.batchUpdate({
       documentId: docId,
       requestBody: { requests },
@@ -125,6 +151,7 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
 
     // 6. Obtener URL pública del documento
     const docUrl = `https://docs.google.com/document/d/${docId}/edit?usp=sharing`
+    console.log('[v0] Document created successfully:', docUrl)
 
     return {
       success: true,
@@ -132,7 +159,12 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
       docUrl,
     }
   } catch (error: any) {
-    console.error('[v0] Error creating Google Doc:', error.message)
+    console.error('[v0] Error creating Google Doc:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      errors: error.errors,
+    })
     throw error
   }
 }

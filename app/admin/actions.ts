@@ -346,7 +346,13 @@ export async function syncBlogPostToGoogleDrive(postId: string) {
       docUrl: result.docUrl,
     }
   } catch (error: any) {
-    console.error('[v0] Error syncing to Google Drive:', error.message)
+    console.error('[v0] Error syncing to Google Drive:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      errors: error.errors,
+      stack: error.stack,
+    })
 
     // Actualizar estado a error
     try {
