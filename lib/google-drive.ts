@@ -10,24 +10,30 @@ interface GoogleDriveConfig {
   folderId: string
 }
 
+/** Normaliza la private key sin importar cómo fue almacenada en la variable de entorno */
+function normalizePrivateKey(raw: string): string {
+  // Si ya tiene saltos de línea reales, está bien
+  if (raw.includes('\n')) return raw
+  // Si tiene \n literales (como cuando se pega en Vercel UI), reemplazarlos
+  let key = raw.replace(/\\n/g, '\n')
+  // Si tiene la key en una sola línea sin headers, agregarlos
+  if (!key.includes('-----BEGIN')) {
+    key = `-----BEGIN RSA PRIVATE KEY-----\n${key}\n-----END RSA PRIVATE KEY-----`
+  }
+  return key
+}
+
 function getGoogleDriveConfig(): GoogleDriveConfig {
   const projectId = process.env.GOOGLE_DRIVE_PROJECT_ID
   const email = process.env.GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL
   const privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
-  console.log('[v0] Google Drive Config:', {
-    projectId: projectId ? projectId.substring(0, 20) + '...' : 'MISSING',
-    email: email ? 'SET' : 'MISSING',
-    privateKey: privateKey ? 'SET' : 'MISSING',
-    folderId: folderId ? folderId.substring(0, 20) + '...' : 'MISSING',
-  })
-
   if (!projectId || !email || !privateKey || !folderId) {
     throw new Error('Credenciales de Google Drive no configuradas')
   }
 
-  return { projectId, email, privateKey, folderId }
+  return { projectId, email, privateKey: normalizePrivateKey(privateKey), folderId }
 }
 
 async function getGoogleDriveClient() {
@@ -38,13 +44,8 @@ async function getGoogleDriveClient() {
       credentials: {
         type: 'service_account',
         project_id: config.projectId,
-        private_key_id: 'key-id',
-        private_key: config.privateKey.replace(/\\n/g, '\n'),
+        private_key: config.privateKey,
         client_email: config.email,
-        client_id: '1',
-        auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-        token_uri: 'https://oauth2.googleapis.com/token',
-        auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
       },
       scopes: [
         'https://www.googleapis.com/auth/drive',
