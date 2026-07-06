@@ -4,8 +4,38 @@ import { useState, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import DOMPurify from 'isomorphic-dompurify'
 import type { BookFragment } from '@/types/book'
+
+function sanitizeHtml(html: string): string {
+  const allowedTags = ['p', 'strong', 'em', 'br', 'a']
+  const allowedAttrs = ['href', 'target', 'rel']
+
+  let sanitized = html
+
+  // Remove script tags and content
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+  sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+  sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+  sanitized = sanitized.replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+
+  // Build regex for allowed tags
+  const tagRegex = new RegExp(`</?(?!${allowedTags.join('|')})[^>]*>`, 'gi')
+  sanitized = sanitized.replace(tagRegex, '')
+
+  // Remove disallowed attributes from allowed tags
+  sanitized = sanitized.replace(/<(a)\s+([^>]*?)>/gi, (match, tag, attrs) => {
+    const allowedAttrStr = attrs
+      .split(/\s+/)
+      .filter((attr: string) => {
+        const attrName = attr.split('=')[0].toLowerCase()
+        return allowedAttrs.includes(attrName)
+      })
+      .join(' ')
+    return `<${tag}${allowedAttrStr ? ' ' + allowedAttrStr : ''}>`
+  })
+
+  return sanitized
+}
 
 interface BookFragmentsProps {
   fragments: BookFragment[]
@@ -68,10 +98,7 @@ const FragmentItem = memo(function FragmentItem({
             <div
               className="pb-8 pl-10 prose-blog text-sm leading-relaxed"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(fragment.content, {
-                  ALLOWED_TAGS: ['p', 'strong', 'em', 'br', 'a'],
-                  ALLOWED_ATTR: ['href', 'target', 'rel'],
-                }),
+                __html: sanitizeHtml(fragment.content),
               }}
             />
           </motion.div>
