@@ -48,41 +48,69 @@ function normalizePrivateKey(raw: string): string {
 }
 
 function getGoogleDriveConfig(): GoogleDriveConfig {
-  const projectId = process.env.GOOGLE_DRIVE_PROJECT_ID
-  const email = process.env.GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL
-  const privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY
+  const projectId = process.env.GOOGLE_DRIVE_PROJECT_ID || ''
+  const email = process.env.GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL || ''
+  const privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY || ''
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
-  if (!projectId || !email || !privateKey || !folderId) {
-    const missing = [
-      !projectId && 'GOOGLE_DRIVE_PROJECT_ID',
-      !email && 'GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL',
-      !privateKey && 'GOOGLE_DRIVE_PRIVATE_KEY',
-      !folderId && 'GOOGLE_DRIVE_FOLDER_ID',
-    ].filter(Boolean)
-    throw new Error(`Credenciales de Google Drive no configuradas (faltan: ${missing.join(', ')})`)
+  if (!folderId) {
+    throw new Error('Falta la variable de entorno GOOGLE_DRIVE_FOLDER_ID')
   }
 
-  return { projectId, email, privateKey: normalizePrivateKey(privateKey), folderId }
+  return {
+    projectId,
+    email,
+    privateKey: privateKey ? normalizePrivateKey(privateKey) : '',
+    folderId: folderId.trim(),
+  }
 }
 
-async function getGoogleDriveClient() {
-  const config = getGoogleDriveConfig()
+const GOOGLE_SCOPES = [
+  'https://www.googleapis.com/auth/drive',
+  'https://www.googleapis.com/auth/documents',
+]
 
-  try {
-    const auth = new google.auth.GoogleAuth({
+/**
+ * Autenticación con Google.
+ * Preferencia: OAuth con la cuenta personal del usuario (GOOGLE_OAUTH_*),
+ * porque Google ya no permite que las cuentas de servicio creen archivos
+ * en Mi Unidad (no tienen cuota de almacenamiento).
+ * Fallback: cuenta de servicio (solo funciona con Unidades Compartidas).
+ */
+function getGoogleAuth() {
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID?.trim()
+  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET?.trim()
+  const refreshToken = process.env.GOOGLE_OAUTH_REFRESH_TOKEN?.trim()
+
+  if (clientId && clientSecret && refreshToken) {
+    console.log('[v0] Using OAuth user credentials for Google Drive')
+    const oauth2 = new google.auth.OAuth2(clientId, clientSecret)
+    oauth2.setCredentials({ refresh_token: refreshToken })
+    return oauth2
+  }
+
+  const config = getGoogleDriveConfig()
+  if (config.email && config.privateKey) {
+    console.log('[v0] Using service account credentials for Google Drive')
+    return new google.auth.GoogleAuth({
       credentials: {
         type: 'service_account',
         project_id: config.projectId,
         private_key: config.privateKey,
         client_email: config.email,
       },
-      scopes: [
-        'https://www.googleapis.com/auth/drive',
-        'https://www.googleapis.com/auth/documents',
-      ],
+      scopes: GOOGLE_SCOPES,
     })
+  }
 
+  throw new Error(
+    'Credenciales de Google no configuradas. Configurá GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET y GOOGLE_OAUTH_REFRESH_TOKEN en Vercel.',
+  )
+}
+
+async function getGoogleDriveClient() {
+  try {
+    const auth = getGoogleAuth()
     return {
       drive: google.drive({ version: 'v3', auth }),
       docs: google.docs({ version: 'v1', auth }),
@@ -181,12 +209,12 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
 
       if (reason === 'storageQuotaExceeded' || /storage quota/i.test(googleMessage)) {
         throw new Error(
-          'Google ya no permite que las cuentas de servicio creen archivos en Mi Unidad (no tienen cuota de almacenamiento). Hay que usar OAuth con tu propia cuenta de Google.',
+          'Google ya no permite que las cuentas de servicio creen archivos en Mi Unidad. Configurá GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET y GOOGLE_OAUTH_REFRESH_TOKEN en Vercel para sincronizar con tu propia cuenta.',
         )
       }
       if (error?.code === 404 || error?.status === 404) {
         throw new Error(
-          `La carpeta de Drive (${config.folderId}) no existe o no está compartida con la cuenta de servicio ${config.email}. Compartí la carpeta con ese email como Editor.`,
+          `La carpeta de Drive (${config.folderId}) no existe o la cuenta que sincroniza no tiene acceso a ella.`,
         )
       }
       if (error?.code === 403 || error?.status === 403) {
