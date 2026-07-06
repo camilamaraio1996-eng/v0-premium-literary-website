@@ -9,17 +9,42 @@ interface GoogleDriveConfig {
   folderId: string
 }
 
-/** Normaliza la private key sin importar cómo fue almacenada en la variable de entorno */
+/**
+ * Normaliza la private key sin importar cómo fue almacenada en la variable de entorno.
+ * Reconstruye el PEM desde cero: tolera comillas envolventes, \n literales,
+ * saltos de línea perdidos, e incluso que se haya pegado el JSON completo
+ * de la cuenta de servicio.
+ */
 function normalizePrivateKey(raw: string): string {
-  // Si ya tiene saltos de línea reales, está bien
-  if (raw.includes('\n')) return raw
-  // Si tiene \n literales (como cuando se pega en Vercel UI), reemplazarlos
-  let key = raw.replace(/\\n/g, '\n')
-  // Si tiene la key en una sola línea sin headers, agregarlos
-  if (!key.includes('-----BEGIN')) {
-    key = `-----BEGIN RSA PRIVATE KEY-----\n${key}\n-----END RSA PRIVATE KEY-----`
+  let key = raw.trim()
+
+  // Si pegaron el JSON completo de la cuenta de servicio, extraer private_key
+  if (key.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(key)
+      if (parsed.private_key) key = parsed.private_key
+    } catch {
+      // no era JSON válido, seguir con el valor crudo
+    }
   }
-  return key
+
+  // Quitar comillas envolventes y normalizar saltos de línea escapados
+  key = key
+    .replace(/^["']+|["']+$/g, '')
+    .replace(/\\r/g, '')
+    .replace(/\\n/g, '\n')
+    .replace(/\r/g, '')
+    .trim()
+
+  // Detectar el tipo de header si existe (PRIVATE KEY = PKCS#8, el formato de Google)
+  const match = key.match(/-----BEGIN ([A-Z0-9 ]+)-----([\s\S]*?)-----END \1-----/)
+  const label = match ? match[1] : 'PRIVATE KEY'
+  const body = match ? match[2] : key
+
+  // Reconstruir el PEM: solo base64, en líneas de 64 caracteres
+  const base64 = body.replace(/[^A-Za-z0-9+/=]/g, '')
+  const lines = base64.match(/.{1,64}/g) || []
+  return `-----BEGIN ${label}-----\n${lines.join('\n')}\n-----END ${label}-----\n`
 }
 
 function getGoogleDriveConfig(): GoogleDriveConfig {
