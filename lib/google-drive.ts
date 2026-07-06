@@ -1,7 +1,6 @@
 'use server'
 
 import { google } from 'googleapis'
-import type { JWT } from 'google-auth-library'
 
 interface GoogleDriveConfig {
   projectId: string
@@ -30,7 +29,13 @@ function getGoogleDriveConfig(): GoogleDriveConfig {
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID
 
   if (!projectId || !email || !privateKey || !folderId) {
-    throw new Error('Credenciales de Google Drive no configuradas')
+    const missing = [
+      !projectId && 'GOOGLE_DRIVE_PROJECT_ID',
+      !email && 'GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL',
+      !privateKey && 'GOOGLE_DRIVE_PRIVATE_KEY',
+      !folderId && 'GOOGLE_DRIVE_FOLDER_ID',
+    ].filter(Boolean)
+    throw new Error(`Credenciales de Google Drive no configuradas (faltan: ${missing.join(', ')})`)
   }
 
   return { projectId, email, privateKey: normalizePrivateKey(privateKey), folderId }
@@ -63,6 +68,52 @@ async function getGoogleDriveClient() {
   }
 }
 
+/** Convierte el HTML del post a texto plano para el Doc */
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+}
+
+/**
+ * Inserta las imágenes al final del documento en batchUpdates separados.
+ * Si una imagen falla (URL no accesible públicamente, formato no soportado),
+ * no rompe la sincronización del texto.
+ */
+async function appendImages(
+  docs: ReturnType<typeof google.docs>,
+  docId: string,
+  images: string[],
+) {
+  for (const imageUrl of images) {
+    if (!imageUrl || !/^https?:\/\//.test(imageUrl)) continue
+    try {
+      // Obtener el índice final actual del documento antes de cada inserción
+      const doc = await docs.documents.get({ documentId: docId })
+      const content = doc.data.body?.content
+      const endIndex = content?.[content.length - 1]?.endIndex || 2
+      // La inserción máxima válida es endIndex - 1 (antes del salto de línea final)
+      const insertIndex = Math.max(1, endIndex - 1)
+
+      await docs.documents.batchUpdate({
+        documentId: docId,
+        requestBody: {
+          requests: [
+            { insertText: { text: '\n', location: { index: insertIndex } } },
+            { insertInlineImage: { location: { index: insertIndex + 1 }, uri: imageUrl } },
+          ],
+        },
+      })
+    } catch (error: any) {
+      // No bloquear la sincronización por una imagen que Google no pudo descargar
+      console.error('[v0] Could not insert image into doc:', imageUrl, error.message)
+    }
+  }
+}
+
 interface CreateDocumentParams {
   title: string
   content: string
@@ -77,87 +128,70 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
     const config = getGoogleDriveConfig()
     const { drive, docs } = await getGoogleDriveClient()
 
-    // 1. Crear documento en blanco
-    console.log('[v0] Creating blank document...')
-    const docResponse = await docs.documents.create({
-      requestBody: {
-        title: params.title,
-      },
-    })
-
-    const docId = docResponse.data.documentId
+    // 1. Crear el documento directamente dentro de la carpeta del blog
+    //    (evita el paso de "mover desde root", que falla si la carpeta no está compartida)
+    console.log('[v0] Creating document in folder:', config.folderId)
+    let docId: string
+    try {
+      const fileResponse = await drive.files.create({
+        requestBody: {
+          name: params.title,
+          mimeType: 'application/vnd.google-apps.document',
+          parents: [config.folderId],
+        },
+        fields: 'id',
+        supportsAllDrives: true,
+      })
+      docId = fileResponse.data.id || ''
+    } catch (error: any) {
+      if (error?.code === 404 || error?.status === 404) {
+        throw new Error(
+          `La carpeta de Drive (${config.folderId}) no existe o no está compartida con la cuenta de servicio ${config.email}. Compartí la carpeta con ese email como Editor.`,
+        )
+      }
+      if (error?.code === 403 || error?.status === 403) {
+        throw new Error(
+          `La cuenta de servicio ${config.email} no tiene permiso de Editor en la carpeta de Drive. Compartí la carpeta con ese email como Editor.`,
+        )
+      }
+      throw error
+    }
     if (!docId) throw new Error('No document ID returned')
     console.log('[v0] Document created with ID:', docId)
 
-    // 2. Mover documento a la carpeta de blog
-    console.log('[v0] Moving document to folder:', config.folderId)
-    await drive.files.update({
-      fileId: docId,
-      addParents: config.folderId,
-      removeParents: 'root',
-      fields: 'id, parents',
-    })
+    // 2. Insertar contenido (título y contenido)
+    const plainContent = stripHtml(params.content)
+    const bodyText = `\n\n${plainContent}\n\n---\nURL: ${params.blogUrl}`
 
-    // 3. Insertar contenido (título y contenido)
-    const plainContent = params.content
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
-
-    const requests: any[] = [
-      {
-        insertText: {
-          text: params.title,
-          location: { index: 1 },
-        },
-      },
-      {
-        updateTextStyle: {
-          range: { startIndex: 1, endIndex: params.title.length + 1 },
-          textStyle: {
-            fontSize: { magnitude: 24, unit: 'pt' },
-            bold: true,
-          },
-          fields: 'fontSize,bold',
-        },
-      },
-      {
-        insertText: {
-          text: `\n\n${plainContent}\n\n---\nURL: ${params.blogUrl}`,
-          location: { index: params.title.length + 1 },
-        },
-      },
-    ]
-
-    // 4. Insertar imágenes (embedidas en el documento)
-    console.log('[v0] Adding', params.images.length, 'images to document')
-    let insertIndex = params.title.length + plainContent.length + params.blogUrl.length + 15
-    for (const imageUrl of params.images) {
-      requests.push({
-        insertInlineImage: {
-          location: { index: insertIndex },
-          uri: imageUrl,
-        },
-      })
-      requests.push({
-        insertText: {
-          text: '\n',
-          location: { index: insertIndex + 1 },
-        },
-      })
-      insertIndex += 2
-    }
-
-    // 5. Aplicar cambios al documento
-    console.log('[v0] Applying batch updates to document')
     await docs.documents.batchUpdate({
       documentId: docId,
-      requestBody: { requests },
+      requestBody: {
+        requests: [
+          {
+            insertText: {
+              text: params.title + bodyText,
+              location: { index: 1 },
+            },
+          },
+          {
+            updateTextStyle: {
+              range: { startIndex: 1, endIndex: params.title.length + 1 },
+              textStyle: {
+                fontSize: { magnitude: 24, unit: 'pt' },
+                bold: true,
+              },
+              fields: 'fontSize,bold',
+            },
+          },
+        ],
+      },
     })
 
-    // 6. Obtener URL pública del documento
+    // 3. Insertar imágenes al final (sin bloquear si alguna falla)
+    console.log('[v0] Adding', params.images.length, 'images to document')
+    await appendImages(docs, docId, params.images)
+
+    // 4. Obtener URL del documento
     const docUrl = `https://docs.google.com/document/d/${docId}/edit?usp=sharing`
     console.log('[v0] Document created successfully:', docUrl)
 
@@ -188,7 +222,7 @@ interface UpdateDocumentParams {
 /** Actualiza un Google Doc existente */
 export async function updateGoogleDoc(params: UpdateDocumentParams) {
   try {
-    const { docs, auth } = await getGoogleDriveClient()
+    const { docs } = await getGoogleDriveClient()
 
     // 1. Obtener contenido actual del documento
     const doc = await docs.documents.get({
@@ -199,22 +233,22 @@ export async function updateGoogleDoc(params: UpdateDocumentParams) {
       throw new Error('No content found in document')
     }
 
-    // 2. Limpiar contenido actual (eliminar todo excepto el último párrafo que es obligatorio)
+    // 2. Limpiar contenido actual (el último salto de línea es obligatorio y no se puede borrar)
     const endIndex = doc.data.body.content[doc.data.body.content.length - 1]?.endIndex || 1
-    const deleteIndex = 1
-
-    const requests = [
-      {
+    const requests: any[] = []
+    if (endIndex - 1 > 1) {
+      requests.push({
         deleteContentRange: {
-          range: { startIndex: deleteIndex, endIndex: endIndex - 1 },
+          range: { startIndex: 1, endIndex: endIndex - 1 },
         },
-      },
-    ]
+      })
+    }
 
-    // 3. Insertar nuevo contenido
+    // 3. Insertar nuevo contenido (texto plano, sin etiquetas HTML)
+    const plainContent = stripHtml(params.content)
     requests.push({
       insertText: {
-        text: `${params.title}\n\n${params.content}\n\n---\nURL: ${params.blogUrl}`,
+        text: `${params.title}\n\n${plainContent}\n\n---\nURL: ${params.blogUrl}`,
         location: { index: 1 },
       },
     })
@@ -231,31 +265,20 @@ export async function updateGoogleDoc(params: UpdateDocumentParams) {
       },
     })
 
-    // 5. Insertar imágenes
-    let insertIndex = params.title.length + params.content.length + 3
-    for (const imageUrl of params.images) {
-      requests.push({
-        insertInlineImage: {
-          location: { index: insertIndex },
-          uri: imageUrl,
-        },
-      })
-      requests.push({
-        insertText: {
-          text: '\n',
-          location: { index: insertIndex + 1 },
-        },
-      })
-      insertIndex += 2
-    }
-
-    // 6. Aplicar cambios
+    // 5. Aplicar cambios de texto
     await docs.documents.batchUpdate({
       documentId: params.docId,
       requestBody: { requests },
     })
 
-    return { success: true }
+    // 6. Insertar imágenes al final (sin bloquear si alguna falla)
+    await appendImages(docs, params.docId, params.images)
+
+    return {
+      success: true,
+      docId: params.docId,
+      docUrl: `https://docs.google.com/document/d/${params.docId}/edit?usp=sharing`,
+    }
   } catch (error: any) {
     console.error('[v0] Error updating Google Doc:', error.message)
     throw error

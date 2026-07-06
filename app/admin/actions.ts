@@ -301,13 +301,28 @@ export async function syncBlogPostToGoogleDrive(postId: string) {
     let result
     if (post.google_doc_id) {
       console.log('[v0] Updating existing Google Doc:', post.google_doc_id)
-      result = await updateGoogleDoc({
-        docId: post.google_doc_id,
-        title: post.title,
-        content: post.content,
-        images,
-        blogUrl,
-      })
+      try {
+        result = await updateGoogleDoc({
+          docId: post.google_doc_id,
+          title: post.title,
+          content: post.content,
+          images,
+          blogUrl,
+        })
+      } catch (updateErr: any) {
+        // Si el Doc fue borrado de Drive (404), crear uno nuevo en vez de fallar para siempre
+        if (updateErr?.code === 404 || updateErr?.status === 404) {
+          console.log('[v0] Existing Doc not found, creating a new one')
+          result = await createGoogleDoc({
+            title: post.title,
+            content: post.content,
+            images,
+            blogUrl,
+          })
+        } else {
+          throw updateErr
+        }
+      }
     } else {
       console.log('[v0] Creating new Google Doc')
       result = await createGoogleDoc({
