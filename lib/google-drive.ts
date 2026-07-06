@@ -169,6 +169,21 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
       })
       docId = fileResponse.data.id || ''
     } catch (error: any) {
+      const reason = error?.errors?.[0]?.reason || ''
+      const googleMessage = error?.errors?.[0]?.message || error?.message || ''
+      console.error('[v0] Drive create error detail:', {
+        code: error?.code,
+        status: error?.status,
+        reason,
+        googleMessage,
+        errors: JSON.stringify(error?.errors),
+      })
+
+      if (reason === 'storageQuotaExceeded' || /storage quota/i.test(googleMessage)) {
+        throw new Error(
+          'Google ya no permite que las cuentas de servicio creen archivos en Mi Unidad (no tienen cuota de almacenamiento). Hay que usar OAuth con tu propia cuenta de Google.',
+        )
+      }
       if (error?.code === 404 || error?.status === 404) {
         throw new Error(
           `La carpeta de Drive (${config.folderId}) no existe o no está compartida con la cuenta de servicio ${config.email}. Compartí la carpeta con ese email como Editor.`,
@@ -176,7 +191,7 @@ export async function createGoogleDoc(params: CreateDocumentParams) {
       }
       if (error?.code === 403 || error?.status === 403) {
         throw new Error(
-          `La cuenta de servicio ${config.email} no tiene permiso de Editor en la carpeta de Drive. Compartí la carpeta con ese email como Editor.`,
+          `Google rechazó la creación del documento (403). Razón: ${reason || 'desconocida'} — ${googleMessage}`,
         )
       }
       throw error
