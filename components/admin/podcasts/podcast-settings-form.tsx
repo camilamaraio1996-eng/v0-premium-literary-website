@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { SmartTextarea } from '@/components/admin/smart-input'
+import { RichEditor } from '@/components/admin/rich-editor'
 import { FileUploadField } from '@/components/admin/file-upload-field'
 import { updateSiteSettings } from '@/app/admin/actions'
 
@@ -76,14 +76,12 @@ export function PodcastSettingsForm({ settings }: { settings: Record<string, str
       />
 
       <div>
-        <Label htmlFor="podcast_description" className="mb-1 block">Descripción breve</Label>
-        <SmartTextarea
-          id="podcast_description"
+        <Label className="mb-1 block">Descripción del Podcast</Label>
+        <RichEditor
           value={get('podcast_description')}
           onChange={set('podcast_description')}
           placeholder="En este episodio hablamos sobre..."
-          rows={4}
-          showIssues={false}
+          minHeight={300}
         />
       </div>
 

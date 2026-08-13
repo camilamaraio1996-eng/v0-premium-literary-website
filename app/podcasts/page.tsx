@@ -73,16 +73,21 @@ export default async function PodcastsPage() {
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
                 
                 {/* Botón siempre visible abajo a la derecha */}
-                <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center gap-1.5 md:gap-2 bg-white/95 backdrop-blur-sm text-black px-3 py-1.5 md:px-5 md:py-2.5 rounded-full shadow-xl border border-black/10 group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-105 transition-all duration-300 z-10">
-                  <span className="text-[10px] md:text-sm font-bold tracking-wide uppercase">
+                <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 flex items-center gap-1.5 md:gap-2 bg-white/95 backdrop-blur-sm text-black px-2.5 py-1 md:px-5 md:py-2.5 rounded-full shadow-xl border border-black/10 group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-105 transition-all duration-300 z-10">
+                  <span className="text-[9px] md:text-sm font-bold tracking-wide uppercase">
                     Toca y escuchá
                   </span>
                   <PlayCircle className="w-3 h-3 md:w-5 md:h-5" />
                 </div>
               </a>
               
-              <div className="text-muted-foreground text-base md:text-lg leading-relaxed whitespace-pre-wrap">
-                {podcastDescription && <p>{podcastDescription}</p>}
+              <div className="text-muted-foreground text-base md:text-lg leading-relaxed">
+                {podcastDescription && (
+                  <div 
+                    className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-accent prose-headings:font-serif"
+                    dangerouslySetInnerHTML={{ __html: podcastDescription }} 
+                  />
+                )}
               </div>
             </div>
           )}
