@@ -84,7 +84,7 @@ export default async function PodcastsPage() {
               <div className="text-muted-foreground text-base md:text-lg leading-relaxed">
                 {podcastDescription && (
                   <div 
-                    className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-accent prose-headings:font-serif whitespace-pre-wrap [&>p:empty]:h-5"
+                    className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-p:leading-relaxed prose-a:text-primary hover:prose-a:text-accent prose-headings:font-serif [&>p]:mb-6 [&>p:has(br)]:h-6"
                     dangerouslySetInnerHTML={{ __html: podcastDescription }} 
                   />
                 )}
