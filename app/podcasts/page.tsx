@@ -69,12 +69,15 @@ export default async function PodcastsPage() {
                   </div>
                 )}
                 
-                {/* Overlay oscuro y botón */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3">
-                  <PlayCircle className="w-16 h-16 text-white" />
-                  <span className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium tracking-wide uppercase shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                {/* Overlay oscuro sutil al pasar el mouse */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+                
+                {/* Botón siempre visible abajo a la derecha */}
+                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2 bg-white/95 backdrop-blur-sm text-black px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-xl border border-black/10 group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-105 transition-all duration-300 z-10">
+                  <span className="text-xs sm:text-sm font-bold tracking-wide uppercase">
                     Toca y escuchá
                   </span>
+                  <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </a>
               
