@@ -19,12 +19,18 @@ export function QuickAccessSection() {
       href: '/diario',
       delay: 0.2,
     },
+    {
+      title: '¿Querés escuchar?',
+      buttonText: 'IR AL PÓDCAST',
+      href: '/podcasts',
+      delay: 0.3,
+    },
   ]
 
   return (
     <section className="py-6 sm:py-8 lg:py-10 bg-background">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           {items.map((item, index) => (
             <motion.div
               key={index}

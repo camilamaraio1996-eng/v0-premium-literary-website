@@ -30,6 +30,7 @@ export async function getNavigationData() {
     { href: '/libro', label: settingsMap['nav_libro'] || 'EL LIBRO' },
     { href: '/diario', label: settingsMap['nav_diario'] || 'BLOG' },
     { href: '/recomendaciones', label: normalizedValue },
+    { href: '/podcasts', label: settingsMap['nav_podcasts'] || 'PÓDCAST' },
     { href: '/autor', label: settingsMap['nav_autor'] || 'AUTORA' },
   ]
 
@@ -68,4 +69,20 @@ export async function getBookInfo() {
     cover_image_url: null,
     description: null,
   }
+}
+
+export async function getPodcasts() {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('podcasts')
+    .select('*')
+    .eq('published', true)
+    .order('sort_order', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching podcasts:', error)
+    return []
+  }
+
+  return data || []
 }

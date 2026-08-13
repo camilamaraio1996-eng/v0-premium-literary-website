@@ -16,6 +16,7 @@ const navItems = [
   { href: '/admin/pages', label: 'Páginas', icon: FileJson },
   { href: '/admin/posts', label: 'Entradas', icon: FileText },
   { href: '/admin/recommendations', label: 'Biblioteca', icon: Heart },
+  { href: '/admin/podcasts', label: 'Podcasts', icon: FileJson },
   { href: '/admin/preorders', label: 'Reservas', icon: Users },
   { href: '/admin/messages', label: 'Mensajes', icon: Mail },
 ]

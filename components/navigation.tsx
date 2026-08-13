@@ -16,6 +16,7 @@ const defaultNavLinks = [
   { href: '/libro', label: 'El Libro' },
   { href: '/diario', label: 'Blog' },
   { href: '/recomendaciones', label: 'Biblioteca' },
+  { href: '/podcasts', label: 'Podcasts' },
   { href: '/autor', label: 'Autora' },
 ]
 
