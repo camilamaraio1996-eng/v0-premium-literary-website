@@ -57,10 +57,10 @@ export const BookHero = memo(function BookHero({
             className="w-full lg:order-2"
           >
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md mb-6 lg:mb-10">
-              20 relatos, casi todos reales, en donde exploro vínculos familiares, de amista y de pareja. También sueños, pesadillas, y la relación de nuestro insconciente con estos.
+              20 relatos, casi todos reales, en donde exploro vínculos familiares, de amistad y de pareja. También sueños, pesadillas, y la relación de nuestro insconciente con estos, sin dejar de analizar esa voz interior que todos tenemos.
               <br />
               <br />
-              Llevo lo personal a lo universal, haciendo que el lector se sienta parte de la historia. Atravesando diferentes emociones a lo largo de los relatos, sin dejar de lado el humor ni las situaciones incómodas.
+              Llevo lo personal a lo universal. Busco que el lector se sienta parte de la historia, y vaya atravesando diferentes emociones a lo largo de los relatos. Resaltando el humor y las situaciones incómodas.
             </p>
 
             {/* Meta */}
