@@ -57,13 +57,16 @@ export const BookHero = memo(function BookHero({
             className="w-full lg:order-2"
           >
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md mb-6 lg:mb-10">
-              Explora los distintos universos.
+              20 relatos, casi todos reales, en donde exploro vínculos familiares, de amista y de pareja. También sueños, pesadillas, y la relación de nuestro insconciente con estos.
+              <br />
+              <br />
+              Llevo lo personal a lo universal, haciendo que el lector se sienta parte de la historia. Atravesando diferentes emociones a lo largo de los relatos, sin dejar de lado el humor ni las situaciones incómodas.
             </p>
 
             {/* Meta */}
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 text-xs mb-10">
               {[
-                { label: 'Género', value: 'Realismo Mágico' },
+                { label: 'Género', value: 'Autoficción' },
                 { label: 'Idioma', value: 'Español' },
                 { label: 'Publicación', value: 'Junio 2026' },
               ].map(({ label, value }) => (
