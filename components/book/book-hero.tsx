@@ -56,6 +56,18 @@ export const BookHero = memo(function BookHero({
             transition={{ duration: 0.8, delay: 0.2 }}
             className="w-full lg:order-2"
           >
+            {/* Mobile Buy link - Shows above text */}
+            {buyUrl && (
+              <div className="lg:hidden mb-8">
+                <Button asChild size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
+                  <a href={buyUrl} target="_blank" rel="noopener noreferrer">
+                    <ShoppingBag className="w-4 h-4" />
+                    {buyLabel}
+                  </a>
+                </Button>
+              </div>
+            )}
+
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md mb-6 lg:mb-10">
               20 relatos, casi todos reales, en donde exploro vínculos familiares, de amistad y de pareja. También sueños, pesadillas, y la relación de nuestro insconciente con estos, sin dejar de analizar esa voz interior que todos tenemos.
               <br />
@@ -79,14 +91,16 @@ export const BookHero = memo(function BookHero({
               ))}
             </div>
 
-            {/* Buy link */}
+            {/* Desktop Buy link - Shows below meta */}
             {buyUrl && (
-              <Button asChild size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
-                <a href={buyUrl} target="_blank" rel="noopener noreferrer">
-                  <ShoppingBag className="w-4 h-4" />
-                  {buyLabel}
-                </a>
-              </Button>
+              <div className="hidden lg:block">
+                <Button asChild size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-accent transition-colors uppercase tracking-[0.15em] text-xs px-8">
+                  <a href={buyUrl} target="_blank" rel="noopener noreferrer">
+                    <ShoppingBag className="w-4 h-4" />
+                    {buyLabel}
+                  </a>
+                </Button>
+              </div>
             )}
           </motion.div>
         </div>
