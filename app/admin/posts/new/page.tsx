@@ -12,15 +12,7 @@ import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
 import { syncBlogPostToGoogleDrive } from '@/app/admin/actions'
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
+import { generateSlug, resolveUniqueSlug } from '@/lib/slug'
 
 export default function NewPostPage() {
   const [title, setTitle] = useState('')
@@ -41,24 +33,45 @@ export default function NewPostPage() {
 
     try {
       const supabase = createClient()
-      const slug = generateSlug(title)
+      const slug = await resolveUniqueSlug(supabase, title)
 
-      const { data, error: insertError } = await supabase
+      const payload = {
+        title: title.trim(),
+        slug,
+        content,
+        cover_image: images.length > 0 ? images[0] : null,
+        image_url: images.length > 0 ? images[0] : null,
+        images: images,
+        reading_time: readingTime,
+        published,
+      }
+
+      let { data, error: insertError } = await supabase
         .from('blog_posts')
-        .insert({
-          title,
-          slug,
-          content,
-          cover_image: images.length > 0 ? images[0] : null,
-          image_url: images.length > 0 ? images[0] : null,
-          images: images,
-          reading_time: readingTime,
-          published,
-        })
+        .insert(payload)
         .select()
 
+      // Fallback automático por si hubiese colisión de slug residual (ej. condición de carrera)
+      if (insertError && (insertError.code === '23505' || insertError.message?.includes('blog_posts_slug_key') || insertError.message?.includes('duplicate key'))) {
+        const fallbackSlug = `${slug}-${Date.now().toString(36)}`
+        const retryResult = await supabase
+          .from('blog_posts')
+          .insert({
+            ...payload,
+            slug: fallbackSlug,
+          })
+          .select()
+
+        data = retryResult.data
+        insertError = retryResult.error
+      }
+
       if (insertError) {
-        setError(insertError.message)
+        if (insertError.code === '23505' || insertError.message?.includes('blog_posts_slug_key') || insertError.message?.includes('duplicate key')) {
+          setError('Ya existe una entrada con un título similar o este enlace. Por favor cambia el título ligeramente.')
+        } else {
+          setError(insertError.message)
+        }
         setLoading(false)
         return
       }

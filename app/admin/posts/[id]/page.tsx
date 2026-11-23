@@ -12,15 +12,7 @@ import { BlogImageUploadField } from '@/components/admin/blog-image-upload-field
 import { SmartInput, SmartTextarea } from '@/components/admin/smart-input'
 import { RichEditor } from '@/components/admin/rich-editor'
 import { syncBlogPostToGoogleDrive } from '@/app/admin/actions'
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
+import { generateSlug, resolveUniqueSlug } from '@/lib/slug'
 
 interface BlogPost {
   id: string
@@ -97,25 +89,50 @@ export default function EditPostPage() {
 
     try {
       const supabase = createClient()
-      const newSlug = generateSlug(title)
+      
+      // Si el título no cambió y ya tiene slug, mantenemos el slug existente para no romper enlaces
+      let targetSlug = post?.slug || generateSlug(title)
+      if (!post?.slug || generateSlug(title) !== generateSlug(post.title)) {
+        targetSlug = await resolveUniqueSlug(supabase, title, postId)
+      }
 
-      const { error: updateError } = await supabase
+      const payload = {
+        title: title.trim(),
+        slug: targetSlug,
+        content,
+        cover_image: images.length > 0 ? images[0] : null,
+        image_url: images.length > 0 ? images[0] : null,
+        images: images,
+        reading_time: readingTime,
+        published,
+        updated_at: new Date().toISOString(),
+      }
+
+      let { error: updateError } = await supabase
         .from('blog_posts')
-        .update({
-          title,
-          slug: newSlug,
-          content,
-          cover_image: images.length > 0 ? images[0] : null,
-          image_url: images.length > 0 ? images[0] : null,
-          images: images,
-          reading_time: readingTime,
-          published,
-          updated_at: new Date().toISOString(),
-        })
+        .update(payload)
         .eq('id', postId)
 
+      // Fallback automático por si hubiese colisión de slug
+      if (updateError && (updateError.code === '23505' || updateError.message?.includes('blog_posts_slug_key') || updateError.message?.includes('duplicate key'))) {
+        const fallbackSlug = `${targetSlug}-${Date.now().toString(36)}`
+        const retryResult = await supabase
+          .from('blog_posts')
+          .update({
+            ...payload,
+            slug: fallbackSlug,
+          })
+          .eq('id', postId)
+
+        updateError = retryResult.error
+      }
+
       if (updateError) {
-        setError(updateError.message)
+        if (updateError.code === '23505' || updateError.message?.includes('blog_posts_slug_key') || updateError.message?.includes('duplicate key')) {
+          setError('Ya existe otra entrada con un título similar o este enlace. Por favor cambia el título ligeramente.')
+        } else {
+          setError(updateError.message)
+        }
         setSaving(false)
         return
       }
